@@ -1,9 +1,9 @@
 import {
+  AllAverages,
   Balances,
   Multiplicator,
   PairOpenOrders,
   Tickers,
-  AllAverages,
 } from '../models';
 
 export interface State {

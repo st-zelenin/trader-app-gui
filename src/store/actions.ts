@@ -1,12 +1,9 @@
 import { createAction, props } from '@ngrx/store';
 import {
+  AllAverages,
   Balances,
   Multiplicator,
-  Order,
   PairOpenOrders,
-  TickerInfo,
-  PairAverages,
-  AllAverages,
   Tickers,
 } from '../models';
 

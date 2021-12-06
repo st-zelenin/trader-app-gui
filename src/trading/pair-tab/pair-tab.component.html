@@ -2,12 +2,12 @@
   <mat-card-title>{{ pair.id }}</mat-card-title>
   <mat-card-subtitle>
     <span *ngIf="tickerInfo | async as info; else loading">{{
-      info.last | number: "1.0-10"
+      info.last | number: '1.0-10'
     }}</span>
     /
     <span *ngIf="tradeAverages | async as averages; else loading">
-      {{ averages.buy.price | number: "1.0-10" }} /
-      {{ averages.sell.price | number: "1.0-10" }}
+      {{ averages.buy.price | number: '1.0-10' }} /
+      {{ averages.sell.price | number: '1.0-10' }}
     </span>
   </mat-card-subtitle>
 

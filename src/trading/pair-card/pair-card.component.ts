@@ -8,9 +8,9 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { Facade } from '../../store/facade';
-import { Order, PairOpenOrders, TickerInfo, PairAverages } from '../../models';
 import { FilteringService } from '../../filtering.service';
+import { Order, PairAverages, TickerInfo } from '../../models';
+import { Facade } from '../../store/facade';
 
 @Component({
   selector: 'app-pair-card',

@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import {
+  AllAverages,
+  Balances,
+  CurrencyPair,
   NewOrder,
   Order,
   PairAverages,
   PairOpenOrders,
-  CurrencyPair,
-  Balances,
-  AllAverages,
   Tickers,
 } from './models';
 import { API_URL } from './models/constants';
@@ -17,33 +17,32 @@ import { API_URL } from './models/constants';
   providedIn: 'root',
 })
 export class HistoryService {
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
   public importAll(pair: string) {
-    return this.httpClient.get(`${API_URL}/importAllHistory`, { params: { pair } });
+    return this.httpClient.get(`${API_URL}/importAllHistory`, {
+      params: { pair },
+    });
   }
 
   public updateRecent(pair: string) {
-    return this.httpClient.get(
-      `${API_URL}/updateRecentHistory`,
-      { params: { pair } }
-    );
+    return this.httpClient.get(`${API_URL}/updateRecentHistory`, {
+      params: { pair },
+    });
   }
 
   public getHistory(pair: string) {
     return this.httpClient
-      .get<{ total: number; res: Order[] }>(
-        `${API_URL}/getHistory`,
-        { params: { pair } }
-      )
+      .get<{ total: number; res: Order[] }>(`${API_URL}/getHistory`, {
+        params: { pair },
+      })
       .pipe(map(({ res }) => res));
   }
 
   public calcAverages(pair: string) {
-    return this.httpClient.get<PairAverages>(
-      `${API_URL}/analyzeTrades`,
-      { params: { pair } }
-    );
+    return this.httpClient.get<PairAverages>(`${API_URL}/analyzeTrades`, {
+      params: { pair },
+    });
   }
 
   public getSingleTickerInfo(pair: string) {
@@ -59,21 +58,17 @@ export class HistoryService {
   }
 
   public getAllAnalytics() {
-    return this.httpClient.get<PairAverages[]>(
-      `${API_URL}/getAllAnalytics`
-    );
+    return this.httpClient.get<PairAverages[]>(`${API_URL}/getAllAnalytics`);
   }
 
   public getOpenOrders(pair: string) {
-    return this.httpClient.get<Order[]>(
-      `${API_URL}/getOpenOrders`,
-      { params: { pair } }
-    );
+    return this.httpClient.get<Order[]>(`${API_URL}/getOpenOrders`, {
+      params: { pair },
+    });
   }
 
   public getAllOpenOrders() {
-    return this.httpClient
-      .get<PairOpenOrders[]>(`${API_URL}/getAllOpenOrders`);
+    return this.httpClient.get<PairOpenOrders>(`${API_URL}/getAllOpenOrders`);
   }
 
   public cancelOrder(order: Order) {
@@ -89,20 +84,14 @@ export class HistoryService {
   }
 
   public getCurrencyPairs() {
-    return this.httpClient.get<CurrencyPair[]>(
-      `${API_URL}/getCurrencyPairs`
-    );
+    return this.httpClient.get<CurrencyPair[]>(`${API_URL}/getCurrencyPairs`);
   }
 
   public getBalances() {
-    return this.httpClient.get<Balances>(
-      `${API_URL}/getBalance`
-    );
+    return this.httpClient.get<Balances>(`${API_URL}/getBalance`);
   }
 
   public getAverages() {
-    return this.httpClient.get<AllAverages>(
-      `${API_URL}/getAverages`
-    );
+    return this.httpClient.get<AllAverages>(`${API_URL}/getAverages`);
   }
 }

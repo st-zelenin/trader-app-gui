@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CurrenciesResolver } from './currencies.resolver';
 import { TradingComponent } from './trading.component';
 import { UserResolver } from './user.resolver';
 

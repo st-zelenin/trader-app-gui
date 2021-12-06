@@ -10,8 +10,8 @@
           <span class="change-percentage" [class.down]="priceDown">{{
             ticker?.change_percentage
           }}</span>
-          / {{ averages?.buy?.price | number: "1.0-10" }} /
-          {{ averages?.sell?.price | number: "1.0-10" }}
+          / {{ averages?.buy?.price | number: '1.0-10' }} /
+          {{ averages?.sell?.price | number: '1.0-10' }}
         </mat-panel-title>
         <div class="open-orders">
           <span class="buy">{{ buyOrders }}</span

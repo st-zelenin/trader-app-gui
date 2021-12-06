@@ -1,15 +1,15 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { CurrencyPair, TradePair, User, Balance } from '../models';
-import { HistoryService } from '../history.service';
-import { UserService } from '../user.service';
 import { FormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Facade } from '../store/facade';
-import { BUY_MULTIPLICATORS } from '../models/constants';
 import { FilteringService } from '../filtering.service';
+import { HistoryService } from '../history.service';
+import { Balance, CurrencyPair, TradePair, User } from '../models';
+import { BUY_MULTIPLICATORS } from '../models/constants';
+import { Facade } from '../store/facade';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-trading',
@@ -35,9 +35,8 @@ export class TradingComponent implements OnInit {
     private readonly userServise: UserService,
     private readonly historyService: HistoryService,
     private readonly facade: Facade,
-    private readonly filteringService: FilteringService
-  ) // public readonly dialog: MatDialog,
-  {
+    private readonly filteringService: FilteringService // public readonly dialog: MatDialog,
+  ) {
     this.user = this.route.snapshot.data.user;
 
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(
@@ -109,7 +108,6 @@ export class TradingComponent implements OnInit {
 
     if (index > -1) {
       this.user.pairs.splice(index, 1);
-      console.log('done', this.user.pairs);
       this.userServise.updateUser(this.user).subscribe();
     }
   }

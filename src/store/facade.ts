@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppState } from './state';
+import {
+  Balance,
+  Multiplicator,
+  Order,
+  PairAverages,
+  TickerInfo,
+} from '../models';
 import {
   getAllAnalytics,
   getAllOpenOrders,
@@ -10,18 +16,12 @@ import {
 } from './actions';
 import {
   analytics,
-  ticker,
-  pairOpenOrders,
-  currencyBalance,
   buyMultiplicator,
+  currencyBalance,
+  pairOpenOrders,
+  ticker,
 } from './selectors';
-import {
-  Multiplicator,
-  TickerInfo,
-  PairAverages,
-  Order,
-  Balance,
-} from '../models';
+import { AppState } from './state';
 
 @Injectable({
   providedIn: 'root',

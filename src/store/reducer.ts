@@ -1,6 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
 import { BUY_MULTIPLICATORS } from '../models/constants';
-
 import {
   setAllAnalytics,
   setAllOpenOrders,

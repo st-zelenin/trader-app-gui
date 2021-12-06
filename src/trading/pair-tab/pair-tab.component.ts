@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { HistoryService } from '../../history.service';
-import { Order, TickerInfo, PairAverages, TradePair } from '../../models';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { HistoryService } from '../../history.service';
+import { Order, PairAverages, TickerInfo, TradePair } from '../../models';
 
 @Component({
   selector: 'app-pair-tab',

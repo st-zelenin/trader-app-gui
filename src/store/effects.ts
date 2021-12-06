@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { of } from 'rxjs';
+import { catchError, map, mergeMap } from 'rxjs/operators';
 import { HistoryService } from '../history.service';
 import {
   getAllAnalytics,
@@ -15,10 +17,7 @@ import {
   setAllOpenOrders,
   setAllTickers,
   setBalances,
-  setBuyMultiplicator,
 } from './actions';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 @Injectable()
 export class Effects {

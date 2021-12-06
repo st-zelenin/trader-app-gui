@@ -1,14 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { Validators } from '@angular/forms';
-import { Facade } from '../../store';
+import { FormBuilder, Validators } from '@angular/forms';
 import {
   Balance,
   Multiplicator,
   NewOrder,
-  TickerInfo,
   PairAverages,
+  TickerInfo,
 } from '../../models';
+import { Facade } from '../../store';
 
 @Component({
   selector: 'app-order-form',

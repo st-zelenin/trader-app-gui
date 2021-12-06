@@ -46,3 +46,4 @@ Thumbs.db
 
 /src/environments/config.ts
 .prettierignore
+.angular/
