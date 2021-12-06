@@ -1,0 +1,65 @@
+<mat-card>
+  <mat-card-title>{{ pair.id }}</mat-card-title>
+  <mat-card-subtitle>
+    <span *ngIf="tickerInfo | async as info; else loading">{{
+      info.last | number: "1.0-10"
+    }}</span>
+    /
+    <span *ngIf="tradeAverages | async as averages; else loading">
+      {{ averages.buy.price | number: "1.0-10" }} /
+      {{ averages.sell.price | number: "1.0-10" }}
+    </span>
+  </mat-card-subtitle>
+
+  <mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button (click)="importAll()">Import all</button>
+      <button mat-raised-button (click)="updateRecent()">Update recent</button>
+      <button mat-raised-button (click)="calcAverages()">Get averages</button>
+      <button mat-raised-button (click)="updateTickerInfo()">
+        Update ticker
+      </button>
+    </mat-card-actions>
+
+    <!-- <mat-divider></mat-divider> -->
+
+    <!-- <ng-container *ngIf="openOrders | async as orders; else loading"> -->
+
+    <table mat-table [dataSource]="orders" class="mat-elevation-z8">
+      <ng-container matColumnDef="ID">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="side">
+        <th mat-header-cell *matHeaderCellDef>side</th>
+        <td mat-cell *matCellDef="let element">{{ element.side }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>amount</th>
+        <td mat-cell *matCellDef="let element">{{ element.amount }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef>price</th>
+        <td mat-cell *matCellDef="let element">{{ element.price }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="star">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <mat-icon>more_vert</mat-icon>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <!-- </ng-container> -->
+  </mat-card-content>
+</mat-card>
+
+<ng-template #loading>
+  <span>loading...</span>
+</ng-template>

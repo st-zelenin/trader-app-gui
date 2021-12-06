@@ -1,0 +1,60 @@
+:host.hidden {
+  display: none;
+}
+
+.card-title {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.change-percentage {
+  padding: 0 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: green;
+
+  &.down {
+    color: red;
+  }
+}
+
+.drag-handle,
+.remove {
+  position: absolute;
+  top: 14px;
+}
+
+.mat-expanded {
+  .mat-expansion-panel-header {
+    background-color: rgba(255, 255, 255) !important;
+  }
+}
+
+.drag-handle {
+  right: 50px;
+  cursor: move;
+}
+
+.remove {
+  right: 80px;
+}
+
+.open-orders {
+  position: absolute;
+  right: 110px;
+  font-size: 12px;
+  font-weight: 600;
+
+  .buy {
+    color: green;
+  }
+
+  .sell {
+    color: red;
+  }
+}
+
+.panel-header {
+  position: relative;
+}

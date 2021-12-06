@@ -1,0 +1,53 @@
+.actions {
+  margin: 0 5px;
+
+  .mat-form-field {
+    padding: 0 5px;
+  }
+}
+
+.label {
+  padding: 0 5px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#add-pair {
+  width: 2em;
+  height: 2em;
+}
+
+.pairs-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+
+  .pair {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .pairs-list {
+    .pair {
+      width: 49%;
+    }
+  }
+}
+
+@media only screen and (min-width: 2100px) {
+  .pairs-list {
+    .pair {
+      width: 33%;
+    }
+  }
+}
+
+@media only screen and (min-width: 3000px) {
+  .pairs-list {
+    .pair {
+      width: 24%;
+    }
+  }
+}

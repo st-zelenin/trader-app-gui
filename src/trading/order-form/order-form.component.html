@@ -1,0 +1,92 @@
+<form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
+  <div class="form-row">
+    <div>
+      <label>Side: </label>
+      <mat-radio-group formControlName="side">
+        <mat-radio-button value="buy" class="buy" color="primary"
+          >Buy</mat-radio-button
+        >
+        <mat-radio-button value="sell" color="warn">Sell</mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </div>
+  <div class="form-row">
+    <mat-form-field appearance="standard">
+      <mat-label>Price</mat-label>
+      <button
+        matPrefix
+        mat-icon-button
+        type="button"
+        (click)="decreasePrice($event)"
+        matTooltip="- {{ buyMultiplicator?.text || '0%' }}"
+      >
+        -
+      </button>
+      <input matInput placeholder="" formControlName="price" />
+      <!-- <mat-icon matSuffix>attach_money</mat-icon> -->
+      <button
+        matSuffix
+        mat-icon-button
+        type="button"
+        (click)="increasePrice($event)"
+        matTooltip="+ {{ buyMultiplicator?.text || '0%' }}"
+      >
+        +
+      </button>
+      <mat-hint>Hint</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="standard">
+      <mat-label>Amount</mat-label>
+      <input matInput placeholder="" formControlName="amount" />
+      <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+      <mat-hint>Hint</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Total</mat-label>
+      <input matInput placeholder="" formControlName="total" />
+      <mat-icon matSuffix>attach_money</mat-icon>
+      <mat-hint>Hint</mat-hint>
+    </mat-form-field>
+  </div>
+  <div class="form-row">
+    <ng-container *ngIf="side.value === 'buy'; else sell">
+      <button mat-raised-button type="button" (click)="setAverageBuy()">
+        From average buy
+      </button>
+      <button mat-raised-button type="button" (click)="setCurrentPrice()">
+        From current price
+      </button>
+    </ng-container>
+
+    <ng-template #sell>
+      <button
+        mat-raised-button
+        type="button"
+        (click)="setAvgBuyPlusFiftyPercent()"
+      >
+        Avg. buy + 50%
+      </button>
+      <button mat-raised-button type="button" (click)="setOneThird()">
+        30% amount
+      </button>
+    </ng-template>
+
+    <button
+      mat-raised-button
+      type="submit"
+      [disabled]="!orderForm.valid"
+      color="warn"
+    >
+      Create
+    </button>
+  </div>
+</form>
+
+<!-- <p class="form-row">
+        <label>Float label: </label>
+        <mat-radio-group [formControl]="floatLabelControl">
+          <mat-radio-button value="auto">Auto</mat-radio-button>
+          <mat-radio-button value="always">Always</mat-radio-button>
+        </mat-radio-group>
+    </p> -->

@@ -1,0 +1,78 @@
+<mat-card-actions>
+  <button mat-raised-button (click)="importAll()">Import all</button>
+  <button mat-raised-button (click)="updateRecent()">Update recent</button>
+  <button mat-raised-button (click)="calcAverages()">Get averages</button>
+  <button mat-raised-button (click)="updateTickerInfo()">Update ticker</button>
+  <!-- <button mat-raised-button (click)="createOrder()">Create order</button> -->
+</mat-card-actions>
+
+<mat-expansion-panel
+  hideToggle
+  [expanded]="isNewOrderExpanded"
+  (opened)="isNewOrderExpanded = true"
+  (closed)="isNewOrderExpanded = false"
+  [@.disabled]="disableAnimation"
+>
+  <mat-expansion-panel-header>
+    <mat-panel-title> Create order </mat-panel-title>
+    <mat-panel-description>
+      {{ (balance | async)?.available }} / {{ (balance | async)?.locked }}
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <app-order-form
+    [ticker]="ticker"
+    [averages]="averages"
+    [balance]="balance | async"
+    (create)="createOrder($event)"
+  ></app-order-form>
+</mat-expansion-panel>
+
+<table mat-table [dataSource]="openOrders" class="mat-elevation-z8">
+  <ng-container matColumnDef="ID">
+    <th mat-header-cell *matHeaderCellDef>ID</th>
+    <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="side">
+    <th mat-header-cell *matHeaderCellDef>side</th>
+    <td mat-cell *matCellDef="let element">{{ element.side }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="amount">
+    <th mat-header-cell *matHeaderCellDef>amount</th>
+    <td mat-cell *matCellDef="let element">{{ element.amount }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="price">
+    <th mat-header-cell *matHeaderCellDef>price</th>
+    <td mat-cell *matCellDef="let element">{{ element.price }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button (click)="cancelOrder(element)">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<mat-expansion-panel
+  (opened)="onPanelOpen()"
+  (closed)="onPanelClose()"
+  hideToggle
+  [expanded]="false"
+  [@.disabled]="disableAnimation"
+>
+  <mat-expansion-panel-header>
+    <mat-panel-title> Trade History </mat-panel-title>
+    <!-- <mat-panel-description>
+      This is a summary of the content
+    </mat-panel-description> -->
+  </mat-expansion-panel-header>
+  <app-trade-history [pair]="pair" *ngIf="panelOpenState"></app-trade-history>
+</mat-expansion-panel>
