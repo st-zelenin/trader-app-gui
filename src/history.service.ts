@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
+import { API_URL } from './constants';
 import {
   AllAverages,
   Balances,
@@ -11,7 +12,6 @@ import {
   PairOpenOrders,
   Tickers,
 } from './models';
-import { API_URL } from './models/constants';
 
 @Injectable({
   providedIn: 'root',

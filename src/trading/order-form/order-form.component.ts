@@ -110,13 +110,19 @@ export class OrderFormComponent implements OnInit {
 
   public setAverageBuy() {
     if (this.averages) {
-      this.orderForm.get('price')?.setValue(this.averages.buy.price);
+      this.price.setValue(this.averages.buy.price);
+    }
+  }
+
+  public setAverageSell() {
+    if (this.averages) {
+      this.price.setValue(this.averages.sell.price);
     }
   }
 
   public setCurrentPrice() {
     if (this.ticker) {
-      this.orderForm.get('price')?.setValue(this.ticker.last);
+      this.price.setValue(this.ticker.last);
     }
   }
 
@@ -138,9 +144,9 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
-  public setAvgBuyPlusFiftyPercent() {
-    if (this.averages) {
-      this.price.setValue(this.averages.buy.price * 1.5);
+  public plusPercents(percents: number) {
+    if (this.price) {
+      this.price.setValue(Number(this.price.value) * (1 + percents / 100));
     }
   }
 

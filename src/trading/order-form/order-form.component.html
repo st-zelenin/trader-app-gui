@@ -52,20 +52,25 @@
   <div class="form-row">
     <ng-container *ngIf="side.value === 'buy'; else sell">
       <button mat-raised-button type="button" (click)="setAverageBuy()">
-        From average buy
+        Avg. buy
       </button>
       <button mat-raised-button type="button" (click)="setCurrentPrice()">
-        From current price
+        Current price
       </button>
     </ng-container>
 
     <ng-template #sell>
-      <button
-        mat-raised-button
-        type="button"
-        (click)="setAvgBuyPlusFiftyPercent()"
-      >
-        Avg. buy + 50%
+      <button mat-raised-button type="button" (click)="setAverageBuy()">
+        Avg. buy
+      </button>
+      <button mat-raised-button type="button" (click)="setAverageSell()">
+        Avg. sell
+      </button>
+      <button mat-raised-button type="button" (click)="plusPercents(50)">
+        + 50%
+      </button>
+      <button mat-raised-button type="button" (click)="plusPercents(10)">
+        + 10%
       </button>
       <button mat-raised-button type="button" (click)="setOneThird()">
         30% amount

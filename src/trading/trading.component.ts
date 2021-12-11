@@ -4,10 +4,10 @@ import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
+import { BUY_MULTIPLICATORS } from '../constants';
 import { FilteringService } from '../filtering.service';
 import { HistoryService } from '../history.service';
 import { Balance, CurrencyPair, TradePair, User } from '../models';
-import { BUY_MULTIPLICATORS } from '../models/constants';
 import { Facade } from '../store/facade';
 import { UserService } from '../user.service';
 

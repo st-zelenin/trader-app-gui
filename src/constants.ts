@@ -1,5 +1,5 @@
-import { environment } from '../environments/environment';
-import { Multiplicator } from './multiplicator';
+import { environment } from './environments/environment';
+import { Multiplicator } from './models/multiplicator';
 
 export const API_URL = environment.API_URL;
 

@@ -4,4 +4,14 @@ table {
 
 .averages-value {
   padding: 0 5px;
+  font-size: 12px;
+}
+
+.side {
+  color: rgb(3, 121, 3);
+
+  &.sell {
+    color: rgb(204, 84, 84);
+    font-weight: 600;
+  }
 }

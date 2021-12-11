@@ -1,8 +1,36 @@
 <p>
-  <span>buy:</span
-  ><span class="averages-value">{{ buy | number: '1.0-10' }}</span>
-  <span>sell:</span
-  ><span class="averages-value">{{ sell | number: '1.0-10' }}</span>
+  <button mat-raised-button type="button" (click)="filterBuy()">
+    <span>buy:</span>
+    <span class="averages-value" matTooltip="price">{{
+      buyPrice | number: '1.0-10'
+    }}</span>
+    /
+    <span class="averages-value" matTooltip="volume">{{
+      buyVolume | number: '1.0-5'
+    }}</span>
+    /
+    <span class="averages-value" matTooltip="money">{{
+      buyMoney | number: '1.0-2'
+    }}</span>
+  </button>
+  <button mat-raised-button type="button" (click)="filterSell()">
+    <span>sell:</span>
+    <span class="averages-value" matTooltip="price">{{
+      sellPrice | number: '1.0-10'
+    }}</span>
+    /
+    <span class="averages-value" matTooltip="volume">{{
+      sellVolume | number: '1.0-5'
+    }}</span>
+    /
+    <span class="averages-value" matTooltip="money">{{
+      sellMoney | number: '1.0-2'
+    }}</span>
+    /
+  </button>
+  <button mat-raised-button type="button" (click)="removeFilter()">
+    <mat-icon>filter_alt_off</mat-icon>
+  </button>
 </p>
 
 <table mat-table [dataSource]="orders" class="mat-elevation-z8">
@@ -13,7 +41,11 @@
 
   <ng-container matColumnDef="side">
     <th mat-header-cell *matHeaderCellDef>side</th>
-    <td mat-cell *matCellDef="let element">{{ element.side }}</td>
+    <td mat-cell *matCellDef="let element">
+      <span class="side" [class.sell]="element.side == 'sell'">{{
+        element.side
+      }}</span>
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="update_time_ms">
@@ -32,6 +64,13 @@
     <th mat-header-cell *matHeaderCellDef>price</th>
     <td mat-cell *matCellDef="let element">
       {{ element.price | number: '1.0-10' }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="total">
+    <th mat-header-cell *matHeaderCellDef>total</th>
+    <td mat-cell *matCellDef="let element">
+      {{ +element.amount * +element.price | number: '1.0-10' }}
     </td>
   </ng-container>
 

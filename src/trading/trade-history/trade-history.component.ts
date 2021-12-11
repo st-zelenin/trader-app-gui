@@ -17,35 +17,56 @@ export class TradeHistoryComponent implements OnInit {
     'side',
     'price',
     'amount',
+    'total',
     'star',
   ];
-  public buy = 0;
-  public sell = 0;
+  public buyVolume = 0;
+  public buyMoney = 0;
+  public buyPrice = 0;
+  public sellVolume = 0;
+  public sellMoney = 0;
+  public sellPrice = 0;
+
+  private allOrders: Order[] = [];
 
   constructor(private readonly historyService: HistoryService) {}
 
   ngOnInit(): void {
     this.historyService.getHistory(this.pair).subscribe((orders) => {
-      this.orders = orders.filter(({ status }) => status !== 'cancelled');
+      this.allOrders = orders.filter(({ status }) => status !== 'cancelled');
+      this.orders = this.allOrders;
 
-      let volumeBuy = 0;
-      let volumeSell = 0;
+      this.buyVolume = 0;
+      this.sellVolume = 0;
 
-      let moneyBuy = 0;
-      let moneSell = 0;
+      this.buyMoney = 0;
+      this.sellMoney = 0;
 
       for (const { side, amount, filled_total } of this.orders) {
         if (side === 'buy') {
-          volumeBuy += Number(amount);
-          moneyBuy += Number(filled_total);
+          this.buyVolume += Number(amount);
+          this.buyMoney += Number(filled_total);
         } else {
-          volumeSell += Number(amount);
-          moneSell += Number(filled_total);
+          this.sellVolume += Number(amount);
+          this.sellMoney += Number(filled_total);
         }
       }
 
-      this.buy = volumeBuy > 0 ? moneyBuy / volumeBuy : 0;
-      this.sell = volumeSell > 0 ? moneSell / volumeSell : 0;
+      this.buyPrice = this.buyVolume > 0 ? this.buyMoney / this.buyVolume : 0;
+      this.sellPrice =
+        this.sellVolume > 0 ? this.sellMoney / this.sellVolume : 0;
     });
+  }
+
+  public filterBuy() {
+    this.orders = this.allOrders.filter(({ side }) => side === 'buy');
+  }
+
+  public filterSell() {
+    this.orders = this.allOrders.filter(({ side }) => side === 'sell');
+  }
+
+  public removeFilter() {
+    this.orders = this.allOrders;
   }
 }

@@ -24,9 +24,11 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
 
   public displayedColumns: string[] = [
     'ID',
+    'update_time_ms',
     'side',
     'price',
     'amount',
+    'total',
     'actions',
   ];
 
