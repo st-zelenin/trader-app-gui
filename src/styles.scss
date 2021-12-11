@@ -9,9 +9,16 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
   background-color: #32323c;
 }
-.mat-card {
+.mat-tab-body {
+  background-color: #32323c;
+}
+.mat-card,
+.mat-tab-header {
   background-color: #f3faff;
 }
 .mat-icon {
   color: rgba(0, 0, 0, 0.54);
+}
+.mat-tab-header {
+  margin: 5px 5px 0 5px;
 }

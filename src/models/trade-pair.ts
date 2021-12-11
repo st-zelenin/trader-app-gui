@@ -1,9 +1,9 @@
-import { TickerInfo } from './tickers';
+import { Ticker } from './tickers';
 import { PairAverages } from './trade-averages';
 
 export interface TradePair {
   id: string;
   panelOpenState: boolean;
-  ticker?: TickerInfo;
+  ticker?: Ticker;
   averages?: PairAverages;
 }

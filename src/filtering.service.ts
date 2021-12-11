@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
-import { PairCardComponent } from './trading/pair-card/pair-card.component';
+import { Filterable } from './models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FilteringService {
-  private cards: PairCardComponent[] = [];
+  private cards: Filterable[] = [];
   private isFiltered = false;
 
-  public register(card: PairCardComponent) {
+  public register(card: Filterable) {
     this.cards.push(card);
   }
 
-  public unregister(card: PairCardComponent) {
+  public unregister(card: Filterable) {
     const index = this.cards.indexOf(card);
     console.log('index', index);
     if (index > -1) {

@@ -1,19 +1,20 @@
 import {
-  AllAverages,
-  Balances,
-  Multiplicator,
-  PairOpenOrders,
-  Tickers,
-} from '../models';
-
-export interface State {
-  buyMultiplicator: Multiplicator;
-  tickers: Tickers;
-  analytics: AllAverages;
-  openOrders: PairOpenOrders;
-  balances: Balances;
-}
-
+  CryptoComEffects,
+  cryptoComReducer,
+  CryptoComState,
+} from './crypto-com';
+import { GateIoEffects, gateIoReducer, State } from './gate-io';
+import { SharedEffects, sharedReducer, SharedState } from './shared';
 export interface AppState {
   trading: State;
+  crypto_com: CryptoComState;
+  shared: SharedState;
 }
+
+export const effects = [GateIoEffects, CryptoComEffects, SharedEffects];
+
+export const reducers = {
+  trading: gateIoReducer,
+  crypto_com: cryptoComReducer,
+  shared: sharedReducer,
+};

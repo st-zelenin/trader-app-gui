@@ -9,7 +9,7 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { SharedModule } from '../shared/shared.module';
-import { Effects, reducer } from '../store';
+import { effects, reducers } from '../store/state';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
@@ -21,8 +21,8 @@ import { AppComponent } from './app.component';
     SharedModule,
     BrowserAnimationsModule,
 
-    StoreModule.forRoot({ trading: reducer }),
-    EffectsModule.forRoot([Effects]),
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot(effects),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,

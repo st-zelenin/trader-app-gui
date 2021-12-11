@@ -3,6 +3,6 @@ export interface Balances {
 }
 
 export interface Balance {
-  available: string;
-  locked: string;
+  available: number;
+  locked: number;
 }

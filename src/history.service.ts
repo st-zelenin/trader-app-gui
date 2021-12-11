@@ -5,7 +5,7 @@ import { API_URL } from './constants';
 import {
   AllAverages,
   Balances,
-  CurrencyPair,
+  GateIoCurrencyPair,
   NewOrder,
   Order,
   PairAverages,
@@ -84,7 +84,9 @@ export class HistoryService {
   }
 
   public getCurrencyPairs() {
-    return this.httpClient.get<CurrencyPair[]>(`${API_URL}/getCurrencyPairs`);
+    return this.httpClient.get<GateIoCurrencyPair[]>(
+      `${API_URL}/getCurrencyPairs`
+    );
   }
 
   public getBalances() {

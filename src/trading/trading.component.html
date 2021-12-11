@@ -1,80 +1,8 @@
-<mat-card class="actions">
-  <!-- <mat-card-actions align="end">
-    <button mat-icon-button (click)="updateOpenOrders()" type="button" title="refresh open orders">
-      <mat-icon>refresh</mat-icon>
-    </button>
-  </mat-card-actions> -->
-
-  <form>
-    <mat-form-field appearance="standard">
-      <mat-label>new currency pair</mat-label>
-      <input
-        type="text"
-        placeholder="Pick one"
-        matInput
-        [formControl]="currencyPairControl"
-        [matAutocomplete]="auto"
-      />
-      <button
-        matSuffix
-        mat-icon-button
-        (click)="updateUser()"
-        type="button"
-        matTooltip="add new pair"
-        id="add-pair"
-      >
-        +
-      </button>
-
-      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-        <mat-option
-          *ngFor="let option of filteredOptions | async"
-          [value]="option"
-        >
-          {{ option.id }}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-
-    <mat-form-field appearance="standard">
-      <mat-label>buy multiplicator</mat-label>
-      <mat-select [formControl]="buyMultiplicatorControl">
-        <mat-option
-          *ngFor="let multiplicator of multiplicators"
-          [value]="multiplicator"
-        >
-          {{ multiplicator.text }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <span class="label">USDT:</span>
-    <span>{{ (usdt | async)?.available | number: '1.0-2' }}</span>
-    <button
-      mat-icon-button
-      (click)="refresh()"
-      type="button"
-      matTooltip="refresh"
-    >
-      <mat-icon>refresh</mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      (click)="filter()"
-      type="button"
-      matTooltip="filter"
-    >
-      <mat-icon>shopping_cart</mat-icon>
-      <!-- <mat-icon>filter_list</mat-icon> -->
-    </button>
-  </form>
-</mat-card>
-
-<div cdkDropList class="pairs-list" (cdkDropListDropped)="drop($event)">
-  <app-pair-card
-    *ngFor="let pair of user.pairs"
-    [pair]="pair"
-    (remove)="removePair($event)"
-    class="pair"
-  ></app-pair-card>
-</div>
+<mat-tab-group animationDuration="0ms">
+  <mat-tab label="Gate.io">
+    <app-gate-io [user]="user"></app-gate-io>
+  </mat-tab>
+  <mat-tab label="Crypto.com">
+    <app-crypto-com [user]="user"></app-crypto-com>
+  </mat-tab>
+</mat-tab-group>

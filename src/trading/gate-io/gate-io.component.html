@@ -1,0 +1,18 @@
+<app-exchange-actions
+  [currencyPairs]="currencyPairs"
+  [usdt]="(usdt | async)?.available"
+  (addCurrencyPair)="updateUser($event)"
+  (refresh)="refresh()"
+  (filter)="filter()"
+></app-exchange-actions>
+
+<div cdkDropList class="pairs-list" (cdkDropListDropped)="drop($event)">
+  <app-pair-card
+    *ngFor="let pair of user.pairs"
+    [pair]="pair"
+    [facade]="facade"
+    (remove)="removePair($event)"
+    class="pair"
+  >
+  </app-pair-card>
+</div>

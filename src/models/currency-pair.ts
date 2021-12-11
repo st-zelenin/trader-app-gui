@@ -1,4 +1,4 @@
-export interface CurrencyPair {
+export interface GateIoCurrencyPair {
   id: string;
   base: string;
   quote: string;
