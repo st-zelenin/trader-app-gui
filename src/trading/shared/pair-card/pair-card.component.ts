@@ -8,14 +8,10 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { EXCHANGE } from 'src/constants';
+import { AppStoreFacade } from 'src/store/facade';
 import { FilteringService } from '../../../filtering.service';
-import {
-  ExchangeStateFacade,
-  Filterable,
-  Order,
-  PairAverages,
-  Ticker,
-} from '../../../models';
+import { Filterable, Order, PairAverages, Ticker } from '../../../models';
 
 @Component({
   selector: 'app-pair-card',
@@ -26,7 +22,7 @@ export class PairCardComponent
   implements OnInit, OnDestroy, AfterViewInit, Filterable
 {
   @Input() pair!: string;
-  @Input() facade!: ExchangeStateFacade;
+  @Input() exchange!: EXCHANGE;
 
   @Output() remove = new EventEmitter<string>();
 
@@ -46,7 +42,10 @@ export class PairCardComponent
   private closeTimeout?: any;
   private openTimeout?: any;
 
-  constructor(private readonly filteringService: FilteringService) {}
+  constructor(
+    private readonly filteringService: FilteringService,
+    private readonly facade: AppStoreFacade
+  ) {}
 
   @HostBinding('class.hidden') hidden: boolean = false;
   // get promoted() { return !this.isVisible }
@@ -58,28 +57,30 @@ export class PairCardComponent
   ngOnInit(): void {
     this.filteringService.register(this);
 
-    this.facade.ticker(this.pair).subscribe((ticker) => {
+    this.facade.ticker(this.exchange, this.pair).subscribe((ticker) => {
       this.ticker = ticker;
       this.priceDown = this.ticker ? this.ticker.change_percentage < 0 : false;
       this.headerColor = this.updateHeaderColor();
     });
 
-    this.facade.analytics(this.pair).subscribe((analytics) => {
+    this.facade.analytics(this.exchange, this.pair).subscribe((analytics) => {
       this.averages = analytics;
       this.headerColor = this.updateHeaderColor();
     });
 
-    this.facade.pairOpenOrders(this.pair).subscribe((orders: Order[]) => {
-      if (orders && orders.length) {
-        this.buyOrders = orders.filter(({ side }) => side === 'buy').length;
-        this.sellOrders = orders.filter(({ side }) => side === 'sell').length;
-        this.openOrders = orders;
-      } else {
-        this.buyOrders = 0;
-        this.sellOrders = 0;
-        this.openOrders = [];
-      }
-    });
+    this.facade
+      .pairOpenOrders(this.exchange, this.pair)
+      .subscribe((orders: Order[]) => {
+        if (orders && orders.length) {
+          this.buyOrders = orders.filter(({ side }) => side === 'buy').length;
+          this.sellOrders = orders.filter(({ side }) => side === 'sell').length;
+          this.openOrders = orders;
+        } else {
+          this.buyOrders = 0;
+          this.sellOrders = 0;
+          this.openOrders = [];
+        }
+      });
   }
 
   public get isRed() {

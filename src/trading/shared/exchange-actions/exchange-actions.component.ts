@@ -1,16 +1,23 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
+import { AppStoreFacade } from 'src/store/facade';
 import { BUY_MULTIPLICATORS } from '../../../constants';
-import { SharedFacade } from '../../../store/shared';
 
 @Component({
   selector: 'app-exchange-actions',
   templateUrl: './exchange-actions.component.html',
   styleUrls: ['./exchange-actions.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExchangeActionsComponent implements OnInit {
+export class ExchangeActionsComponent {
   @Input() currencyPairs: string[] = [];
   @Input() usdt?: number = 0;
 
@@ -25,7 +32,7 @@ export class ExchangeActionsComponent implements OnInit {
 
   public filteredOptions: Observable<string[]>;
 
-  constructor(private readonly sharedFacade: SharedFacade) {
+  constructor(private readonly facade: AppStoreFacade) {
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(
       startWith(''),
       debounceTime(500),
@@ -33,7 +40,7 @@ export class ExchangeActionsComponent implements OnInit {
       map((value) => this.filterPairs(value))
     );
 
-    this.sharedFacade.buyMultiplicator.subscribe((buyMultiplicator) => {
+    this.facade.buyMultiplicator.subscribe((buyMultiplicator) => {
       if (buyMultiplicator) {
         this.buyMultiplicatorControl.patchValue(buyMultiplicator, {
           emitEvent: false,
@@ -42,11 +49,9 @@ export class ExchangeActionsComponent implements OnInit {
     });
 
     this.buyMultiplicatorControl.valueChanges.subscribe((value) => {
-      this.sharedFacade.setBuyMultiplicator(value);
+      this.facade.setBuyMultiplicator(value);
     });
   }
-
-  ngOnInit(): void {}
 
   public addPair() {
     if (!this.currencyPairControl.value) {

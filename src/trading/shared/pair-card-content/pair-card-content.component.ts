@@ -1,15 +1,16 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
+import { EXCHANGE } from '../../../constants';
 import { HistoryService } from '../../../history.service';
 import {
   Balance,
-  ExchangeStateFacade,
   NewOrder,
   Order,
   PairAverages,
   Ticker,
 } from '../../../models';
+import { AppStoreFacade } from '../../../store/facade';
 
 @Component({
   selector: 'app-pair-card-content',
@@ -17,8 +18,8 @@ import {
   styleUrls: ['./pair-card-content.component.scss'],
 })
 export class PairCardContentComponent implements OnInit, AfterViewInit {
-  @Input() facade!: ExchangeStateFacade;
   @Input() pair!: string;
+  @Input() exchange!: EXCHANGE;
   @Input() ticker?: Ticker;
   @Input() averages?: PairAverages;
   @Input() openOrders: Order[] = [];
@@ -45,10 +46,9 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
 
   constructor(
     private readonly historyService: HistoryService,
-    private readonly snackBar: MatSnackBar
-  ) {
-    console.log('app-pair-card-content', 'constructor');
-  }
+    private readonly snackBar: MatSnackBar,
+    private readonly facade: AppStoreFacade
+  ) {}
 
   ngAfterViewInit(): void {
     setTimeout(() => (this.disableAnimation = false));
@@ -60,7 +60,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
     this.calcAverages();
     this.updateTickerInfo();
 
-    this.balance = this.facade.balance(this.currency);
+    this.balance = this.facade.balance(this.exchange, this.currency);
   }
 
   public importAll(): void {
@@ -76,11 +76,11 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   }
 
   public calcAverages(): void {
-    this.facade.getAnalytics();
+    this.facade.getAnalytics(this.exchange);
   }
 
   public updateTickerInfo() {
-    this.facade.getTickers();
+    this.facade.getTickers(this.exchange);
   }
 
   private showSnackBar(message: string) {
@@ -93,8 +93,8 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
 
   public cancelOrder(order: Order) {
     this.historyService.cancelOrder(order).subscribe(() => {
-      this.facade.getOpenOrders();
-      this.facade.getBalances();
+      this.facade.getOpenOrders(this.exchange);
+      this.facade.getBalances(this.exchange);
     });
   }
 
@@ -102,8 +102,8 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
     order.currency_pair = this.pair;
     this.historyService.createOrder(order).subscribe(() => {
       this.isNewOrderExpanded = false;
-      this.facade.getOpenOrders();
-      this.facade.getBalances();
+      this.facade.getOpenOrders(this.exchange);
+      this.facade.getBalances(this.exchange);
     });
   }
 

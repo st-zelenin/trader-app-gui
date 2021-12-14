@@ -1,8 +1,9 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { EXCHANGE } from 'src/constants';
 import { Balance, User } from '../../models';
-import { CryptoComFacade } from '../../store/crypto-com';
+import { AppStoreFacade } from '../../store/facade';
 import { UserService } from '../../user.service';
 import { CryptoComService } from './crypto-com.service';
 
@@ -16,9 +17,10 @@ export class CryptoComComponent implements OnInit {
 
   public currencyPairs: string[] = [];
   public usdt?: Observable<Balance>;
+  public exchange = EXCHANGE.CRYPTO_COM;
 
   constructor(
-    public readonly facade: CryptoComFacade,
+    private readonly facade: AppStoreFacade,
     private readonly historyService: CryptoComService,
     private readonly userService: UserService
   ) {}
@@ -28,8 +30,8 @@ export class CryptoComComponent implements OnInit {
       this.currencyPairs = currencyPairs;
     });
 
-    this.facade.ticker('CRO_USDT').subscribe(console.log);
-    this.usdt = this.facade.balance('USDT');
+    this.facade.ticker(this.exchange, 'CRO_USDT').subscribe(console.log);
+    this.usdt = this.facade.balance(this.exchange, 'USDT');
 
     this.refresh();
   }
@@ -65,10 +67,10 @@ export class CryptoComComponent implements OnInit {
   }
 
   public refresh() {
-    this.facade.getAnalytics();
-    this.facade.getAllOpenOrders();
-    this.facade.getTickers();
-    this.facade.getBalances();
+    this.facade.getAnalytics(this.exchange);
+    this.facade.getOpenOrders(this.exchange);
+    this.facade.getTickers(this.exchange);
+    this.facade.getBalances(this.exchange);
 
     // this.historyService.importYearHistory().subscribe(console.log);
   }

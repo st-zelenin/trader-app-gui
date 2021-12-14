@@ -1,11 +1,11 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BUY_MULTIPLICATORS } from '../../constants';
+import { AppStoreFacade } from 'src/store/facade';
+import { BUY_MULTIPLICATORS, EXCHANGE } from '../../constants';
 import { FilteringService } from '../../filtering.service';
 import { HistoryService } from '../../history.service';
 import { Balance, User } from '../../models';
-import { GateIoFacade } from '../../store/gate-io';
 import { UserService } from '../../user.service';
 
 @Component({
@@ -18,17 +18,15 @@ export class GateIoComponent implements OnInit {
 
   public multiplicators = BUY_MULTIPLICATORS;
 
-  // public buyMultiplicatorControl = new FormControl('');
-
-  // public pairs: TradePair[] = [];
   public currencyPairs: string[] = [];
   public balance?: Balance;
   public usdt?: Observable<Balance>;
+  public exchange = EXCHANGE.GATE_IO;
 
   constructor(
     private readonly userService: UserService,
     private readonly historyService: HistoryService,
-    public readonly facade: GateIoFacade,
+    private readonly facade: AppStoreFacade,
     private readonly filteringService: FilteringService
   ) {}
 
@@ -37,7 +35,7 @@ export class GateIoComponent implements OnInit {
       this.currencyPairs = currencyPairs.map(({ id }) => id);
     });
 
-    this.usdt = this.facade.balance('USDT');
+    this.usdt = this.facade.balance(this.exchange, 'USDT');
     this.refresh();
   }
 
@@ -68,10 +66,10 @@ export class GateIoComponent implements OnInit {
   }
 
   public refresh() {
-    this.facade.getTickers();
-    this.facade.getAnalytics();
-    this.facade.getOpenOrders();
-    this.facade.getBalances();
+    this.facade.getTickers(this.exchange);
+    this.facade.getAnalytics(this.exchange);
+    this.facade.getOpenOrders(this.exchange);
+    this.facade.getBalances(this.exchange);
   }
 
   public filter() {

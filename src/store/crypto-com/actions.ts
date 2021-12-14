@@ -21,7 +21,7 @@ export enum ACTIONS {
   // SET_BUY_MULTIPLICATOR = '[Multiplicators] set buy multiplicator',
 }
 
-export const getickers = createAction(ACTIONS.GET_ALL_TICKERS);
+export const geTickers = createAction(ACTIONS.GET_ALL_TICKERS);
 
 export const getTickersError = createAction(ACTIONS.GET_ALL_TICKERS_ERROR);
 

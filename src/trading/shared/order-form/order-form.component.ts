@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { AppStoreFacade } from 'src/store/facade';
 import {
   Balance,
   Multiplicator,
@@ -7,7 +8,6 @@ import {
   PairAverages,
   Ticker,
 } from '../../../models';
-import { SharedFacade } from '../../../store/shared';
 
 @Component({
   selector: 'app-order-form',
@@ -52,9 +52,9 @@ export class OrderFormComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly sharedFacade: SharedFacade
+    private readonly facade: AppStoreFacade
   ) {
-    this.sharedFacade.buyMultiplicator.subscribe((buyMultiplicator) => {
+    this.facade.buyMultiplicator.subscribe((buyMultiplicator) => {
       this.buyMultiplicator = buyMultiplicator;
     });
   }
@@ -94,7 +94,7 @@ export class OrderFormComponent implements OnInit {
       }
     });
 
-    this.sharedFacade.buyMultiplicator.subscribe((buyMultiplicator) => {
+    this.facade.buyMultiplicator.subscribe((buyMultiplicator) => {
       this.buyMultiplicator = buyMultiplicator;
     });
   }

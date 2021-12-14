@@ -11,7 +11,7 @@ import {
   getAllOpenOrdersError,
   getBalances,
   getBalancesError,
-  getickers,
+  geTickers,
   getTickersError,
   setAllAnalytics,
   setAllOpenOrders,
@@ -29,7 +29,7 @@ export class CryptoComEffects {
 
   getTickers = createEffect(() =>
     this.actions.pipe(
-      ofType(getickers),
+      ofType(geTickers),
       mergeMap(() => this.historyService.getTickers()),
       map((tickers) => setTickers({ tickers })),
       catchError((err) => {

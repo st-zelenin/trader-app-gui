@@ -10,7 +10,7 @@ export const BUY_MULTIPLICATORS: Multiplicator[] = [
   { text: '10 %', value: 0.1 },
 ];
 
-export const EXCHANGES = {
-  GATE_IO: 'GATE_IO',
-  CRYPTO_COM: 'CRYPTO_COM',
-};
+export enum EXCHANGE {
+  GATE_IO = 'GATE_IO',
+  CRYPTO_COM = 'CRYPTO_COM',
+}

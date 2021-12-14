@@ -10,7 +10,7 @@
   <app-pair-card
     *ngFor="let pair of user.crypto_pairs"
     [pair]="pair"
-    [facade]="facade"
+    [exchange]="exchange"
     (remove)="removePair($event)"
     class="pair"
   >

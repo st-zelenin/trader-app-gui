@@ -1,6 +1,5 @@
 export * from './balances';
 export * from './currency-pair';
-export * from './exchange-state-facade';
 export * from './filterable';
 export * from './multiplicator';
 export * from './orders';
