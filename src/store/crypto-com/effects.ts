@@ -5,10 +5,16 @@ import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { CryptoComService } from '../../trading/crypto-com/crypto-com.service';
 import {
+  getAllAnalytics,
+  getAllAnalyticsError,
+  getAllOpenOrders,
+  getAllOpenOrdersError,
   getBalances,
   getBalancesError,
   getickers,
   getTickersError,
+  setAllAnalytics,
+  setAllOpenOrders,
   setBalances,
   setTickers,
 } from './actions';
@@ -33,29 +39,29 @@ export class CryptoComEffects {
     )
   );
 
-  // getAnalytics = createEffect(() =>
-  //   this.actions.pipe(
-  //     ofType(getAllAnalytics),
-  //     mergeMap(() => this.historyService.getAverages()),
-  //     map((analytics) => setAllAnalytics({ analytics })),
-  //     catchError((err) => {
-  //       console.log(err);
-  //       return of(getAllAnalyticsError());
-  //     })
-  //   )
-  // );
+  getAnalytics = createEffect(() =>
+    this.actions.pipe(
+      ofType(getAllAnalytics),
+      mergeMap(() => this.historyService.getAverages()),
+      map((analytics) => setAllAnalytics({ analytics })),
+      catchError((err) => {
+        console.log(err);
+        return of(getAllAnalyticsError());
+      })
+    )
+  );
 
-  // getAllOpenOrders = createEffect(() =>
-  //   this.actions.pipe(
-  //     ofType(getAllOpenOrders),
-  //     mergeMap(() => this.historyService.getAllOpenOrders()),
-  //     map((openOrders) => setAllOpenOrders({ openOrders })),
-  //     catchError((err) => {
-  //       console.log(err);
-  //       return of(getAllOpenOrdersError());
-  //     })
-  //   )
-  // );
+  getAllOpenOrders = createEffect(() =>
+    this.actions.pipe(
+      ofType(getAllOpenOrders),
+      mergeMap(() => this.historyService.getAllOpenOrders()),
+      map((openOrders) => setAllOpenOrders({ openOrders })),
+      catchError((err) => {
+        console.log(err);
+        return of(getAllOpenOrdersError());
+      })
+    )
+  );
 
   getBalances = createEffect(() =>
     this.actions.pipe(

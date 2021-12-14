@@ -1,15 +1,12 @@
-export interface Order extends NewOrder {
+export interface Order {
   id: string;
-  create_time_ms: string;
-  update_time_ms: string;
-  status: string;
-  type: string;
-  account: string;
-  left: string;
-  filled_total: string;
-  fee: string;
-  fee_currency: string;
-  point_fee: string;
+  currencyPair: string;
+  createTimestamp: number;
+  updateTimestamp: number;
+  side: 'buy' | 'sell';
+  amount: number;
+  price: number;
+  status: CommonOrderStatus;
 }
 
 export interface NewOrder {
@@ -22,3 +19,5 @@ export interface NewOrder {
 export interface PairOpenOrders {
   [key: string]: Order[];
 }
+
+export type CommonOrderStatus = 'closed' | 'open' | 'cancelled';

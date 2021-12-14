@@ -42,13 +42,13 @@ export class TradeHistoryComponent implements OnInit {
       this.buyMoney = 0;
       this.sellMoney = 0;
 
-      for (const { side, amount, filled_total } of this.orders) {
+      for (const { side, amount, price } of this.orders) {
         if (side === 'buy') {
-          this.buyVolume += Number(amount);
-          this.buyMoney += Number(filled_total);
+          this.buyVolume += amount;
+          this.buyMoney += amount * price;
         } else {
-          this.sellVolume += Number(amount);
-          this.sellMoney += Number(filled_total);
+          this.sellVolume += amount;
+          this.sellMoney += amount * price;
         }
       }
 

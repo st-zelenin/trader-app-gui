@@ -19,17 +19,20 @@ export const ticker = (id: string) => defaultMemoize(tickerById).memoized(id);
 //   (state: State) => state.analytics
 // );
 
-// const averageById = (id: string) =>
-//   createSelector(selectState, (state: State) => state.analytics[id]);
+const averageById = (id: string) =>
+  createSelector(selectState, (state: CryptoComState) => state.analytics[id]);
 
-// export const analytics = (id: string) =>
-//   defaultMemoize(averageById).memoized(id);
+export const analytics = (id: string) =>
+  defaultMemoize(averageById).memoized(id);
 
-// const ordersByCurrencyPair = (currencyPair: string) =>
-//   createSelector(selectState, (state: State) => state.openOrders[currencyPair]);
+const ordersByCurrencyPair = (currencyPair: string) =>
+  createSelector(
+    selectState,
+    (state: CryptoComState) => state.openOrders[currencyPair]
+  );
 
-// export const pairOpenOrders = (currencyPair: string) =>
-//   defaultMemoize(ordersByCurrencyPair).memoized(currencyPair);
+export const pairOpenOrders = (currencyPair: string) =>
+  defaultMemoize(ordersByCurrencyPair).memoized(currencyPair);
 
 const balanceByCurrency = (currency: string) =>
   createSelector(

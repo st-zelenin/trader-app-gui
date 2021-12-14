@@ -57,10 +57,6 @@ export class HistoryService {
     return this.httpClient.get<Tickers>(`${API_URL}/tickerInfo`);
   }
 
-  public getAllAnalytics() {
-    return this.httpClient.get<PairAverages[]>(`${API_URL}/getAllAnalytics`);
-  }
-
   public getOpenOrders(pair: string) {
     return this.httpClient.get<Order[]>(`${API_URL}/getOpenOrders`, {
       params: { pair },
@@ -73,7 +69,7 @@ export class HistoryService {
 
   public cancelOrder(order: Order) {
     return this.httpClient.delete(`${API_URL}/cancelOrder`, {
-      params: { id: order.id, pair: order.currency_pair },
+      params: { id: order.id, pair: order.currencyPair },
     });
   }
 

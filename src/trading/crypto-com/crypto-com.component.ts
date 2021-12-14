@@ -65,10 +65,12 @@ export class CryptoComComponent implements OnInit {
   }
 
   public refresh() {
-    this.facade.getAllTickers();
-    // this.facade.getAllAnalytics();
-    // this.facade.getAllOpenOrders();
+    this.facade.getAnalytics();
+    this.facade.getAllOpenOrders();
+    this.facade.getTickers();
     this.facade.getBalances();
+
+    // this.historyService.importYearHistory().subscribe(console.log);
   }
 
   public filter() {

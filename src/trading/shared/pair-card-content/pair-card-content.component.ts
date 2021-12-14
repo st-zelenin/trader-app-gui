@@ -76,9 +76,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   }
 
   public calcAverages(): void {
-    this.historyService.calcAverages(this.pair).subscribe(() => {
-      this.facade.getAnalytics();
-    });
+    this.facade.getAnalytics();
   }
 
   public updateTickerInfo() {
