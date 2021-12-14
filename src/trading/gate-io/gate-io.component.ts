@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 import { AppStoreFacade } from 'src/store/facade';
 import { BUY_MULTIPLICATORS, EXCHANGE } from '../../constants';
 import { FilteringService } from '../../filtering.service';
-import { HistoryService } from '../../history.service';
 import { Balance, User } from '../../models';
 import { UserService } from '../../user.service';
+import { GateIoService } from './gate-io.service';
 
 @Component({
   selector: 'app-gate-io',
@@ -25,13 +25,13 @@ export class GateIoComponent implements OnInit {
 
   constructor(
     private readonly userService: UserService,
-    private readonly historyService: HistoryService,
+    private readonly gateIoService: GateIoService,
     private readonly facade: AppStoreFacade,
     private readonly filteringService: FilteringService
   ) {}
 
   ngOnInit(): void {
-    this.historyService.getCurrencyPairs().subscribe((currencyPairs) => {
+    this.gateIoService.getCurrencyPairs().subscribe((currencyPairs) => {
       this.currencyPairs = currencyPairs.map(({ id }) => id);
     });
 

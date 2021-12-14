@@ -30,11 +30,4 @@ export class CryptoComService {
       `${API_URL}/crypto_getOpenOrders`
     );
   }
-
-  public importYearHistory() {
-    return this.httpClient.post<Balances>(
-      `${API_URL}/orchestrators/crypto_importHistory_orchestrator`,
-      { periodMonths: 12 }
-    );
-  }
 }

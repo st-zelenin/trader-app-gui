@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   HostBinding,
@@ -8,19 +7,17 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { EXCHANGE } from 'src/constants';
-import { AppStoreFacade } from 'src/store/facade';
+import { EXCHANGE } from '../../../constants';
 import { FilteringService } from '../../../filtering.service';
 import { Filterable, Order, PairAverages, Ticker } from '../../../models';
+import { AppStoreFacade } from '../../../store/facade';
 
 @Component({
   selector: 'app-pair-card',
   templateUrl: './pair-card.component.html',
   styleUrls: ['./pair-card.component.scss'],
 })
-export class PairCardComponent
-  implements OnInit, OnDestroy, AfterViewInit, Filterable
-{
+export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   @Input() pair!: string;
   @Input() exchange!: EXCHANGE;
 
@@ -33,11 +30,8 @@ export class PairCardComponent
   public priceDown = true;
   public buyOrders = 0;
   public sellOrders = 0;
-  // public disableAnimation = true;
 
   public headerColor = 'rgb(255, 255, 255)';
-
-  // public isVisible = true;
 
   private closeTimeout?: any;
   private openTimeout?: any;
@@ -48,11 +42,6 @@ export class PairCardComponent
   ) {}
 
   @HostBinding('class.hidden') hidden: boolean = false;
-  // get promoted() { return !this.isVisible }
-
-  ngAfterViewInit(): void {
-    // setTimeout(() => this.disableAnimation = false);
-  }
 
   ngOnInit(): void {
     this.filteringService.register(this);

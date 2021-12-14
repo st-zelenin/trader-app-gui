@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { HistoryService } from '../../history.service';
+import { GateIoService } from '../../trading/gate-io/gate-io.service';
 import {
   getAllAnalytics,
   getAllAnalyticsError,
@@ -24,13 +24,13 @@ export class GateIoEffects {
   constructor(
     private actions: Actions,
     private store: Store,
-    private readonly historyService: HistoryService
+    private readonly gateIoService: GateIoService
   ) {}
 
   getTickers = createEffect(() =>
     this.actions.pipe(
       ofType(getAllTickers),
-      mergeMap(() => this.historyService.getAllTickers()),
+      mergeMap(() => this.gateIoService.getAllTickers()),
       map((tickers) => setAllTickers({ tickers })),
       catchError((err) => {
         console.log(err);
@@ -42,7 +42,7 @@ export class GateIoEffects {
   getAnalytics = createEffect(() =>
     this.actions.pipe(
       ofType(getAllAnalytics),
-      mergeMap(() => this.historyService.getAverages()),
+      mergeMap(() => this.gateIoService.getAverages()),
       map((analytics) => setAllAnalytics({ analytics })),
       catchError((err) => {
         console.log(err);
@@ -54,7 +54,7 @@ export class GateIoEffects {
   getAllOpenOrders = createEffect(() =>
     this.actions.pipe(
       ofType(getAllOpenOrders),
-      mergeMap(() => this.historyService.getAllOpenOrders()),
+      mergeMap(() => this.gateIoService.getAllOpenOrders()),
       map((openOrders) => setAllOpenOrders({ openOrders })),
       catchError((err) => {
         console.log(err);
@@ -66,7 +66,7 @@ export class GateIoEffects {
   getBalances = createEffect(() =>
     this.actions.pipe(
       ofType(getBalances),
-      mergeMap(() => this.historyService.getBalances()),
+      mergeMap(() => this.gateIoService.getBalances()),
       map((balances) => setBalances({ balances })),
       catchError((err) => {
         console.log(err);

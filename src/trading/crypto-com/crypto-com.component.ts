@@ -45,6 +45,7 @@ export class CryptoComComponent implements OnInit {
 
     this.userService.updateUser(this.user).subscribe((data) => {
       this.user = data;
+      this.facade.getTickers(this.exchange);
     });
   }
 

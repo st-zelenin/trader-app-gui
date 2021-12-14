@@ -8,7 +8,7 @@
         <mat-panel-title>
           <strong>{{ pair }}</strong> / {{ ticker?.last }}
           <span class="change-percentage" [class.down]="priceDown">{{
-            ticker?.change_percentage
+            ticker?.change_percentage | number: '1.0-2'
           }}</span>
           / {{ averages?.buy?.price | number: '1.0-10' }} /
           {{ averages?.sell?.price | number: '1.0-10' }}

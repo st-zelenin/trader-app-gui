@@ -11,6 +11,7 @@ import {
   Ticker,
 } from '../../../models';
 import { AppStoreFacade } from '../../../store/facade';
+import { OrderingService } from '../../ordering.service';
 
 @Component({
   selector: 'app-pair-card-content',
@@ -45,6 +46,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   private openTimeout?: any;
 
   constructor(
+    private readonly orderingService: OrderingService,
     private readonly historyService: HistoryService,
     private readonly snackBar: MatSnackBar,
     private readonly facade: AppStoreFacade
@@ -64,15 +66,19 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   }
 
   public importAll(): void {
-    this.historyService.importAll(this.pair).subscribe((data) => {
-      this.showSnackBar('history imported');
-    });
+    this.historyService
+      .importAll(this.exchange, this.pair)
+      .subscribe((data) => {
+        this.showSnackBar('history imported');
+      });
   }
 
   public updateRecent(): void {
-    this.historyService.updateRecent(this.pair).subscribe((data) => {
-      this.showSnackBar('recent history updated');
-    });
+    this.historyService
+      .updateRecent(this.exchange, this.pair)
+      .subscribe((data) => {
+        this.showSnackBar('recent history updated');
+      });
   }
 
   public calcAverages(): void {
@@ -92,7 +98,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   }
 
   public cancelOrder(order: Order) {
-    this.historyService.cancelOrder(order).subscribe(() => {
+    this.orderingService.cancel(this.exchange, order).subscribe(() => {
       this.facade.getOpenOrders(this.exchange);
       this.facade.getBalances(this.exchange);
     });
@@ -100,7 +106,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
 
   public createOrder(order: NewOrder) {
     order.currency_pair = this.pair;
-    this.historyService.createOrder(order).subscribe(() => {
+    this.orderingService.create(this.exchange, order).subscribe(() => {
       this.isNewOrderExpanded = false;
       this.facade.getOpenOrders(this.exchange);
       this.facade.getBalances(this.exchange);

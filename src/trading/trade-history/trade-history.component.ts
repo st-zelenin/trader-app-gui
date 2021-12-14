@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { EXCHANGE } from '../../constants';
 import { HistoryService } from '../../history.service';
 import { Order } from '../../models';
 
@@ -9,6 +10,7 @@ import { Order } from '../../models';
 })
 export class TradeHistoryComponent implements OnInit {
   @Input() pair!: string;
+  @Input() exchange!: EXCHANGE;
 
   public orders: Order[] = [];
   public displayedColumns: string[] = [
@@ -32,30 +34,32 @@ export class TradeHistoryComponent implements OnInit {
   constructor(private readonly historyService: HistoryService) {}
 
   ngOnInit(): void {
-    this.historyService.getHistory(this.pair).subscribe((orders) => {
-      this.allOrders = orders.filter(({ status }) => status !== 'cancelled');
-      this.orders = this.allOrders;
+    this.historyService
+      .getHistory(this.exchange, this.pair)
+      .subscribe((orders) => {
+        this.allOrders = orders.filter(({ status }) => status !== 'cancelled');
+        this.orders = this.allOrders;
 
-      this.buyVolume = 0;
-      this.sellVolume = 0;
+        this.buyVolume = 0;
+        this.sellVolume = 0;
 
-      this.buyMoney = 0;
-      this.sellMoney = 0;
+        this.buyMoney = 0;
+        this.sellMoney = 0;
 
-      for (const { side, amount, price } of this.orders) {
-        if (side === 'buy') {
-          this.buyVolume += amount;
-          this.buyMoney += amount * price;
-        } else {
-          this.sellVolume += amount;
-          this.sellMoney += amount * price;
+        for (const { side, amount, price } of this.orders) {
+          if (side === 'buy') {
+            this.buyVolume += amount;
+            this.buyMoney += amount * price;
+          } else {
+            this.sellVolume += amount;
+            this.sellMoney += amount * price;
+          }
         }
-      }
 
-      this.buyPrice = this.buyVolume > 0 ? this.buyMoney / this.buyVolume : 0;
-      this.sellPrice =
-        this.sellVolume > 0 ? this.sellMoney / this.sellVolume : 0;
-    });
+        this.buyPrice = this.buyVolume > 0 ? this.buyMoney / this.buyVolume : 0;
+        this.sellPrice =
+          this.sellVolume > 0 ? this.sellMoney / this.sellVolume : 0;
+      });
   }
 
   public filterBuy() {
