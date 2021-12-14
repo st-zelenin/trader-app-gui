@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
-import { BUY_MULTIPLICATORS } from '../../constants';
-import { SharedFacade } from '../../store/shared';
+import { BUY_MULTIPLICATORS } from '../../../constants';
+import { SharedFacade } from '../../../store/shared';
 
 @Component({
   selector: 'app-exchange-actions',
