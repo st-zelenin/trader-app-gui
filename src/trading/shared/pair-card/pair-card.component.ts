@@ -30,6 +30,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   public priceDown = true;
   public buyOrders = 0;
   public sellOrders = 0;
+  public logoSrc = '';
 
   public headerColor = 'rgb(255, 255, 255)';
 
@@ -44,6 +45,8 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   @HostBinding('class.hidden') hidden: boolean = false;
 
   ngOnInit(): void {
+    this.logoSrc = `assets/coins/${this.pair.split('_')[0]}.png`;
+
     this.filteringService.register(this);
 
     this.facade.ticker(this.exchange, this.pair).subscribe((ticker) => {

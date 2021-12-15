@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { EXCHANGE } from '../../constants';
-import { HistoryService } from '../../history.service';
-import { Order } from '../../models';
+import { EXCHANGE } from '../../../constants';
+import { HistoryService } from '../../../history.service';
+import { Order } from '../../../models';
 
 @Component({
   selector: 'app-trade-history',

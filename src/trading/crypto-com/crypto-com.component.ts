@@ -1,7 +1,8 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { EXCHANGE } from 'src/constants';
+import { EXCHANGE } from '../../constants';
+import { FilteringService } from '../../filtering.service';
 import { Balance, User } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 import { UserService } from '../../user.service';
@@ -22,7 +23,8 @@ export class CryptoComComponent implements OnInit {
   constructor(
     private readonly facade: AppStoreFacade,
     private readonly historyService: CryptoComService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly filteringService: FilteringService
   ) {}
 
   ngOnInit(): void {
@@ -72,11 +74,9 @@ export class CryptoComComponent implements OnInit {
     this.facade.getOpenOrders(this.exchange);
     this.facade.getTickers(this.exchange);
     this.facade.getBalances(this.exchange);
-
-    // this.historyService.importYearHistory().subscribe(console.log);
   }
 
   public filter() {
-    // this.filteringService.toggleFilter();
+    this.filteringService.toggleFilter();
   }
 }

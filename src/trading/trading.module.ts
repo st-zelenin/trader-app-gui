@@ -7,7 +7,7 @@ import { ExchangeActionsComponent } from './shared/exchange-actions/exchange-act
 import { OrderFormComponent } from './shared/order-form/order-form.component';
 import { PairCardContentComponent } from './shared/pair-card-content/pair-card-content.component';
 import { PairCardComponent } from './shared/pair-card/pair-card.component';
-import { TradeHistoryComponent } from './trade-history/trade-history.component';
+import { TradeHistoryComponent } from './shared/trade-history/trade-history.component';
 import { TradingRoutingModule } from './trading-routing.module';
 import { TradingComponent } from './trading.component';
 
