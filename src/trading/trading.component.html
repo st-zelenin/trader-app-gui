@@ -1,8 +1,15 @@
-<mat-tab-group animationDuration="0ms">
+<mat-tab-group
+  animationDuration="0ms"
+  (selectedTabChange)="selectedTabChange($event)"
+  [selectedIndex]="activeTabIndex"
+>
   <mat-tab label="Gate.io">
     <app-gate-io [user]="user"></app-gate-io>
   </mat-tab>
   <mat-tab label="Crypto.com">
     <app-crypto-com [user]="user"></app-crypto-com>
+  </mat-tab>
+  <mat-tab label="Coinbase">
+    <app-coinbase [user]="user"></app-coinbase>
   </mat-tab>
 </mat-tab-group>

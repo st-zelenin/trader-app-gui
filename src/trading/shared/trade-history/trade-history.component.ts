@@ -46,13 +46,15 @@ export class TradeHistoryComponent implements OnInit {
         this.buyMoney = 0;
         this.sellMoney = 0;
 
-        for (const { side, amount, price } of this.orders) {
-          if (side === 'buy') {
-            this.buyVolume += amount;
-            this.buyMoney += amount * price;
+        for (const order of this.orders) {
+          this.applyDenomination(order);
+
+          if (order.side === 'buy') {
+            this.buyVolume += order.amount;
+            this.buyMoney += order.amount * order.price;
           } else {
-            this.sellVolume += amount;
-            this.sellMoney += amount * price;
+            this.sellVolume += order.amount;
+            this.sellMoney += order.amount * order.price;
           }
         }
 
@@ -72,5 +74,17 @@ export class TradeHistoryComponent implements OnInit {
 
   public removeFilter() {
     this.orders = this.allOrders;
+  }
+
+  private applyDenomination(order: Order): void {
+    // 12/16/2021 - BTT denomination
+    if (
+      order.currencyPair === 'BTT_USDT' &&
+      this.exchange === EXCHANGE.GATE_IO &&
+      new Date(2021, 11, 16) > new Date(order.updateTimestamp)
+    ) {
+      order.price /= 1000;
+      order.amount *= 1000;
+    }
   }
 }

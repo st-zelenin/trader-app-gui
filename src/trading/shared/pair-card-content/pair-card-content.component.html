@@ -20,6 +20,7 @@
     </mat-panel-description>
   </mat-expansion-panel-header>
   <app-order-form
+    [exchange]="exchange"
     [ticker]="ticker"
     [averages]="averages"
     [balance]="balance | async"

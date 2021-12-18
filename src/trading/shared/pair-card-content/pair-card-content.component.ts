@@ -57,7 +57,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.currency = this.pair.split('_')[0];
+    this.currency = this.pair.split(/_|-/)[0];
 
     this.calcAverages();
     this.updateTickerInfo();
@@ -105,7 +105,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   }
 
   public createOrder(order: NewOrder) {
-    order.currency_pair = this.pair;
+    order.currencyPair = this.pair;
     this.orderingService.create(this.exchange, order).subscribe(() => {
       this.isNewOrderExpanded = false;
       this.facade.getOpenOrders(this.exchange);

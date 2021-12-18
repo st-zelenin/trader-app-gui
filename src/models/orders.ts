@@ -10,10 +10,12 @@ export interface Order {
 }
 
 export interface NewOrder {
-  currency_pair: string;
+  currencyPair: string;
   side: 'buy' | 'sell';
   amount: string;
   price: string;
+  total: string;
+  market: boolean;
 }
 
 export interface PairOpenOrders {

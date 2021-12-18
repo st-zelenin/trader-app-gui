@@ -8,7 +8,7 @@
         <mat-panel-title>
           <img class="logo" [src]="logoSrc" loading="lazy" />
           <span class="coin-info">
-            <strong>{{ pair }}</strong> / {{ ticker?.last }}
+            <strong>{{ pair }}</strong> / {{ ticker?.last | number: '1.0-10' }}
             <sup class="change-percentage" [class.down]="priceDown">{{
               ticker?.change_percentage | number: '1.0-2'
             }}</sup>

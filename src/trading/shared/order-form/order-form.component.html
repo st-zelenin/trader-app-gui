@@ -9,6 +9,11 @@
         <mat-radio-button value="sell" color="warn">Sell</mat-radio-button>
       </mat-radio-group>
     </div>
+    <div *ngIf="exchange !== 'GATE_IO'">
+      <mat-checkbox color="warn" formControlName="market"
+        >by market</mat-checkbox
+      >
+    </div>
   </div>
   <div class="form-row">
     <mat-form-field appearance="standard">
@@ -50,29 +55,65 @@
     </mat-form-field>
   </div>
   <div class="form-row">
+    <button
+      mat-raised-button
+      type="button"
+      (click)="setCurrentPrice()"
+      [disabled]="this.market.value"
+    >
+      Current price
+    </button>
+
     <ng-container *ngIf="side.value === 'buy'; else sell">
-      <button mat-raised-button type="button" (click)="setAverageBuy()">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="setAverageBuy()"
+        [disabled]="this.market.value"
+      >
         Avg. buy
-      </button>
-      <button mat-raised-button type="button" (click)="setCurrentPrice()">
-        Current price
       </button>
     </ng-container>
 
     <ng-template #sell>
-      <button mat-raised-button type="button" (click)="setAverageBuy()">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="setAverageBuy()"
+        [disabled]="this.market.value"
+      >
         Avg. buy
       </button>
-      <button mat-raised-button type="button" (click)="setAverageSell()">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="setAverageSell()"
+        [disabled]="this.market.value"
+      >
         Avg. sell
       </button>
-      <button mat-raised-button type="button" (click)="plusPercents(50)">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="plusPercents(50)"
+        [disabled]="this.market.value"
+      >
         + 50%
       </button>
-      <button mat-raised-button type="button" (click)="plusPercents(10)">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="plusPercents(10)"
+        [disabled]="this.market.value"
+      >
         + 10%
       </button>
-      <button mat-raised-button type="button" (click)="setOneThird()">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="setOneThird()"
+        [disabled]="this.market.value"
+      >
         30% amount
       </button>
     </ng-template>

@@ -45,7 +45,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   @HostBinding('class.hidden') hidden: boolean = false;
 
   ngOnInit(): void {
-    this.logoSrc = `assets/coins/${this.pair.split('_')[0]}.png`;
+    this.logoSrc = `assets/coins/${this.pair.split(/-|_/)[0]}.png`;
 
     this.filteringService.register(this);
 

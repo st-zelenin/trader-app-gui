@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { CryptoComService } from '../../trading/crypto-com/crypto-com.service';
+import { CoinbaseService } from '../../trading/coinbase/coinbase.service';
 import {
   getAllAnalytics,
   getAllAnalyticsError,
@@ -20,17 +20,17 @@ import {
 } from './actions';
 
 @Injectable()
-export class CryptoComEffects {
+export class CoinbaseEffects {
   constructor(
     private actions: Actions,
     private store: Store,
-    private readonly historyService: CryptoComService
+    private readonly coinbaseService: CoinbaseService
   ) {}
 
   getTickers = createEffect(() =>
     this.actions.pipe(
       ofType(getTickers),
-      mergeMap(() => this.historyService.getTickers()),
+      mergeMap(() => this.coinbaseService.getAllTickers()),
       map((tickers) => setTickers({ tickers })),
       catchError((err) => {
         console.log(err);
@@ -42,7 +42,7 @@ export class CryptoComEffects {
   getAnalytics = createEffect(() =>
     this.actions.pipe(
       ofType(getAllAnalytics),
-      mergeMap(() => this.historyService.getAverages()),
+      mergeMap(() => this.coinbaseService.getAverages()),
       map((analytics) => setAllAnalytics({ analytics })),
       catchError((err) => {
         console.log(err);
@@ -54,7 +54,7 @@ export class CryptoComEffects {
   getAllOpenOrders = createEffect(() =>
     this.actions.pipe(
       ofType(getAllOpenOrders),
-      mergeMap(() => this.historyService.getAllOpenOrders()),
+      mergeMap(() => this.coinbaseService.getAllOpenOrders()),
       map((openOrders) => setAllOpenOrders({ openOrders })),
       catchError((err) => {
         console.log(err);
@@ -66,7 +66,7 @@ export class CryptoComEffects {
   getBalances = createEffect(() =>
     this.actions.pipe(
       ofType(getBalances),
-      mergeMap(() => this.historyService.getBalances()),
+      mergeMap(() => this.coinbaseService.getBalances()),
       map((balances) => setBalances({ balances })),
       catchError((err) => {
         console.log(err);

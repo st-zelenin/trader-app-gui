@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
 
 @Component({
@@ -10,7 +10,11 @@ import { MsalService } from '@azure/msal-angular';
 export class AppComponent {
   public isLoggedIn = false;
 
-  constructor(private authService: MsalService, private router: Router) {
+  constructor(
+    private authService: MsalService,
+    private router: Router,
+    private readonly route: ActivatedRoute
+  ) {
     this.isLoggedIn = this.getLoggedIn();
     this.initUser();
   }
@@ -35,6 +39,7 @@ export class AppComponent {
       return;
     }
 
-    this.router.navigate(['trades/']);
+    const { pathname } = window.location;
+    this.router.navigate([pathname === '/' ? 'trades' : pathname]);
   }
 }

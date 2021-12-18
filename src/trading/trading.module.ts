@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
+import { CoinbaseComponent } from './coinbase/coinbase.component';
 import { CryptoComComponent } from './crypto-com/crypto-com.component';
 import { GateIoComponent } from './gate-io/gate-io.component';
 import { ExchangeActionsComponent } from './shared/exchange-actions/exchange-actions.component';
@@ -21,6 +22,7 @@ import { TradingComponent } from './trading.component';
     GateIoComponent,
     CryptoComComponent,
     ExchangeActionsComponent,
+    CoinbaseComponent,
   ],
   imports: [CommonModule, SharedModule, TradingRoutingModule],
 })

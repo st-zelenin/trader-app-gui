@@ -1,6 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { AppStoreFacade } from 'src/store/facade';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
+import { EXCHANGE } from '../../../constants';
 import {
   Balance,
   Multiplicator,
@@ -8,6 +14,7 @@ import {
   PairAverages,
   Ticker,
 } from '../../../models';
+import { AppStoreFacade } from '../../../store/facade';
 
 @Component({
   selector: 'app-order-form',
@@ -15,6 +22,7 @@ import {
   styleUrls: ['./order-form.component.scss'],
 })
 export class OrderFormComponent implements OnInit {
+  @Input() exchange!: EXCHANGE;
   @Input() ticker?: Ticker;
   @Input() averages?: PairAverages;
 
@@ -26,13 +34,11 @@ export class OrderFormComponent implements OnInit {
 
   public totalAmount = 0;
   public buyMultiplicator?: Multiplicator = undefined;
+  public orderForm: FormGroup;
 
-  public orderForm = this.fb.group({
-    side: ['buy'],
-    price: ['', Validators.required],
-    amount: ['', Validators.required],
-    total: ['', Validators.required],
-  });
+  public get market() {
+    return this.orderForm.get('market')!;
+  }
 
   public get side() {
     return this.orderForm.get('side')!;
@@ -57,9 +63,43 @@ export class OrderFormComponent implements OnInit {
     this.facade.buyMultiplicator.subscribe((buyMultiplicator) => {
       this.buyMultiplicator = buyMultiplicator;
     });
+
+    this.orderForm = this.fb.group({
+      side: ['buy'],
+      price: ['', this.requiredByMarketType],
+      amount: ['', this.requiredByMarketType],
+      total: ['', this.requiredByMarketType],
+      market: [false, Validators.required],
+    });
+  }
+
+  private enableDisableTotal(isMarket: boolean, isSell: boolean) {
+    if (isMarket && isSell) {
+      this.total.patchValue('');
+      this.total.disable();
+    } else if (this.total.disabled) {
+      this.total.enable();
+    }
   }
 
   ngOnInit(): void {
+    this.side.valueChanges.subscribe((val) => {
+      this.enableDisableTotal(this.market.value, val === 'sell');
+    });
+    this.market.valueChanges.subscribe((val) => {
+      if (val) {
+        this.price.disable();
+        this.price.patchValue('');
+      } else {
+        this.price.enable();
+        this.total.enable();
+      }
+
+      this.enableDisableTotal(val, this.side.value === 'sell');
+      this.price.updateValueAndValidity();
+      this.amount.updateValueAndValidity();
+      this.total.updateValueAndValidity();
+    });
     this.price.valueChanges.subscribe((val) => {
       if (!val || Number(val) <= 0) {
         return;
@@ -76,6 +116,11 @@ export class OrderFormComponent implements OnInit {
         return;
       }
 
+      if (this.market.value) {
+        this.total.patchValue('');
+        return;
+      }
+
       if (this.price.value && Number(this.price.value) > 0) {
         this.total.patchValue(Number(val) * Number(this.price.value), {
           emitEvent: false,
@@ -84,6 +129,11 @@ export class OrderFormComponent implements OnInit {
     });
     this.total.valueChanges.subscribe((val) => {
       if (!val || Number(val) <= 0) {
+        return;
+      }
+
+      if (this.market.value) {
+        this.amount.patchValue('');
         return;
       }
 
@@ -153,4 +203,26 @@ export class OrderFormComponent implements OnInit {
       this.amount.setValue(this.totalAmount / 3);
     }
   }
+
+  private requiredByMarketType = (
+    control: AbstractControl
+  ): ValidationErrors | null => {
+    // not initialized yet
+    if (!this.orderForm) {
+      return null;
+    }
+
+    // without 'buy by market' - standard required
+    if (!this.market || !this.market.value) {
+      return Validators.required(control);
+    }
+
+    // with 'buy by market' - valid if there is 'amount' or 'total'
+    if (this.amount.value || this.total.value) {
+      return null;
+    }
+
+    // add standard required error
+    return Validators.required(control);
+  };
 }

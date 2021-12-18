@@ -6,43 +6,46 @@ import { FilteringService } from '../../filtering.service';
 import { Balance, User } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 import { UserService } from '../../user.service';
-import { CryptoComService } from './crypto-com.service';
+import { CoinbaseService } from './coinbase.service';
 
 @Component({
-  selector: 'app-crypto-com',
-  templateUrl: './crypto-com.component.html',
-  styleUrls: ['./crypto-com.component.scss'],
+  selector: 'app-coinbase',
+  templateUrl: './coinbase.component.html',
+  styleUrls: ['./coinbase.component.scss'],
 })
-export class CryptoComComponent implements OnInit {
+export class CoinbaseComponent implements OnInit {
   @Input() user!: User;
 
   public currencyPairs: string[] = [];
-  public usdt?: Observable<Balance>;
-  public exchange = EXCHANGE.CRYPTO_COM;
+  public eur?: Observable<Balance>;
+  public exchange = EXCHANGE.COINBASE;
 
   constructor(
     private readonly facade: AppStoreFacade,
-    private readonly historyService: CryptoComService,
+    private readonly coinbaseService: CoinbaseService,
     private readonly userService: UserService,
     private readonly filteringService: FilteringService
   ) {}
 
   ngOnInit(): void {
-    this.historyService.getCurrencyPairs().subscribe((currencyPairs) => {
+    this.coinbaseService.getCurrencyPairs().subscribe((currencyPairs) => {
       this.currencyPairs = currencyPairs;
     });
 
-    this.usdt = this.facade.balance(this.exchange, 'USDT');
-
+    this.eur = this.facade.balance(this.exchange, 'EUR');
     this.refresh();
   }
 
   public updateUser(currencyPair: string) {
-    if (!currencyPair || this.user.crypto_pairs.includes(currencyPair)) {
+    if (!this.user.coinbase_pairs) {
+      this.user.coinbase_pairs = [];
+    }
+
+    if (!currencyPair || this.user.coinbase_pairs.includes(currencyPair)) {
       return;
     }
 
-    this.user.crypto_pairs.push(currencyPair);
+    this.user.coinbase_pairs.push(currencyPair);
 
     this.userService.updateUser(this.user).subscribe((data) => {
       this.user = data;
@@ -52,7 +55,7 @@ export class CryptoComComponent implements OnInit {
 
   public drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(
-      this.user.crypto_pairs,
+      this.user.coinbase_pairs,
       event.previousIndex,
       event.currentIndex
     );
@@ -60,10 +63,10 @@ export class CryptoComComponent implements OnInit {
   }
 
   public removePair(pair: string) {
-    const index = this.user.crypto_pairs.indexOf(pair);
+    const index = this.user.coinbase_pairs.indexOf(pair);
 
     if (index > -1) {
-      this.user.crypto_pairs.splice(index, 1);
+      this.user.coinbase_pairs.splice(index, 1);
       this.userService.updateUser(this.user).subscribe();
     }
   }

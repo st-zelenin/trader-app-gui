@@ -2,28 +2,28 @@ import { createAction, props } from '@ngrx/store';
 import { AllAverages, Balances, PairOpenOrders, Tickers } from '../../models';
 
 export enum ACTIONS {
-  GET_ALL_TICKERS = '[gate.io][Tickers] get all tickers',
-  GET_ALL_TICKERS_ERROR = '[gate.io][Tickers] get all tickers error',
-  SET_ALL_TICKERS = '[gate.io][Tickers] set all tickers',
+  GET_ALL_TICKERS = '[coinbase][Tickers] get all tickers',
+  GET_ALL_TICKERS_ERROR = '[coinbase][Tickers] get all tickers error',
+  SET_ALL_TICKERS = '[coinbase][Tickers] set all tickers',
 
-  GET_ALL_ANALYTICS = '[gate.io][Analytics] get all analytics',
-  GET_ALL_ANALYTICS_ERROR = '[gate.io][Analytics] get all analytics error',
-  SET_ALL_ANALYTICS = '[gate.io][Analytics] set all analytics',
+  GET_ALL_ANALYTICS = '[coinbase][Analytics] get all analytics',
+  GET_ALL_ANALYTICS_ERROR = '[coinbase][Analytics] get all analytics error',
+  SET_ALL_ANALYTICS = '[coinbase][Analytics] set all analytics',
 
-  GET_ALL_OPEN_ORDERS = '[gate.io][Orders] get all open orders',
-  GET_ALL_OPEN_ORDERS_ERROR = '[gate.io][Orders] get all open orders error',
-  SET_ALL_OPEN_ORDERS = '[gate.io][Orders] set all open orders',
+  GET_ALL_OPEN_ORDERS = '[coinbase][Orders] get all open orders',
+  GET_ALL_OPEN_ORDERS_ERROR = '[coinbase][Orders] get all open orders error',
+  SET_ALL_OPEN_ORDERS = '[coinbase][Orders] set all open orders',
 
-  GET_BALANCES = '[gate.io][Balances] get balances',
-  GET_BALANCES_ERROR = '[gate.io][Balances] get balances error',
-  SET_BALANCES = '[gate.io][Balances] set balances',
+  GET_BALANCES = '[coinbase][Balances] get balances',
+  GET_BALANCES_ERROR = '[coinbase][Balances] get balances error',
+  SET_BALANCES = '[coinbase][Balances] set balances',
 }
 
 export const getTickers = createAction(ACTIONS.GET_ALL_TICKERS);
 
-export const getAllTickersError = createAction(ACTIONS.GET_ALL_TICKERS_ERROR);
+export const getTickersError = createAction(ACTIONS.GET_ALL_TICKERS_ERROR);
 
-export const setAllTickers = createAction(
+export const setTickers = createAction(
   ACTIONS.SET_ALL_TICKERS,
   props<{ tickers: Tickers }>()
 );

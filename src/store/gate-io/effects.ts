@@ -9,10 +9,10 @@ import {
   getAllAnalyticsError,
   getAllOpenOrders,
   getAllOpenOrdersError,
-  getAllTickers,
   getAllTickersError,
   getBalances,
   getBalancesError,
+  getTickers,
   setAllAnalytics,
   setAllOpenOrders,
   setAllTickers,
@@ -29,7 +29,7 @@ export class GateIoEffects {
 
   getTickers = createEffect(() =>
     this.actions.pipe(
-      ofType(getAllTickers),
+      ofType(getTickers),
       mergeMap(() => this.gateIoService.getAllTickers()),
       map((tickers) => setAllTickers({ tickers })),
       catchError((err) => {

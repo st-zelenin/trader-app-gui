@@ -13,4 +13,16 @@ export const BUY_MULTIPLICATORS: Multiplicator[] = [
 export enum EXCHANGE {
   GATE_IO = 'GATE_IO',
   CRYPTO_COM = 'CRYPTO_COM',
+  COINBASE = 'COINBASE',
 }
+
+export enum EXCHANGE_URL_PARAMS {
+  GATE_IO = 'gate-io',
+  CRYPTO_COM = 'crypto-com',
+  COINBASE = 'coinbase',
+}
+
+// export const EXCHANGE_URL_PARAMS = {
+//   GATE_IO: { param: 'gate-io', index: 0 },
+//   CRYPTO_COM: { param: 'crypto-com', index: 1 },
+// };
