@@ -70,6 +70,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
       .importAll(this.exchange, this.pair)
       .subscribe((data) => {
         this.showSnackBar('history imported');
+        this.facade.getAnalytics(this.exchange);
       });
   }
 

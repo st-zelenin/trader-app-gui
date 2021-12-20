@@ -23,6 +23,11 @@ export class HistoryService {
           { periodMonths: 12 }
         );
       }
+      case EXCHANGE.COINBASE: {
+        return this.httpClient.get(`${API_URL}/coinbase_importHistory`, {
+          params: { pair },
+        });
+      }
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);
     }
@@ -37,6 +42,11 @@ export class HistoryService {
       }
       case EXCHANGE.CRYPTO_COM: {
         return this.httpClient.get(`${API_URL}/crypto_updateTradeHistory`);
+      }
+      case EXCHANGE.COINBASE: {
+        return this.httpClient.get(`${API_URL}/coinbase_updateTradeHistory`, {
+          params: { pair },
+        });
       }
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);
@@ -54,6 +64,11 @@ export class HistoryService {
       }
       case EXCHANGE.CRYPTO_COM: {
         return this.httpClient.get<Order[]>(`${API_URL}/crypto_getHistory`, {
+          params: { pair },
+        });
+      }
+      case EXCHANGE.COINBASE: {
+        return this.httpClient.get<Order[]>(`${API_URL}/coinbase_getHistory`, {
           params: { pair },
         });
       }
