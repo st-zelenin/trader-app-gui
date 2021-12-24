@@ -1,13 +1,13 @@
 import { createReducer, on } from '@ngrx/store';
+import { ExchangeState } from '../state';
 import {
   setAllAnalytics,
   setAllOpenOrders,
   setAllTickers,
   setBalances,
 } from './actions';
-import { State } from './state';
 
-export const initialState: State = {
+export const initialState: ExchangeState = {
   tickers: {},
   analytics: {},
   openOrders: {},

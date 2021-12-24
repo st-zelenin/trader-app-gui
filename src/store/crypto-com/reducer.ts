@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { CryptoComState } from '.';
+import { ExchangeState } from '../state';
 import {
   setAllAnalytics,
   setAllOpenOrders,
@@ -7,7 +7,7 @@ import {
   setTickers,
 } from './actions';
 
-export const initialState: CryptoComState = {
+export const initialState: ExchangeState = {
   tickers: {},
   analytics: {},
   openOrders: {},

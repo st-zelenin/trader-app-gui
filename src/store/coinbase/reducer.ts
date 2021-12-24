@@ -1,13 +1,13 @@
 import { createReducer, on } from '@ngrx/store';
+import { ExchangeState } from '../state';
 import {
   setAllAnalytics,
   setAllOpenOrders,
   setBalances,
   setTickers,
 } from './actions';
-import { CoinbaseState } from './state';
 
-export const initialState: CoinbaseState = {
+export const initialState: ExchangeState = {
   tickers: {},
   analytics: {},
   openOrders: {},

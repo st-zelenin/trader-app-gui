@@ -1,27 +1,20 @@
 import { createSelector } from '@ngrx/store';
 import { AppState } from '../state';
-import { State } from './state';
 
-const selectState = (state: AppState) => state.trading;
+const selectState = (state: AppState) => state.gate_io;
 
-export const tickers = createSelector(
-  selectState,
-  (state: State) => state.tickers
-);
+export const tickers = createSelector(selectState, (state) => state.tickers);
 
 export const ticker = (id: string) =>
-  createSelector(selectState, (state: State) => state.tickers[id]);
+  createSelector(selectState, (state) => state.tickers[id]);
 
-export const averages = createSelector(
-  selectState,
-  (state: State) => state.analytics
-);
+export const averages = createSelector(selectState, (state) => state.analytics);
 
 export const analytics = (id: string) =>
-  createSelector(selectState, (state: State) => state.analytics[id]);
+  createSelector(selectState, (state) => state.analytics[id]);
 
 export const pairOpenOrders = (currencyPair: string) =>
-  createSelector(selectState, (state: State) => state.openOrders[currencyPair]);
+  createSelector(selectState, (state) => state.openOrders[currencyPair]);
 
 export const currencyBalance = (currency: string) =>
-  createSelector(selectState, (state: State) => state.balances[currency]);
+  createSelector(selectState, (state) => state.balances[currency]);
