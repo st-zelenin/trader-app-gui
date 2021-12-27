@@ -6,15 +6,15 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { EXCHANGE } from '../../../constants';
+import { EXCHANGE } from '../../constants';
 import {
   Balance,
   Multiplicator,
   NewOrder,
   PairAverages,
   Ticker,
-} from '../../../models';
-import { AppStoreFacade } from '../../../store/facade';
+} from '../../models';
+import { AppStoreFacade } from '../../store/facade';
 
 @Component({
   selector: 'app-order-form',

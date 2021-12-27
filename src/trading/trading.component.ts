@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EXCHANGE_URL_PARAMS } from 'src/constants';
+import { EXCHANGE, EXCHANGE_URL_PARAMS } from '../constants';
 import { User } from '../models';
+import { AppStoreFacade } from '../store/facade';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-trading',
@@ -12,6 +14,7 @@ import { User } from '../models';
 export class TradingComponent implements OnInit {
   public user: User;
   public activeTabIndex: number;
+  public exchanges = EXCHANGE;
 
   private tabs: string[] = [
     EXCHANGE_URL_PARAMS.GATE_IO,
@@ -21,7 +24,9 @@ export class TradingComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly facade: AppStoreFacade,
+    private readonly userService: UserService
   ) {
     this.user = this.route.snapshot.data.user;
     this.activeTabIndex = this.tabs.indexOf(
@@ -33,14 +38,42 @@ export class TradingComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.facade.setPairs(this.user);
+  }
 
   public selectedTabChange(event: MatTabChangeEvent) {
     this.activeTabIndex = event.index;
-    const url = this.router
-      .createUrlTree(['trades', this.tabs[event.index]])
-      .toString();
-
     this.router.navigate([`trades/${this.tabs[event.index]}`]);
+  }
+
+  public updateUser({
+    exchange,
+    pairs,
+  }: {
+    exchange: EXCHANGE;
+    pairs: string[];
+  }) {
+    console.log('updateUser', exchange, pairs);
+
+    // TODO: move to store
+    switch (exchange) {
+      case EXCHANGE.GATE_IO:
+        this.user.pairs = pairs;
+        break;
+      case EXCHANGE.CRYPTO_COM:
+        this.user.crypto_pairs = pairs;
+        break;
+      case EXCHANGE.COINBASE:
+        this.user.coinbase_pairs = pairs;
+        break;
+      default:
+        throw new Error(`unhabdled exchange type: ${exchange}`);
+    }
+
+    this.userService.updateUser(this.user).subscribe((data) => {
+      this.user = data;
+      this.facade.setPairs(data);
+    });
   }
 }

@@ -1,17 +1,11 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
-import { EXCHANGE } from '../../../constants';
-import { HistoryService } from '../../../history.service';
-import {
-  Balance,
-  NewOrder,
-  Order,
-  PairAverages,
-  Ticker,
-} from '../../../models';
-import { AppStoreFacade } from '../../../store/facade';
-import { OrderingService } from '../../ordering.service';
+import { EXCHANGE } from '../../constants';
+import { Balance, NewOrder, Order, PairAverages, Ticker } from '../../models';
+import { AppStoreFacade } from '../../store/facade';
+import { HistoryService } from '../history.service';
+import { OrderingService } from '../ordering.service';
 
 @Component({
   selector: 'app-pair-card-content',

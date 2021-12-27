@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { EXCHANGE } from '../constants';
-import { Multiplicator } from '../models';
+import { Multiplicator, User } from '../models';
 import * as coinbaseActions from './coinbase/actions';
 import * as coinbaseSelectors from './coinbase/selectors';
 import * as cryptoComActions from './crypto-com/actions';
@@ -19,6 +19,32 @@ export class AppStoreFacade {
   constructor(private store: Store<AppState>) {}
 
   public buyMultiplicator = this.store.select(sharedSelectors.buyMultiplicator);
+
+  public pairs = (exchange: EXCHANGE) => {
+    switch (exchange) {
+      case EXCHANGE.GATE_IO:
+        return this.store.select(gateIoSelectors.pairs);
+      case EXCHANGE.CRYPTO_COM:
+        return this.store.select(cryptoComSelectors.pairs);
+      case EXCHANGE.COINBASE:
+        return this.store.select(coinbaseSelectors.pairs);
+      default:
+        throw new Error(`unhabdled exchange type: ${exchange}`);
+    }
+  };
+
+  public tickers = (exchange: EXCHANGE) => {
+    switch (exchange) {
+      case EXCHANGE.GATE_IO:
+        return this.store.select(gateIoSelectors.tickers);
+      case EXCHANGE.CRYPTO_COM:
+        return this.store.select(cryptoComSelectors.tickers);
+      case EXCHANGE.COINBASE:
+        return this.store.select(coinbaseSelectors.tickers);
+      default:
+        throw new Error(`unhabdled exchange type: ${exchange}`);
+    }
+  };
 
   public ticker = (exchange: EXCHANGE, id: string) => {
     switch (exchange) {
@@ -46,6 +72,19 @@ export class AppStoreFacade {
     }
   };
 
+  public openOrders = (exchange: EXCHANGE) => {
+    switch (exchange) {
+      case EXCHANGE.GATE_IO:
+        return this.store.select(gateIoSelectors.openOrders);
+      case EXCHANGE.CRYPTO_COM:
+        return this.store.select(cryptoComSelectors.openOrders);
+      case EXCHANGE.COINBASE:
+        return this.store.select(coinbaseSelectors.openOrders);
+      default:
+        throw new Error(`unhabdled exchange type: ${exchange}`);
+    }
+  };
+
   public pairOpenOrders = (exchange: EXCHANGE, currencyPair: string) => {
     switch (exchange) {
       case EXCHANGE.GATE_IO:
@@ -58,6 +97,19 @@ export class AppStoreFacade {
         return this.store.select(
           coinbaseSelectors.pairOpenOrders(currencyPair)
         );
+      default:
+        throw new Error(`unhabdled exchange type: ${exchange}`);
+    }
+  };
+
+  public currencyPairs = (exchange: EXCHANGE) => {
+    switch (exchange) {
+      case EXCHANGE.GATE_IO:
+        return this.store.select(gateIoSelectors.currencyPairs);
+      case EXCHANGE.CRYPTO_COM:
+        return this.store.select(cryptoComSelectors.currencyPairs);
+      case EXCHANGE.COINBASE:
+        return this.store.select(coinbaseSelectors.currencyPairs);
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);
     }
@@ -126,6 +178,29 @@ export class AppStoreFacade {
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);
     }
+  }
+
+  public getCurrencyPairs(exchange: EXCHANGE) {
+    switch (exchange) {
+      case EXCHANGE.GATE_IO:
+        return this.store.dispatch(gateIoActions.getCurrencyPairs());
+      case EXCHANGE.CRYPTO_COM:
+        return this.store.dispatch(cryptoComActions.getCurrencyPairs());
+      case EXCHANGE.COINBASE:
+        return this.store.dispatch(coinbaseActions.getCurrencyPairs());
+      default:
+        throw new Error(`unhabdled exchange type: ${exchange}`);
+    }
+  }
+
+  public setPairs(user: User) {
+    this.store.dispatch(gateIoActions.setPairs({ pairs: user.pairs }));
+    this.store.dispatch(
+      cryptoComActions.setPairs({ pairs: user.crypto_pairs })
+    );
+    this.store.dispatch(
+      coinbaseActions.setPairs({ pairs: user.coinbase_pairs })
+    );
   }
 
   public setBuyMultiplicator(buyMultiplicator: Multiplicator) {

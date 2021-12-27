@@ -18,7 +18,7 @@ export interface NewOrder {
   market: boolean;
 }
 
-export interface PairOpenOrders {
+export interface OpenOrdersByPairs {
   [key: string]: Order[];
 }
 

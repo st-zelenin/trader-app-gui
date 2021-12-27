@@ -4,6 +4,8 @@ import {
   setAllAnalytics,
   setAllOpenOrders,
   setBalances,
+  setCurrencyPairs,
+  setPairs,
   setTickers,
 } from './actions';
 
@@ -12,6 +14,8 @@ export const initialState: ExchangeState = {
   analytics: {},
   openOrders: {},
   balances: {},
+  pairs: [],
+  currencyPairs: [],
 };
 
 export const coinbaseReducer = createReducer(
@@ -31,5 +35,13 @@ export const coinbaseReducer = createReducer(
   on(setBalances, (state, { balances }) => {
     console.log('coinbase: set balances', balances);
     return { ...state, balances };
+  }),
+  on(setPairs, (state, { pairs }) => {
+    console.log('coinbase: set pairs', pairs);
+    return { ...state, pairs };
+  }),
+  on(setCurrencyPairs, (state, { currencyPairs }) => {
+    console.log('coinbase: set currency pairs', currencyPairs);
+    return { ...state, currencyPairs };
   })
 );

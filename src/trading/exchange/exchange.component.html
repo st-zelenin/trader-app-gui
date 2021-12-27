@@ -1,15 +1,16 @@
 <app-exchange-actions
-  [currencyPairs]="currencyPairs"
-  [balance]="(usdt | async)?.available"
-  currencyLabel="USDT"
-  (addCurrencyPair)="updateUser($event)"
+  [currencyPairs]="(currencyPairs | async) || []"
+  [balance]="(baseCurrencyBalance | async)?.available"
+  [currencyLabel]="baseCurrency"
+  (addCurrencyPair)="addPair($event)"
   (refresh)="refresh()"
   (filter)="filter()"
+  (sort)="sort()"
 ></app-exchange-actions>
 
 <div cdkDropList class="pairs-list" (cdkDropListDropped)="drop($event)">
   <app-pair-card
-    *ngFor="let pair of user.pairs"
+    *ngFor="let pair of pairs"
     [pair]="pair"
     [exchange]="exchange"
     (remove)="removePair($event)"

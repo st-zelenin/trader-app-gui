@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { API_URL, EXCHANGE } from './constants';
-import { Order } from './models';
+import { API_URL, EXCHANGE } from '../constants';
+import { Order } from '../models';
 
 @Injectable({
   providedIn: 'root',

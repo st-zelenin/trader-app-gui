@@ -4,12 +4,24 @@
   [selectedIndex]="activeTabIndex"
 >
   <mat-tab label="Gate.io">
-    <app-gate-io [user]="user"></app-gate-io>
+    <app-exchange
+      [exchange]="exchanges.GATE_IO"
+      baseCurrency="USDT"
+      (updatePairs)="updateUser($event)"
+    ></app-exchange>
   </mat-tab>
   <mat-tab label="Crypto.com">
-    <app-crypto-com [user]="user"></app-crypto-com>
+    <app-exchange
+      [exchange]="exchanges.CRYPTO_COM"
+      baseCurrency="USDT"
+      (updatePairs)="updateUser($event)"
+    ></app-exchange>
   </mat-tab>
   <mat-tab label="Coinbase">
-    <app-coinbase [user]="user"></app-coinbase>
+    <app-exchange
+      [exchange]="exchanges.COINBASE"
+      baseCurrency="EUR"
+      (updatePairs)="updateUser($event)"
+    ></app-exchange>
   </mat-tab>
 </mat-tab-group>

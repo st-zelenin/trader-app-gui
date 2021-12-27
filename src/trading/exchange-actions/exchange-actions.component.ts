@@ -8,8 +8,8 @@ import {
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
-import { AppStoreFacade } from 'src/store/facade';
-import { BUY_MULTIPLICATORS } from '../../../constants';
+import { BUY_MULTIPLICATORS } from '../../constants';
+import { AppStoreFacade } from '../../store/facade';
 
 @Component({
   selector: 'app-exchange-actions',
@@ -25,6 +25,7 @@ export class ExchangeActionsComponent {
   @Output() addCurrencyPair = new EventEmitter<string>();
   @Output() refresh = new EventEmitter<void>();
   @Output() filter = new EventEmitter<void>();
+  @Output() sort = new EventEmitter<void>();
 
   public multiplicators = BUY_MULTIPLICATORS;
 

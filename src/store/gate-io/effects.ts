@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { GateIoService } from '../../trading/gate-io/gate-io.service';
+import { GateIoService } from '../../trading/gate-io.service';
 import {
   getAllAnalytics,
   getAllAnalyticsError,
@@ -12,11 +12,14 @@ import {
   getAllTickersError,
   getBalances,
   getBalancesError,
+  getCurrencyPairs,
+  getCurrencyPairsError,
   getTickers,
   setAllAnalytics,
   setAllOpenOrders,
   setAllTickers,
   setBalances,
+  setCurrencyPairs,
 } from './actions';
 
 @Injectable()
@@ -71,6 +74,20 @@ export class GateIoEffects {
       catchError((err) => {
         console.log(err);
         return of(getBalancesError());
+      })
+    )
+  );
+
+  getCurrencyPairs = createEffect(() =>
+    this.actions.pipe(
+      ofType(getCurrencyPairs),
+      mergeMap(() => this.gateIoService.getCurrencyPairs()),
+      map((currencyPairs) =>
+        setCurrencyPairs({ currencyPairs: currencyPairs.map(({ id }) => id) })
+      ),
+      catchError((err) => {
+        console.log(err);
+        return of(getCurrencyPairsError());
       })
     )
   );

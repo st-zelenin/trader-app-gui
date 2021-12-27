@@ -7,10 +7,10 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { EXCHANGE } from '../../../constants';
-import { FilteringService } from '../../../filtering.service';
-import { Filterable, Order, PairAverages, Ticker } from '../../../models';
-import { AppStoreFacade } from '../../../store/facade';
+import { EXCHANGE } from '../../constants';
+import { Filterable, Order, PairAverages, Ticker } from '../../models';
+import { AppStoreFacade } from '../../store/facade';
+import { FilteringService } from '../filtering.service';
 
 @Component({
   selector: 'app-pair-card',

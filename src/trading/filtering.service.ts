@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Filterable } from './models';
+import { Filterable } from '../models';
 
 @Injectable({
   providedIn: 'root',

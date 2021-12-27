@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { CoinbaseService } from '../../trading/coinbase/coinbase.service';
+import { CoinbaseService } from '../../trading/coinbase.service';
 import {
   getAllAnalytics,
   getAllAnalyticsError,
@@ -11,11 +11,14 @@ import {
   getAllOpenOrdersError,
   getBalances,
   getBalancesError,
+  getCurrencyPairs,
+  getCurrencyPairsError,
   getTickers,
   getTickersError,
   setAllAnalytics,
   setAllOpenOrders,
   setBalances,
+  setCurrencyPairs,
   setTickers,
 } from './actions';
 
@@ -71,6 +74,18 @@ export class CoinbaseEffects {
       catchError((err) => {
         console.log(err);
         return of(getBalancesError());
+      })
+    )
+  );
+
+  getCurrencyPairs = createEffect(() =>
+    this.actions.pipe(
+      ofType(getCurrencyPairs),
+      mergeMap(() => this.coinbaseService.getCurrencyPairs()),
+      map((currencyPairs) => setCurrencyPairs({ currencyPairs })),
+      catchError((err) => {
+        console.log(err);
+        return of(getCurrencyPairsError());
       })
     )
   );

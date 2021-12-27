@@ -21,8 +21,3 @@ export enum EXCHANGE_URL_PARAMS {
   CRYPTO_COM = 'crypto-com',
   COINBASE = 'coinbase',
 }
-
-// export const EXCHANGE_URL_PARAMS = {
-//   GATE_IO: { param: 'gate-io', index: 0 },
-//   CRYPTO_COM: { param: 'crypto-com', index: 1 },
-// };

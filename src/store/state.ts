@@ -1,4 +1,4 @@
-import { AllAverages, Balances, PairOpenOrders, Tickers } from '../models';
+import { AllAverages, Balances, OpenOrdersByPairs, Tickers } from '../models';
 import { CoinbaseEffects, coinbaseReducer } from './coinbase';
 import { CryptoComEffects, cryptoComReducer } from './crypto-com';
 import { GateIoEffects, gateIoReducer } from './gate-io';
@@ -7,8 +7,10 @@ import { SharedEffects, sharedReducer, SharedState } from './shared';
 export interface ExchangeState {
   tickers: Tickers;
   analytics: AllAverages;
-  openOrders: PairOpenOrders;
+  openOrders: OpenOrdersByPairs;
   balances: Balances;
+  pairs: string[];
+  currencyPairs: string[];
 }
 
 export interface AppState {

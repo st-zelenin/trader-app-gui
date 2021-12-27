@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { API_URL } from '../../constants';
-import { AllAverages, Balances, PairOpenOrders, Tickers } from '../../models';
+import { API_URL } from '../constants';
+import { AllAverages, Balances, OpenOrdersByPairs, Tickers } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +14,7 @@ export class CoinbaseService {
   }
 
   public getAllOpenOrders() {
-    return this.httpClient.get<PairOpenOrders>(
+    return this.httpClient.get<OpenOrdersByPairs>(
       `${API_URL}/coinbase_getOpenOrders`
     );
   }

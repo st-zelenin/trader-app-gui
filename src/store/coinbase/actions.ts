@@ -1,5 +1,10 @@
 import { createAction, props } from '@ngrx/store';
-import { AllAverages, Balances, PairOpenOrders, Tickers } from '../../models';
+import {
+  AllAverages,
+  Balances,
+  OpenOrdersByPairs,
+  Tickers,
+} from '../../models';
 
 export enum ACTIONS {
   GET_ALL_TICKERS = '[coinbase][Tickers] get all tickers',
@@ -17,6 +22,12 @@ export enum ACTIONS {
   GET_BALANCES = '[coinbase][Balances] get balances',
   GET_BALANCES_ERROR = '[coinbase][Balances] get balances error',
   SET_BALANCES = '[coinbase][Balances] set balances',
+
+  GET_CURRENCY_PAIRS = '[coinbase][Currency Pairs] get currency pairs',
+  GET_CURRENCY_PAIRS_ERROR = '[coinbase][Currency Pairs] get currency pairs error',
+  SET_CURRENCY_PAIRS = '[coinbase][Currency Pairs] set currency pairs',
+
+  SET_PAIRS = '[coinbase][Pairs] set pairs',
 }
 
 export const getTickers = createAction(ACTIONS.GET_ALL_TICKERS);
@@ -47,7 +58,7 @@ export const getAllOpenOrdersError = createAction(
 
 export const setAllOpenOrders = createAction(
   ACTIONS.SET_ALL_OPEN_ORDERS,
-  props<{ openOrders: PairOpenOrders }>()
+  props<{ openOrders: OpenOrdersByPairs }>()
 );
 
 export const getBalances = createAction(ACTIONS.GET_BALANCES);
@@ -57,4 +68,20 @@ export const getBalancesError = createAction(ACTIONS.GET_BALANCES_ERROR);
 export const setBalances = createAction(
   ACTIONS.SET_BALANCES,
   props<{ balances: Balances }>()
+);
+
+export const getCurrencyPairs = createAction(ACTIONS.GET_CURRENCY_PAIRS);
+
+export const getCurrencyPairsError = createAction(
+  ACTIONS.GET_CURRENCY_PAIRS_ERROR
+);
+
+export const setCurrencyPairs = createAction(
+  ACTIONS.SET_CURRENCY_PAIRS,
+  props<{ currencyPairs: string[] }>()
+);
+
+export const setPairs = createAction(
+  ACTIONS.SET_PAIRS,
+  props<{ pairs: string[] }>()
 );

@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { API_URL } from '../../constants';
+import { API_URL } from '../constants';
 import {
   AllAverages,
   Balances,
   GateIoCurrencyPair,
+  OpenOrdersByPairs,
   Order,
-  PairOpenOrders,
   Tickers,
-} from '../../models';
+} from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +27,9 @@ export class GateIoService {
   }
 
   public getAllOpenOrders() {
-    return this.httpClient.get<PairOpenOrders>(`${API_URL}/getAllOpenOrders`);
+    return this.httpClient.get<OpenOrdersByPairs>(
+      `${API_URL}/getAllOpenOrders`
+    );
   }
 
   public getCurrencyPairs() {

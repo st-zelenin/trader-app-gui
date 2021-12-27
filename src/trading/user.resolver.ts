@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable } from 'rxjs';
-import { User } from 'src/models';
-import { UserService } from 'src/user.service';
+import { User } from '../models';
+import { UserService } from '../user.service';
 
 @Injectable({
   providedIn: 'root',

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CoinbaseComponent } from './coinbase.component';
+import { ExchangeComponent } from './exchange.component';
 
-describe('CoinbaseComponent', () => {
-  let component: CoinbaseComponent;
-  let fixture: ComponentFixture<CoinbaseComponent>;
+describe('ExchangeComponent', () => {
+  let component: ExchangeComponent;
+  let fixture: ComponentFixture<ExchangeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CoinbaseComponent],
+      declarations: [ExchangeComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CoinbaseComponent);
+    fixture = TestBed.createComponent(ExchangeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
