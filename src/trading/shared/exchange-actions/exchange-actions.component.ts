@@ -19,7 +19,8 @@ import { BUY_MULTIPLICATORS } from '../../../constants';
 })
 export class ExchangeActionsComponent {
   @Input() currencyPairs: string[] = [];
-  @Input() usdt?: number = 0;
+  @Input() balance?: number = 0;
+  @Input() currencyLabel!: string;
 
   @Output() addCurrencyPair = new EventEmitter<string>();
   @Output() refresh = new EventEmitter<void>();

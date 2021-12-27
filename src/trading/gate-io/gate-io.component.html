@@ -1,6 +1,7 @@
 <app-exchange-actions
   [currencyPairs]="currencyPairs"
-  [usdt]="(usdt | async)?.available"
+  [balance]="(usdt | async)?.available"
+  currencyLabel="USDT"
   (addCurrencyPair)="updateUser($event)"
   (refresh)="refresh()"
   (filter)="filter()"
