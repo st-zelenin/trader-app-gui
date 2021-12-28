@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
 import { API_URL } from '../constants';
 import {
   AllAverages,
   Balances,
+  ExchangeService,
   GateIoCurrencyPair,
   OpenOrdersByPairs,
   Order,
@@ -13,10 +15,10 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class GateIoService {
+export class GateIoService implements ExchangeService {
   constructor(private httpClient: HttpClient) {}
 
-  public getAllTickers() {
+  public getTickers() {
     return this.httpClient.get<Tickers>(`${API_URL}/tickerInfo`);
   }
 
@@ -33,9 +35,9 @@ export class GateIoService {
   }
 
   public getCurrencyPairs() {
-    return this.httpClient.get<GateIoCurrencyPair[]>(
-      `${API_URL}/getCurrencyPairs`
-    );
+    return this.httpClient
+      .get<GateIoCurrencyPair[]>(`${API_URL}/getCurrencyPairs`)
+      .pipe(map((p) => p.map(({ id }) => id)));
   }
 
   public getBalances() {

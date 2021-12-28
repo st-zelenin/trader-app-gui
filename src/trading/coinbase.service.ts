@@ -1,15 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_URL } from '../constants';
-import { AllAverages, Balances, OpenOrdersByPairs, Tickers } from '../models';
+import {
+  AllAverages,
+  Balances,
+  ExchangeService,
+  OpenOrdersByPairs,
+  Tickers,
+} from '../models';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CoinbaseService {
+export class CoinbaseService implements ExchangeService {
   constructor(private httpClient: HttpClient) {}
 
-  public getAllTickers() {
+  public getTickers() {
     return this.httpClient.get<Tickers>(`${API_URL}/coinbase_getTickers`);
   }
 

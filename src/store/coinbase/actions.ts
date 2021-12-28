@@ -5,6 +5,7 @@ import {
   OpenOrdersByPairs,
   Tickers,
 } from '../../models';
+import { ExchangeActions } from '../state';
 
 export enum ACTIONS {
   GET_ALL_TICKERS = '[coinbase][Tickers] get all tickers',
@@ -30,58 +31,68 @@ export enum ACTIONS {
   SET_PAIRS = '[coinbase][Pairs] set pairs',
 }
 
-export const getTickers = createAction(ACTIONS.GET_ALL_TICKERS);
+const getTickers = createAction(ACTIONS.GET_ALL_TICKERS);
 
-export const getTickersError = createAction(ACTIONS.GET_ALL_TICKERS_ERROR);
+const getTickersError = createAction(ACTIONS.GET_ALL_TICKERS_ERROR);
 
-export const setTickers = createAction(
+const setTickers = createAction(
   ACTIONS.SET_ALL_TICKERS,
   props<{ tickers: Tickers }>()
 );
 
-export const getAllAnalytics = createAction(ACTIONS.GET_ALL_ANALYTICS);
+const getAllAnalytics = createAction(ACTIONS.GET_ALL_ANALYTICS);
 
-export const getAllAnalyticsError = createAction(
-  ACTIONS.GET_ALL_ANALYTICS_ERROR
-);
+const getAllAnalyticsError = createAction(ACTIONS.GET_ALL_ANALYTICS_ERROR);
 
-export const setAllAnalytics = createAction(
+const setAllAnalytics = createAction(
   ACTIONS.SET_ALL_ANALYTICS,
   props<{ analytics: AllAverages }>()
 );
 
-export const getAllOpenOrders = createAction(ACTIONS.GET_ALL_OPEN_ORDERS);
+const getAllOpenOrders = createAction(ACTIONS.GET_ALL_OPEN_ORDERS);
 
-export const getAllOpenOrdersError = createAction(
-  ACTIONS.GET_ALL_OPEN_ORDERS_ERROR
-);
+const getAllOpenOrdersError = createAction(ACTIONS.GET_ALL_OPEN_ORDERS_ERROR);
 
-export const setAllOpenOrders = createAction(
+const setAllOpenOrders = createAction(
   ACTIONS.SET_ALL_OPEN_ORDERS,
   props<{ openOrders: OpenOrdersByPairs }>()
 );
 
-export const getBalances = createAction(ACTIONS.GET_BALANCES);
+const getBalances = createAction(ACTIONS.GET_BALANCES);
 
-export const getBalancesError = createAction(ACTIONS.GET_BALANCES_ERROR);
+const getBalancesError = createAction(ACTIONS.GET_BALANCES_ERROR);
 
-export const setBalances = createAction(
+const setBalances = createAction(
   ACTIONS.SET_BALANCES,
   props<{ balances: Balances }>()
 );
 
-export const getCurrencyPairs = createAction(ACTIONS.GET_CURRENCY_PAIRS);
+const getCurrencyPairs = createAction(ACTIONS.GET_CURRENCY_PAIRS);
 
-export const getCurrencyPairsError = createAction(
-  ACTIONS.GET_CURRENCY_PAIRS_ERROR
-);
+const getCurrencyPairsError = createAction(ACTIONS.GET_CURRENCY_PAIRS_ERROR);
 
-export const setCurrencyPairs = createAction(
+const setCurrencyPairs = createAction(
   ACTIONS.SET_CURRENCY_PAIRS,
   props<{ currencyPairs: string[] }>()
 );
 
-export const setPairs = createAction(
-  ACTIONS.SET_PAIRS,
-  props<{ pairs: string[] }>()
-);
+const setPairs = createAction(ACTIONS.SET_PAIRS, props<{ pairs: string[] }>());
+
+export const actions: ExchangeActions = {
+  getTickers,
+  getTickersError,
+  setTickers,
+  getAllAnalytics,
+  getAllAnalyticsError,
+  setAllAnalytics,
+  getAllOpenOrders,
+  getAllOpenOrdersError,
+  setAllOpenOrders,
+  getBalances,
+  getBalancesError,
+  setBalances,
+  getCurrencyPairs,
+  getCurrencyPairsError,
+  setCurrencyPairs,
+  setPairs,
+};
