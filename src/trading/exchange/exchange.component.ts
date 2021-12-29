@@ -1,6 +1,14 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Observable } from 'rxjs';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { interval, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
 import { Balance, OpenOrdersByPairs, Tickers } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
@@ -12,7 +20,7 @@ import { SortingService } from '../sorting.service';
   templateUrl: './exchange.component.html',
   styleUrls: ['./exchange.component.scss'],
 })
-export class ExchangeComponent implements OnInit {
+export class ExchangeComponent implements OnInit, OnDestroy {
   @Input() exchange!: EXCHANGE;
   @Input() baseCurrency!: string;
 
@@ -29,6 +37,7 @@ export class ExchangeComponent implements OnInit {
   private tickers: Tickers = {};
   private isSorted = false;
   private notSortedPairs: string[] = [];
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private readonly facade: AppStoreFacade,
@@ -37,22 +46,36 @@ export class ExchangeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.facade.pairs(this.exchange).subscribe((pairs) => {
-      this.notSortedPairs = [...pairs];
+    // 15 minutes
+    interval(15 * 60 * 1000)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => this.refresh());
 
-      this.pairs = this.isSorted
-        ? this.sortingService.sort([...pairs], this.openOrders, this.tickers)
-        : [...pairs];
-      this.facade.getTickers(this.exchange);
-    });
+    this.facade
+      .pairs(this.exchange)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((pairs) => {
+        this.notSortedPairs = [...pairs];
 
-    this.facade.openOrders(this.exchange).subscribe((openOrders) => {
-      this.openOrders = openOrders;
-    });
+        this.pairs = this.isSorted
+          ? this.sortingService.sort([...pairs], this.openOrders, this.tickers)
+          : [...pairs];
+        this.facade.getTickers(this.exchange);
+      });
 
-    this.facade.tickers(this.exchange).subscribe((tickers) => {
-      this.tickers = tickers;
-    });
+    this.facade
+      .openOrders(this.exchange)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((openOrders) => {
+        this.openOrders = openOrders;
+      });
+
+    this.facade
+      .tickers(this.exchange)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((tickers) => {
+        this.tickers = tickers;
+      });
 
     this.facade.getCurrencyPairs(this.exchange);
 
@@ -97,6 +120,7 @@ export class ExchangeComponent implements OnInit {
   }
 
   public refresh() {
+    console.log('refresh');
     this.facade.getAnalytics(this.exchange);
     this.facade.getOpenOrders(this.exchange);
     this.facade.getTickers(this.exchange);
@@ -113,5 +137,10 @@ export class ExchangeComponent implements OnInit {
     this.pairs = this.isSorted
       ? this.sortingService.sort(this.pairs, this.openOrders, this.tickers)
       : [...this.notSortedPairs];
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

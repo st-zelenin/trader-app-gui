@@ -7,6 +7,8 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
 import { Filterable, Order, PairAverages, Ticker } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
@@ -37,6 +39,8 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   private closeTimeout?: any;
   private openTimeout?: any;
 
+  private unsubscribe$ = new Subject<void>();
+
   constructor(
     private readonly filteringService: FilteringService,
     private readonly facade: AppStoreFacade
@@ -49,19 +53,28 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
     this.filteringService.register(this);
 
-    this.facade.ticker(this.exchange, this.pair).subscribe((ticker) => {
-      this.ticker = ticker;
-      this.priceDown = this.ticker ? this.ticker.change_percentage < 0 : false;
-      this.headerColor = this.updateHeaderColor();
-    });
+    this.facade
+      .ticker(this.exchange, this.pair)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((ticker) => {
+        this.ticker = ticker;
+        this.priceDown = this.ticker
+          ? this.ticker.change_percentage < 0
+          : false;
+        this.headerColor = this.updateHeaderColor();
+      });
 
-    this.facade.analytics(this.exchange, this.pair).subscribe((analytics) => {
-      this.averages = analytics;
-      this.headerColor = this.updateHeaderColor();
-    });
+    this.facade
+      .analytics(this.exchange, this.pair)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((analytics) => {
+        this.averages = analytics;
+        this.headerColor = this.updateHeaderColor();
+      });
 
     this.facade
       .pairOpenOrders(this.exchange, this.pair)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((orders: Order[]) => {
         if (orders && orders.length) {
           this.buyOrders = orders.filter(({ side }) => side === 'buy').length;
@@ -148,5 +161,8 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
   ngOnDestroy(): void {
     this.filteringService.unregister(this);
+
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

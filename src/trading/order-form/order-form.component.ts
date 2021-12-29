@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -6,6 +13,8 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
 import {
   Balance,
@@ -21,7 +30,7 @@ import { AppStoreFacade } from '../../store/facade';
   templateUrl: './order-form.component.html',
   styleUrls: ['./order-form.component.scss'],
 })
-export class OrderFormComponent implements OnInit {
+export class OrderFormComponent implements OnInit, OnDestroy {
   @Input() exchange!: EXCHANGE;
   @Input() ticker?: Ticker;
   @Input() averages?: PairAverages;
@@ -56,13 +65,17 @@ export class OrderFormComponent implements OnInit {
     return this.orderForm.get('total')!;
   }
 
+  private unsubscribe$ = new Subject<void>();
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly facade: AppStoreFacade
   ) {
-    this.facade.buyMultiplicator.subscribe((buyMultiplicator) => {
-      this.buyMultiplicator = buyMultiplicator;
-    });
+    this.facade.buyMultiplicator
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((buyMultiplicator) => {
+        this.buyMultiplicator = buyMultiplicator;
+      });
 
     this.orderForm = this.fb.group({
       side: ['buy'],
@@ -83,70 +96,82 @@ export class OrderFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.side.valueChanges.subscribe((val) => {
-      this.enableDisableTotal(this.market.value, val === 'sell');
-    });
-    this.market.valueChanges.subscribe((val) => {
-      if (val) {
-        this.price.disable();
-        this.price.patchValue('');
-      } else {
-        this.price.enable();
-        this.total.enable();
-      }
+    this.side.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((val) => {
+        this.enableDisableTotal(this.market.value, val === 'sell');
+      });
+    this.market.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((val) => {
+        if (val) {
+          this.price.disable();
+          this.price.patchValue('');
+        } else {
+          this.price.enable();
+          this.total.enable();
+        }
 
-      this.enableDisableTotal(val, this.side.value === 'sell');
-      this.price.updateValueAndValidity();
-      this.amount.updateValueAndValidity();
-      this.total.updateValueAndValidity();
-    });
-    this.price.valueChanges.subscribe((val) => {
-      if (!val || Number(val) <= 0) {
-        return;
-      }
+        this.enableDisableTotal(val, this.side.value === 'sell');
+        this.price.updateValueAndValidity();
+        this.amount.updateValueAndValidity();
+        this.total.updateValueAndValidity();
+      });
+    this.price.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((val) => {
+        if (!val || Number(val) <= 0) {
+          return;
+        }
 
-      if (this.amount.value && Number(this.amount.value) > 0) {
-        this.total.patchValue(Number(val) * Number(this.amount.value), {
-          emitEvent: false,
-        });
-      }
-    });
-    this.amount.valueChanges.subscribe((val) => {
-      if (!val || Number(val) <= 0) {
-        return;
-      }
+        if (this.amount.value && Number(this.amount.value) > 0) {
+          this.total.patchValue(Number(val) * Number(this.amount.value), {
+            emitEvent: false,
+          });
+        }
+      });
+    this.amount.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((val) => {
+        if (!val || Number(val) <= 0) {
+          return;
+        }
 
-      if (this.market.value) {
-        this.total.patchValue('');
-        return;
-      }
+        if (this.market.value) {
+          this.total.patchValue('');
+          return;
+        }
 
-      if (this.price.value && Number(this.price.value) > 0) {
-        this.total.patchValue(Number(val) * Number(this.price.value), {
-          emitEvent: false,
-        });
-      }
-    });
-    this.total.valueChanges.subscribe((val) => {
-      if (!val || Number(val) <= 0) {
-        return;
-      }
+        if (this.price.value && Number(this.price.value) > 0) {
+          this.total.patchValue(Number(val) * Number(this.price.value), {
+            emitEvent: false,
+          });
+        }
+      });
+    this.total.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((val) => {
+        if (!val || Number(val) <= 0) {
+          return;
+        }
 
-      if (this.market.value) {
-        this.amount.patchValue('');
-        return;
-      }
+        if (this.market.value) {
+          this.amount.patchValue('');
+          return;
+        }
 
-      if (this.price.value && Number(this.price.value) > 0) {
-        this.amount.patchValue(Number(val) / Number(this.price.value), {
-          emitEvent: false,
-        });
-      }
-    });
+        if (this.price.value && Number(this.price.value) > 0) {
+          this.amount.patchValue(Number(val) / Number(this.price.value), {
+            emitEvent: false,
+          });
+        }
+      });
 
-    this.facade.buyMultiplicator.subscribe((buyMultiplicator) => {
-      this.buyMultiplicator = buyMultiplicator;
-    });
+    this.facade.buyMultiplicator
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((buyMultiplicator) => {
+        this.buyMultiplicator = buyMultiplicator;
+      });
   }
 
   public onSubmit() {
@@ -225,4 +250,9 @@ export class OrderFormComponent implements OnInit {
     // add standard required error
     return Validators.required(control);
   };
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 }

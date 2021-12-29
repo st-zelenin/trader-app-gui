@@ -3,11 +3,12 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   Output,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { debounceTime, map, startWith } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
 import { BUY_MULTIPLICATORS } from '../../constants';
 import { AppStoreFacade } from '../../store/facade';
 
@@ -17,7 +18,7 @@ import { AppStoreFacade } from '../../store/facade';
   styleUrls: ['./exchange-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExchangeActionsComponent {
+export class ExchangeActionsComponent implements OnDestroy {
   @Input() currencyPairs: string[] = [];
   @Input() balance?: number = 0;
   @Input() currencyLabel!: string;
@@ -34,6 +35,8 @@ export class ExchangeActionsComponent {
 
   public filteredOptions: Observable<string[]>;
 
+  private unsubscribe$ = new Subject<void>();
+
   constructor(private readonly facade: AppStoreFacade) {
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(
       startWith(''),
@@ -42,17 +45,21 @@ export class ExchangeActionsComponent {
       map((value) => this.filterPairs(value))
     );
 
-    this.facade.buyMultiplicator.subscribe((buyMultiplicator) => {
-      if (buyMultiplicator) {
-        this.buyMultiplicatorControl.patchValue(buyMultiplicator, {
-          emitEvent: false,
-        });
-      }
-    });
+    this.facade.buyMultiplicator
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((buyMultiplicator) => {
+        if (buyMultiplicator) {
+          this.buyMultiplicatorControl.patchValue(buyMultiplicator, {
+            emitEvent: false,
+          });
+        }
+      });
 
-    this.buyMultiplicatorControl.valueChanges.subscribe((value) => {
-      this.facade.setBuyMultiplicator(value);
-    });
+    this.buyMultiplicatorControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((value) => {
+        this.facade.setBuyMultiplicator(value);
+      });
   }
 
   public addPair() {
@@ -71,5 +78,10 @@ export class ExchangeActionsComponent {
     return this.currencyPairs.filter((pair) =>
       pair.toLowerCase().includes(filterValue)
     );
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

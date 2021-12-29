@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE, EXCHANGE_URL_PARAMS } from '../constants';
 import { User } from '../models';
 import { AppStoreFacade } from '../store/facade';
@@ -11,7 +13,7 @@ import { UserService } from '../user.service';
   templateUrl: './trading.component.html',
   styleUrls: ['./trading.component.scss'],
 })
-export class TradingComponent implements OnInit {
+export class TradingComponent implements OnInit, OnDestroy {
   public user: User;
   public activeTabIndex: number;
   public exchanges = EXCHANGE;
@@ -21,6 +23,8 @@ export class TradingComponent implements OnInit {
     EXCHANGE_URL_PARAMS.CRYPTO_COM,
     EXCHANGE_URL_PARAMS.COINBASE,
   ];
+
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -33,9 +37,11 @@ export class TradingComponent implements OnInit {
       this.route.snapshot.paramMap.get('tab')!
     );
 
-    this.route.paramMap.subscribe((paramMap) => {
-      this.activeTabIndex = this.tabs.indexOf(paramMap.get('tab')!);
-    });
+    this.route.paramMap
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((paramMap) => {
+        this.activeTabIndex = this.tabs.indexOf(paramMap.get('tab')!);
+      });
   }
 
   ngOnInit(): void {
@@ -71,9 +77,17 @@ export class TradingComponent implements OnInit {
         throw new Error(`unhabdled exchange type: ${exchange}`);
     }
 
-    this.userService.updateUser(this.user).subscribe((data) => {
-      this.user = data;
-      this.facade.setPairs(data);
-    });
+    this.userService
+      .updateUser(this.user)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((data) => {
+        this.user = data;
+        this.facade.setPairs(data);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
 import { Order } from '../../models';
 import { HistoryService } from '../history.service';
@@ -8,7 +10,7 @@ import { HistoryService } from '../history.service';
   templateUrl: './trade-history.component.html',
   styleUrls: ['./trade-history.component.scss'],
 })
-export class TradeHistoryComponent implements OnInit {
+export class TradeHistoryComponent implements OnInit, OnDestroy {
   @Input() pair!: string;
   @Input() exchange!: EXCHANGE;
 
@@ -30,12 +32,14 @@ export class TradeHistoryComponent implements OnInit {
   public sellPrice = 0;
 
   private allOrders: Order[] = [];
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private readonly historyService: HistoryService) {}
 
   ngOnInit(): void {
     this.historyService
       .getHistory(this.exchange, this.pair)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((orders) => {
         this.allOrders = orders.filter(({ status }) => status !== 'cancelled');
         this.orders = this.allOrders;
@@ -86,5 +90,10 @@ export class TradeHistoryComponent implements OnInit {
       order.price /= 1000;
       order.amount *= 1000;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

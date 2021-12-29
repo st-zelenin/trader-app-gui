@@ -1,6 +1,13 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
 import { Balance, NewOrder, Order, PairAverages, Ticker } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
@@ -12,7 +19,9 @@ import { OrderingService } from '../ordering.service';
   templateUrl: './pair-card-content.component.html',
   styleUrls: ['./pair-card-content.component.scss'],
 })
-export class PairCardContentComponent implements OnInit, AfterViewInit {
+export class PairCardContentComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
   @Input() pair!: string;
   @Input() exchange!: EXCHANGE;
   @Input() ticker?: Ticker;
@@ -39,6 +48,8 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   private closeTimeout?: any;
   private openTimeout?: any;
 
+  private unsubscribe$ = new Subject<void>();
+
   constructor(
     private readonly orderingService: OrderingService,
     private readonly historyService: HistoryService,
@@ -62,6 +73,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   public importAll(): void {
     this.historyService
       .importAll(this.exchange, this.pair)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((data) => {
         this.showSnackBar('history imported');
         this.facade.getAnalytics(this.exchange);
@@ -71,6 +83,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   public updateRecent(): void {
     this.historyService
       .updateRecent(this.exchange, this.pair)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((data) => {
         this.showSnackBar('recent history updated');
       });
@@ -93,19 +106,25 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
   }
 
   public cancelOrder(order: Order) {
-    this.orderingService.cancel(this.exchange, order).subscribe(() => {
-      this.facade.getOpenOrders(this.exchange);
-      this.facade.getBalances(this.exchange);
-    });
+    this.orderingService
+      .cancel(this.exchange, order)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.facade.getOpenOrders(this.exchange);
+        this.facade.getBalances(this.exchange);
+      });
   }
 
   public createOrder(order: NewOrder) {
     order.currencyPair = this.pair;
-    this.orderingService.create(this.exchange, order).subscribe(() => {
-      this.isNewOrderExpanded = false;
-      this.facade.getOpenOrders(this.exchange);
-      this.facade.getBalances(this.exchange);
-    });
+    this.orderingService
+      .create(this.exchange, order)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.isNewOrderExpanded = false;
+        this.facade.getOpenOrders(this.exchange);
+        this.facade.getBalances(this.exchange);
+      });
   }
 
   public onPanelOpen() {
@@ -128,5 +147,10 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
     this.closeTimeout = setTimeout(() => {
       this.panelOpenState = false;
     }, 2000);
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
