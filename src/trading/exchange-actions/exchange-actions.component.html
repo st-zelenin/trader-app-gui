@@ -43,7 +43,11 @@
     </mat-form-field>
 
     <span class="label">{{ currencyLabel }}:</span>
-    <span>{{ balance | number: '1.0-2' }}</span>
+    <span matTooltip="available base currency">{{
+      balance | number: '1.0-2'
+    }}</span>
+    /
+    <span matTooltip="estimated total">{{ estimated | number: '1.0-2' }}</span>
     <button
       mat-icon-button
       (click)="refresh.emit()"

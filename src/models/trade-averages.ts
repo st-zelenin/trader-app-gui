@@ -8,7 +8,7 @@ export interface PairAverages {
   sell: Average;
 }
 
-interface Average {
+export interface Average {
   money: number;
   volume: number;
   price: number;

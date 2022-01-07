@@ -8,19 +8,39 @@
         <mat-panel-title>
           <img class="logo" [src]="logoSrc" loading="lazy" />
           <span class="coin-info">
-            <strong>{{ pair }}</strong> / {{ ticker?.last | number: '1.0-10' }}
-            <sup class="change-percentage" [class.down]="priceDown">{{
-              ticker?.change_percentage | number: '1.0-2'
-            }}</sup>
-            / {{ averages?.buy?.price | number: '1.0-10' }} /
-            {{ averages?.sell?.price | number: '1.0-10' }}
+            <strong>{{ pair }}</strong> /
+            <span matTooltip="current price">{{
+              ticker?.last | number: '1.0-10'
+            }}</span>
+            <sup
+              class="change-percentage"
+              [class.down]="priceDown"
+              matTooltip="change percentage"
+              >{{ ticker?.change_percentage | number: '1.0-2' }}</sup
+            >
+            /
+            <span matTooltip="average buy price">{{
+              averages?.buy?.price | number: '1.0-10'
+            }}</span>
+            /
+            <span matTooltip="average sell price">{{
+              averages?.sell?.price | number: '1.0-10'
+            }}</span>
           </span>
         </mat-panel-title>
-        <div class="open-orders">
-          <span class="buy">{{ buyOrders }}</span
-          >/<span class="sell">{{ sellOrders }}</span>
-        </div>
-        <mat-icon class="remove" (click)="removeCard($event)"
+        <sup class="estimated-total" matTooltip="estimated total">{{
+          estimatedTotal | number: '1.0-2'
+        }}</sup>
+        <sup class="open-orders">
+          <span class="buy" matTooltip="total buy orders">{{ buyOrders }}</span
+          >/<span class="sell" matTooltip="total sell orders">{{
+            sellOrders
+          }}</span>
+        </sup>
+        <mat-icon
+          class="remove"
+          (click)="removeCard($event)"
+          matTooltip="remove pair"
           >delete_outline</mat-icon
         >
         <mat-icon class="drag-handle" cdkDragHandle>drag_indicator</mat-icon>

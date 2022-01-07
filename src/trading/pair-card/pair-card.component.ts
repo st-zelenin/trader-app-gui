@@ -10,7 +10,7 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
-import { Filterable, Order, PairAverages, Ticker } from '../../models';
+import { Balance, Filterable, Order, PairAverages, Ticker } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 import { FilteringService } from '../filtering.service';
 
@@ -27,12 +27,14 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
   public panelOpenState = false;
   public ticker?: Ticker;
+  public balance?: Balance;
   public averages?: PairAverages;
   public openOrders: Order[] = [];
   public priceDown = true;
   public buyOrders = 0;
   public sellOrders = 0;
   public logoSrc = '';
+  public estimatedTotal = 0;
 
   public headerColor = 'rgb(255, 255, 255)';
 
@@ -62,6 +64,18 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
           ? this.ticker.change_percentage < 0
           : false;
         this.headerColor = this.updateHeaderColor();
+
+        this.calcEstimatedTotal();
+      });
+
+    const currency = this.pair.split(/_|-/)[0];
+    this.facade
+      .balance(this.exchange, currency)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((balance) => {
+        this.balance = balance;
+
+        this.calcEstimatedTotal();
       });
 
     this.facade
@@ -157,6 +171,14 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   public removeCard(event: Event) {
     event.stopPropagation();
     this.remove.emit(this.pair);
+  }
+
+  private calcEstimatedTotal() {
+    this.estimatedTotal =
+      this.ticker && this.balance
+        ? this.ticker.last * (this.balance.available + this.balance.locked)
+        : 0;
+    console.log(this.pair, this.estimatedTotal, this.ticker, this.balance);
   }
 
   ngOnDestroy(): void {

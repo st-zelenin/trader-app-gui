@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { API_URL, EXCHANGE } from '../constants';
-import { Order } from '../models';
+import { Average, Order } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -49,7 +49,7 @@ export class HistoryService {
         });
       }
       default:
-        throw new Error(`unhabdled exchange type: ${exchange}`);
+        throw new Error(`unhandled exchange type: ${exchange}`);
     }
   }
 
@@ -73,7 +73,35 @@ export class HistoryService {
         });
       }
       default:
-        throw new Error(`unhabdled exchange type: ${exchange}`);
+        throw new Error(`unhandled exchange type: ${exchange}`);
+    }
+  }
+
+  public getRecentBuyAverages(exchange: EXCHANGE, pair: string) {
+    switch (exchange) {
+      case EXCHANGE.GATE_IO: {
+        return this.httpClient.get<Average>(`${API_URL}/analyzeTrades`, {
+          params: { pair },
+        });
+      }
+      case EXCHANGE.CRYPTO_COM: {
+        return this.httpClient.get<Average>(
+          `${API_URL}/crypto_getRecentBuyAverages`,
+          {
+            params: { pair },
+          }
+        );
+      }
+      case EXCHANGE.COINBASE: {
+        return this.httpClient.get<Average>(
+          `${API_URL}/coinbase_getRecentBuyAverages`,
+          {
+            params: { pair },
+          }
+        );
+      }
+      default:
+        throw new Error(`unhandled exchange type: ${exchange}`);
     }
   }
 }

@@ -2,6 +2,7 @@
   [currencyPairs]="(currencyPairs | async) || []"
   [balance]="(baseCurrencyBalance | async)?.available"
   [currencyLabel]="baseCurrency"
+  [estimated]="estimated"
   (addCurrencyPair)="addPair($event)"
   (refresh)="refresh()"
   (filter)="filter()"

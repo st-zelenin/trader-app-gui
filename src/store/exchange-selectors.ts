@@ -62,5 +62,10 @@ export class ExchangeSelectors {
       (state: ExchangeState) => state.balances[currency]
     );
 
+  public balances = createSelector(
+    this.selectState,
+    (state: ExchangeState) => state.balances
+  );
+
   public pairs = createSelector(this.selectState, (state) => state.pairs);
 }

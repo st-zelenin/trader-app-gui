@@ -55,43 +55,25 @@
     </mat-form-field>
   </div>
   <div class="form-row">
-    <button
-      mat-raised-button
-      type="button"
-      (click)="setCurrentPrice()"
-      [disabled]="this.market.value"
-    >
-      Current price
-    </button>
-
     <ng-container *ngIf="side.value === 'buy'; else sell">
-      <button
-        mat-raised-button
-        type="button"
-        (click)="setAverageBuy()"
-        [disabled]="this.market.value"
-      >
-        Avg. buy
-      </button>
+      <mat-button-toggle-group formControlName="priceSource">
+        <mat-button-toggle value="current">current price</mat-button-toggle>
+        <mat-button-toggle value="buy">avg. buy</mat-button-toggle>
+      </mat-button-toggle-group>
     </ng-container>
 
     <ng-template #sell>
-      <button
-        mat-raised-button
-        type="button"
-        (click)="setAverageBuy()"
-        [disabled]="this.market.value"
-      >
-        Avg. buy
-      </button>
-      <button
-        mat-raised-button
-        type="button"
-        (click)="setAverageSell()"
-        [disabled]="this.market.value"
-      >
-        Avg. sell
-      </button>
+      <ng-container>
+        <mat-button-toggle-group formControlName="priceSource">
+          <mat-button-toggle value="current">current price</mat-button-toggle>
+          <mat-button-toggle value="recent" *ngIf="recent && recent.price > 0"
+            >recent</mat-button-toggle
+          >
+          <mat-button-toggle value="buy">avg. buy</mat-button-toggle>
+          <mat-button-toggle value="sell">avg. sell</mat-button-toggle>
+        </mat-button-toggle-group>
+      </ng-container>
+
       <button
         mat-raised-button
         type="button"
@@ -128,11 +110,3 @@
     </button>
   </div>
 </form>
-
-<!-- <p class="form-row">
-        <label>Float label: </label>
-        <mat-radio-group [formControl]="floatLabelControl">
-          <mat-radio-button value="auto">Auto</mat-radio-button>
-          <mat-radio-button value="always">Always</mat-radio-button>
-        </mat-radio-group>
-    </p> -->

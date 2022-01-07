@@ -17,6 +17,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
 import {
+  Average,
   Balance,
   Multiplicator,
   NewOrder,
@@ -34,6 +35,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   @Input() exchange!: EXCHANGE;
   @Input() ticker?: Ticker;
   @Input() averages?: PairAverages;
+  @Input() recent?: Average;
 
   @Input() set balance(balance: Balance | null) {
     this.totalAmount = balance ? balance.available + balance.locked : 0;
@@ -65,6 +67,10 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     return this.orderForm.get('total')!;
   }
 
+  private get priceSource() {
+    return this.orderForm.get('priceSource')!;
+  }
+
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -82,7 +88,8 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       price: ['', this.requiredByMarketType],
       amount: ['', this.requiredByMarketType],
       total: ['', this.requiredByMarketType],
-      market: [false, Validators.required],
+      market: [false],
+      priceSource: [''],
     });
   }
 
@@ -100,6 +107,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((val) => {
         this.enableDisableTotal(this.market.value, val === 'sell');
+        this.priceSource.setValue('');
       });
     this.market.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
@@ -166,6 +174,22 @@ export class OrderFormComponent implements OnInit, OnDestroy {
           });
         }
       });
+    this.priceSource.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((val) => {
+        switch (val) {
+          case 'current':
+            return this.setCurrentPrice();
+          case 'recent':
+            return this.setRecentBuyPrice();
+          case 'buy':
+            return this.setAverageBuy();
+          case 'sell':
+            return this.setAverageSell();
+          default:
+            this.price.setValue('');
+        }
+      });
 
     this.facade.buyMultiplicator
       .pipe(takeUntil(this.unsubscribe$))
@@ -181,21 +205,27 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     this.orderForm.reset({ side });
   }
 
-  public setAverageBuy() {
+  private setAverageBuy() {
     if (this.averages) {
       this.price.setValue(this.averages.buy.price);
     }
   }
 
-  public setAverageSell() {
+  private setAverageSell() {
     if (this.averages) {
       this.price.setValue(this.averages.sell.price);
     }
   }
 
-  public setCurrentPrice() {
+  private setCurrentPrice() {
     if (this.ticker) {
       this.price.setValue(this.ticker.last);
+    }
+  }
+
+  private setRecentBuyPrice() {
+    if (this.recent) {
+      this.price.setValue(this.recent.price);
     }
   }
 
@@ -225,7 +255,11 @@ export class OrderFormComponent implements OnInit, OnDestroy {
 
   public setOneThird() {
     if (this.totalAmount > 0) {
-      this.amount.setValue(this.totalAmount / 3);
+      if (this.priceSource.value === 'recent' && this.recent) {
+        this.amount.setValue(this.recent.volume / 3);
+      } else {
+        this.amount.setValue(this.totalAmount / 3);
+      }
     }
   }
 

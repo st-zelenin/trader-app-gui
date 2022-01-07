@@ -10,8 +10,7 @@
 
 .change-percentage {
   padding: 0 5px;
-  font-size: 10px;
-  font-weight: 600;
+  font-weight: 500;
   color: green;
 
   &.down {
@@ -41,10 +40,9 @@
 }
 
 .open-orders {
-  position: absolute;
-  right: 110px;
-  font-size: 12px;
-  font-weight: 600;
+  padding-right: 90px;
+  // font-size: 11px;
+  font-weight: 500;
 
   .buy {
     color: green;
@@ -68,4 +66,8 @@
 
 .coin-info {
   line-height: 18px;
+}
+
+.estimated-total {
+  padding-right: 10px;
 }

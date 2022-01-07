@@ -10,7 +10,7 @@ import {
 import { interval, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
-import { Balance, OpenOrdersByPairs, Tickers } from '../../models';
+import { Balance, Balances, OpenOrdersByPairs, Tickers } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 import { FilteringService } from '../filtering.service';
 import { SortingService } from '../sorting.service';
@@ -32,9 +32,11 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   public pairs: string[] = [];
   public currencyPairs?: Observable<string[]>;
   public baseCurrencyBalance?: Observable<Balance>;
+  public estimated: number = 0;
 
   private openOrders: OpenOrdersByPairs = {};
   private tickers: Tickers = {};
+  private balances: Balances = {};
   private isSorted = false;
   private notSortedPairs: string[] = [];
   private unsubscribe$ = new Subject<void>();
@@ -75,6 +77,15 @@ export class ExchangeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((tickers) => {
         this.tickers = tickers;
+        this.calcEstimatedTotal();
+      });
+
+    this.facade
+      .balances(this.exchange)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((balances) => {
+        this.balances = balances;
+        this.calcEstimatedTotal();
       });
 
     this.facade.getCurrencyPairs(this.exchange);
@@ -137,6 +148,21 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     this.pairs = this.isSorted
       ? this.sortingService.sort(this.pairs, this.openOrders, this.tickers)
       : [...this.notSortedPairs];
+  }
+
+  private calcEstimatedTotal() {
+    const coins = Object.keys(this.balances);
+    this.estimated = coins.reduce((total, coin) => {
+      const pair =
+        this.exchange === EXCHANGE.COINBASE ? `${coin}-EUR` : `${coin}_USDT`;
+      if (this.tickers[pair]) {
+        total +=
+          this.tickers[pair].last *
+          (this.balances[coin].available + this.balances[coin].locked);
+      }
+
+      return total;
+    }, 0);
   }
 
   ngOnDestroy(): void {

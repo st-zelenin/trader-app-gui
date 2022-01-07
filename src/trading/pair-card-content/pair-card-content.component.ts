@@ -9,7 +9,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
-import { Balance, NewOrder, Order, PairAverages, Ticker } from '../../models';
+import {
+  Average,
+  Balance,
+  NewOrder,
+  Order,
+  PairAverages,
+  Ticker,
+} from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 import { HistoryService } from '../history.service';
 import { OrderingService } from '../ordering.service';
@@ -43,6 +50,7 @@ export class PairCardContentComponent
 
   public balance?: Observable<Balance>;
   public currency = '';
+  public recent?: Average;
 
   public panelOpenState = false;
   private closeTimeout?: any;
@@ -68,6 +76,11 @@ export class PairCardContentComponent
     this.updateTickerInfo();
 
     this.balance = this.facade.balance(this.exchange, this.currency);
+
+    this.historyService
+      .getRecentBuyAverages(this.exchange, this.pair)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((recent) => (this.recent = recent));
   }
 
   public importAll(): void {

@@ -21,6 +21,7 @@ import { AppStoreFacade } from '../../store/facade';
 export class ExchangeActionsComponent implements OnDestroy {
   @Input() currencyPairs: string[] = [];
   @Input() balance?: number = 0;
+  @Input() estimated!: number;
   @Input() currencyLabel!: string;
 
   @Output() addCurrencyPair = new EventEmitter<string>();
