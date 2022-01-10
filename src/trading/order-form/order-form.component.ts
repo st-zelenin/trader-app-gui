@@ -1,3 +1,4 @@
+import { formatNumber } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -72,6 +73,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   private unsubscribe$ = new Subject<void>();
+  private readonly LOCALE = 'en';
 
   constructor(
     private readonly fb: FormBuilder,
@@ -207,32 +209,32 @@ export class OrderFormComponent implements OnInit, OnDestroy {
 
   private setAverageBuy() {
     if (this.averages) {
-      this.price.setValue(this.averages.buy.price);
+      this.setPriceValue(this.averages.buy.price);
     }
   }
 
   private setAverageSell() {
     if (this.averages) {
-      this.price.setValue(this.averages.sell.price);
+      this.setPriceValue(this.averages.sell.price);
     }
   }
 
   private setCurrentPrice() {
     if (this.ticker) {
-      this.price.setValue(this.ticker.last);
+      this.setPriceValue(this.ticker.last);
     }
   }
 
   private setRecentBuyPrice() {
     if (this.recent) {
-      this.price.setValue(this.recent.price);
+      this.setPriceValue(this.recent.price);
     }
   }
 
   public increasePrice(event: Event) {
     event.stopPropagation();
     if (this.buyMultiplicator && this.price.value) {
-      this.price.setValue(
+      this.setPriceValue(
         Number(this.price.value) * (1 + this.buyMultiplicator.value)
       );
     }
@@ -241,7 +243,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   public decreasePrice(event: Event) {
     event.stopPropagation();
     if (this.buyMultiplicator && this.price.value) {
-      this.price.setValue(
+      this.setPriceValue(
         Number(this.price.value) * (1 - this.buyMultiplicator.value)
       );
     }
@@ -249,7 +251,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
 
   public plusPercents(percents: number) {
     if (this.price) {
-      this.price.setValue(Number(this.price.value) * (1 + percents / 100));
+      this.setPriceValue(Number(this.price.value) * (1 + percents / 100));
     }
   }
 
@@ -284,6 +286,12 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     // add standard required error
     return Validators.required(control);
   };
+
+  private setPriceValue(value: number) {
+    this.price.setValue(
+      formatNumber(value, this.LOCALE, '1.0-10').replace(',', '')
+    );
+  }
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
