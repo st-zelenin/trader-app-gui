@@ -1,9 +1,43 @@
 <mat-card-actions>
-  <button mat-raised-button (click)="importAll()">Import all</button>
-  <button mat-raised-button (click)="updateRecent()">Update recent</button>
-  <button mat-raised-button (click)="calcAverages()">Get averages</button>
-  <button mat-raised-button (click)="updateTickerInfo()">Update ticker</button>
-  <!-- <button mat-raised-button (click)="createOrder()">Create order</button> -->
+  <button
+    mat-raised-button
+    (click)="importAll()"
+    type="button"
+    matTooltip="import entire trade history"
+    class="first-action"
+  >
+    <mat-icon>import_export</mat-icon>
+  </button>
+  <button
+    mat-raised-button
+    (click)="updateRecent()"
+    type="button"
+    matTooltip="sync recent trade history"
+  >
+    <mat-icon>history</mat-icon>
+  </button>
+  <button
+    mat-raised-button
+    (click)="calcAverages()"
+    type="button"
+    matTooltip="update averages"
+  >
+    <mat-icon>architecture</mat-icon>
+  </button>
+  <button
+    mat-raised-button
+    (click)="updateTickerInfo()"
+    type="button"
+    matTooltip="update ticker"
+  >
+    <mat-icon>currency_exchange</mat-icon>
+  </button>
+  <button mat-raised-button (click)="sellRecent()" class="sell-recent">
+    sell: recent
+  </button>
+  <button mat-raised-button (click)="buyByMultiplicator()" class="buy-recent">
+    buy: -mult.
+  </button>
 </mat-card-actions>
 
 <mat-expansion-panel
@@ -25,6 +59,7 @@
     [averages]="averages"
     [balance]="balance | async"
     [recent]="recent"
+    [buyMultiplicator]="buyMultiplicator"
     (create)="createOrder($event)"
   >
   </app-order-form>

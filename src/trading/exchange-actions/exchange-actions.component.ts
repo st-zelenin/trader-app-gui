@@ -10,6 +10,7 @@ import { FormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
 import { BUY_MULTIPLICATORS } from '../../constants';
+import { FILTERING_TYPE } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 
 @Component({
@@ -26,10 +27,11 @@ export class ExchangeActionsComponent implements OnDestroy {
 
   @Output() addCurrencyPair = new EventEmitter<string>();
   @Output() refresh = new EventEmitter<void>();
-  @Output() filter = new EventEmitter<void>();
+  @Output() filter = new EventEmitter<FILTERING_TYPE>();
   @Output() sort = new EventEmitter<void>();
 
   public multiplicators = BUY_MULTIPLICATORS;
+  public filteringTypes = FILTERING_TYPE;
 
   public currencyPairControl = new FormControl();
   public buyMultiplicatorControl = new FormControl('');

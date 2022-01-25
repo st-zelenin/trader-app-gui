@@ -28,6 +28,12 @@
             }}</span>
           </span>
         </mat-panel-title>
+        <mat-icon
+          *ngIf="attentionMessage"
+          class="attention"
+          [matTooltip]="attentionMessage"
+          >warning_amber</mat-icon
+        >
         <sup class="estimated-total" matTooltip="estimated total">{{
           estimatedTotal | number: '1.0-2'
         }}</sup>
@@ -52,6 +58,7 @@
         [pair]="pair"
         [ticker]="ticker"
         [averages]="averages"
+        [recent]="recent"
         [openOrders]="openOrders"
         [exchange]="exchange"
       >

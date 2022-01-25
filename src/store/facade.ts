@@ -18,6 +18,7 @@ export class AppStoreFacade {
     [EXCHANGE.GATE_IO]: new ExchangeSelectors(EXCHANGE.GATE_IO),
     [EXCHANGE.CRYPTO_COM]: new ExchangeSelectors(EXCHANGE.CRYPTO_COM),
     [EXCHANGE.COINBASE]: new ExchangeSelectors(EXCHANGE.COINBASE),
+    [EXCHANGE.BYBIT]: new ExchangeSelectors(EXCHANGE.BYBIT),
   };
   private readonly exchangeActions: { [key: string]: ExchangeActions } = {
     [EXCHANGE.GATE_IO]: gateIoActions,

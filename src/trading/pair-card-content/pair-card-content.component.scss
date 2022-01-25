@@ -1,12 +1,29 @@
+$buy-color: rgb(3, 121, 3);
+$sell-color: rgb(204, 84, 84);
+
 table {
   width: 100%;
 }
 
 .side {
-  color: rgb(3, 121, 3);
+  color: $buy-color;
 
   &.sell {
-    color: rgb(204, 84, 84);
+    color: $sell-color;
     font-weight: 600;
   }
+}
+
+.mat-raised-button.first-action:first-child {
+  margin-right: 8px;
+}
+
+.sell-recent {
+  font-size: 12px;
+  color: $sell-color;
+}
+
+.buy-recent {
+  font-size: 12px;
+  color: $buy-color;
 }

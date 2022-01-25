@@ -10,9 +10,17 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
-import { Balance, Filterable, Order, PairAverages, Ticker } from '../../models';
+import {
+  Average,
+  Balance,
+  Filterable,
+  Order,
+  PairAverages,
+  Ticker,
+} from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 import { FilteringService } from '../filtering.service';
+import { HistoryService } from '../history.service';
 
 @Component({
   selector: 'app-pair-card',
@@ -29,6 +37,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   public ticker?: Ticker;
   public balance?: Balance;
   public averages?: PairAverages;
+  public recent?: Average;
   public openOrders: Order[] = [];
   public priceDown = true;
   public buyOrders = 0;
@@ -38,6 +47,8 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
   public headerColor = 'rgb(255, 255, 255)';
 
+  public attentionMessage = '';
+
   private closeTimeout?: any;
   private openTimeout?: any;
 
@@ -45,6 +56,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
   constructor(
     private readonly filteringService: FilteringService,
+    private readonly historyService: HistoryService,
     private readonly facade: AppStoreFacade
   ) {}
 
@@ -99,6 +111,16 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
           this.sellOrders = 0;
           this.openOrders = [];
         }
+
+        this.checkNeedsAttention();
+      });
+
+    this.historyService
+      .getRecentBuyAverages(this.exchange, this.pair)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((recent) => {
+        this.recent = recent;
+        this.checkNeedsAttention();
       });
   }
 
@@ -179,6 +201,21 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
         ? this.ticker.last * (this.balance.available + this.balance.locked)
         : 0;
     console.log(this.pair, this.estimatedTotal, this.ticker, this.balance);
+  }
+
+  private checkNeedsAttention() {
+    this.attentionMessage = '';
+
+    if (this.recent && this.openOrders && this.openOrders.length) {
+      const buyOrders = this.openOrders.filter(({ side }) => side === 'sell');
+      if (buyOrders.length === 1) {
+        const { amount } = buyOrders[0];
+        const targetAmount = this.recent.volume / 3;
+        if (targetAmount / amount > 1.001) {
+          this.attentionMessage = `recent sell diff: ${targetAmount / amount}`;
+        }
+      }
+    }
   }
 
   ngOnDestroy(): void {

@@ -19,7 +19,6 @@
       >
         +
       </button>
-      <!-- [displayWith]="displayFn" -->
       <mat-autocomplete #auto="matAutocomplete">
         <mat-option
           *ngFor="let option of filteredOptions | async"
@@ -58,11 +57,19 @@
     </button>
     <button
       mat-icon-button
-      (click)="filter.emit()"
+      (click)="filter.emit(filteringTypes.MISSING_BUY)"
       type="button"
-      matTooltip="filter"
+      matTooltip="filter by missing buy order"
     >
       <mat-icon>shopping_cart</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      (click)="filter.emit(filteringTypes.ATTENTION_MESSAGE)"
+      type="button"
+      matTooltip="filter by attention message"
+    >
+      <mat-icon>warning_amber</mat-icon>
     </button>
     <button
       mat-icon-button

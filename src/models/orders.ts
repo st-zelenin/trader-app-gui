@@ -1,17 +1,22 @@
+export type OrderSide = 'buy' | 'sell';
+
 export interface Order {
   id: string;
   currencyPair: string;
   createTimestamp: number;
   updateTimestamp: number;
-  side: 'buy' | 'sell';
+  side: OrderSide;
   amount: number;
   price: number;
   status: CommonOrderStatus;
 }
 
-export interface NewOrder {
+export interface NewOrder extends OrderFormValues {
   currencyPair: string;
-  side: 'buy' | 'sell';
+}
+
+export interface OrderFormValues {
+  side: OrderSide;
   amount: string;
   price: string;
   total: string;

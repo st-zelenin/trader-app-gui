@@ -21,11 +21,10 @@ import {
   Average,
   Balance,
   Multiplicator,
-  NewOrder,
+  OrderFormValues,
   PairAverages,
   Ticker,
 } from '../../models';
-import { AppStoreFacade } from '../../store/facade';
 
 @Component({
   selector: 'app-order-form',
@@ -37,15 +36,15 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   @Input() ticker?: Ticker;
   @Input() averages?: PairAverages;
   @Input() recent?: Average;
+  @Input() buyMultiplicator?: Multiplicator = undefined;
 
   @Input() set balance(balance: Balance | null) {
     this.totalAmount = balance ? balance.available + balance.locked : 0;
   }
 
-  @Output() create = new EventEmitter<NewOrder>();
+  @Output() create = new EventEmitter<OrderFormValues>();
 
   public totalAmount = 0;
-  public buyMultiplicator?: Multiplicator = undefined;
   public orderForm: FormGroup;
 
   public get market() {
@@ -75,16 +74,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
   private readonly LOCALE = 'en';
 
-  constructor(
-    private readonly fb: FormBuilder,
-    private readonly facade: AppStoreFacade
-  ) {
-    this.facade.buyMultiplicator
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((buyMultiplicator) => {
-        this.buyMultiplicator = buyMultiplicator;
-      });
-
+  constructor(private readonly fb: FormBuilder) {
     this.orderForm = this.fb.group({
       side: ['buy'],
       price: ['', this.requiredByMarketType],
@@ -191,12 +181,6 @@ export class OrderFormComponent implements OnInit, OnDestroy {
           default:
             this.price.setValue('');
         }
-      });
-
-    this.facade.buyMultiplicator
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((buyMultiplicator) => {
-        this.buyMultiplicator = buyMultiplicator;
       });
   }
 

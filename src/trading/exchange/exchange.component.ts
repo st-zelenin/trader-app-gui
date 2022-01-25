@@ -10,7 +10,13 @@ import {
 import { interval, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
-import { Balance, Balances, OpenOrdersByPairs, Tickers } from '../../models';
+import {
+  Balance,
+  Balances,
+  FILTERING_TYPE,
+  OpenOrdersByPairs,
+  Tickers,
+} from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 import { FilteringService } from '../filtering.service';
 import { SortingService } from '../sorting.service';
@@ -138,8 +144,8 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     this.facade.getBalances(this.exchange);
   }
 
-  public filter() {
-    this.filteringService.toggleFilter();
+  public filter(filteringType: FILTERING_TYPE) {
+    this.filteringService.toggleFilter(filteringType);
   }
 
   public sort() {

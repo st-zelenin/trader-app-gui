@@ -8,12 +8,20 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { EXCHANGE } from '../../constants';
+import {
+  EXCHANGE,
+  ORDER_TOTAL_MONEY,
+  SELL_PRICE_MULTIPLICATOR,
+  SELL_VOLUME_DIVIDER,
+} from '../../constants';
 import {
   Average,
   Balance,
+  Multiplicator,
   NewOrder,
   Order,
+  OrderFormValues,
+  OrderSide,
   PairAverages,
   Ticker,
 } from '../../models';
@@ -33,6 +41,7 @@ export class PairCardContentComponent
   @Input() exchange!: EXCHANGE;
   @Input() ticker?: Ticker;
   @Input() averages?: PairAverages;
+  @Input() recent?: Average;
   @Input() openOrders: Order[] = [];
 
   public displayedColumns: string[] = [
@@ -50,7 +59,7 @@ export class PairCardContentComponent
 
   public balance?: Observable<Balance>;
   public currency = '';
-  public recent?: Average;
+  public buyMultiplicator?: Multiplicator;
 
   public panelOpenState = false;
   private closeTimeout?: any;
@@ -66,7 +75,9 @@ export class PairCardContentComponent
   ) {}
 
   ngAfterViewInit(): void {
-    setTimeout(() => (this.disableAnimation = false));
+    setTimeout(() => {
+      this.disableAnimation = false;
+    });
   }
 
   ngOnInit(): void {
@@ -77,10 +88,11 @@ export class PairCardContentComponent
 
     this.balance = this.facade.balance(this.exchange, this.currency);
 
-    this.historyService
-      .getRecentBuyAverages(this.exchange, this.pair)
+    this.facade.buyMultiplicator
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((recent) => (this.recent = recent));
+      .subscribe((buyMultiplicator) => {
+        this.buyMultiplicator = buyMultiplicator;
+      });
   }
 
   public importAll(): void {
@@ -128,8 +140,8 @@ export class PairCardContentComponent
       });
   }
 
-  public createOrder(order: NewOrder) {
-    order.currencyPair = this.pair;
+  public createOrder(formValues: OrderFormValues) {
+    const order: NewOrder = { ...formValues, currencyPair: this.pair };
     this.orderingService
       .create(this.exchange, order)
       .pipe(takeUntil(this.unsubscribe$))
@@ -160,6 +172,40 @@ export class PairCardContentComponent
     this.closeTimeout = setTimeout(() => {
       this.panelOpenState = false;
     }, 2000);
+  }
+
+  public sellRecent() {
+    if (this.recent) {
+      const price = this.recent.price * SELL_PRICE_MULTIPLICATOR;
+      const amount = this.recent.volume / SELL_VOLUME_DIVIDER;
+      const order = this.getOrderFormValues('sell', price, amount);
+
+      this.createOrder(order);
+    }
+  }
+
+  public buyByMultiplicator() {
+    if (this.ticker && this.buyMultiplicator) {
+      const price = this.ticker.last * (1 - this.buyMultiplicator.value);
+      const amount = ORDER_TOTAL_MONEY / price;
+      const order = this.getOrderFormValues('buy', price, amount);
+
+      this.createOrder(order);
+    }
+  }
+
+  private getOrderFormValues(
+    side: OrderSide,
+    price: number,
+    amount: number
+  ): OrderFormValues {
+    return {
+      market: false,
+      amount: String(amount),
+      price: String(price),
+      side,
+      total: String(amount * price),
+    };
   }
 
   ngOnDestroy(): void {
