@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -26,6 +27,10 @@ import {
   Ticker,
 } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogData,
+} from '../confirmation-dialog/confirmation-dialog.component';
 import { HistoryService } from '../history.service';
 import { OrderingService } from '../ordering.service';
 
@@ -71,7 +76,8 @@ export class PairCardContentComponent
     private readonly orderingService: OrderingService,
     private readonly historyService: HistoryService,
     private readonly snackBar: MatSnackBar,
-    private readonly facade: AppStoreFacade
+    private readonly facade: AppStoreFacade,
+    private dialog: MatDialog
   ) {}
 
   ngAfterViewInit(): void {
@@ -141,6 +147,26 @@ export class PairCardContentComponent
   }
 
   public createOrder(formValues: OrderFormValues) {
+    const message = this.validateOrder(formValues);
+    debugger;
+    if (message) {
+      const dialogRef = this.dialog.open<
+        ConfirmationDialogComponent,
+        ConfirmationDialogData,
+        boolean
+      >(ConfirmationDialogComponent, {
+        data: { title: 'Achtung!', message },
+      });
+
+      dialogRef.afterClosed().subscribe((confirmed) => {
+        if (confirmed) {
+          this.placeNewOrder(formValues);
+        }
+      });
+    }
+  }
+
+  private placeNewOrder(formValues: OrderFormValues) {
     const order: NewOrder = { ...formValues, currencyPair: this.pair };
     this.orderingService
       .create(this.exchange, order)
@@ -150,6 +176,24 @@ export class PairCardContentComponent
         this.facade.getOpenOrders(this.exchange);
         this.facade.getBalances(this.exchange);
       });
+  }
+
+  private validateOrder(formValues: OrderFormValues): string {
+    if (formValues.side === 'sell' && this.ticker) {
+      const price = Number(formValues.price);
+      if (price < this.ticker.last) {
+        return `Current price ${this.ticker.last} is heigher than order SELL price ${price}. Are you shure?`;
+      }
+    }
+
+    if (formValues.side === 'buy' && this.ticker) {
+      const price = Number(formValues.price);
+      if (price > this.ticker.last) {
+        return `Current price ${this.ticker.last} is less than order BUY price ${price}. Are you shure?`;
+      }
+    }
+
+    return '';
   }
 
   public onPanelOpen() {

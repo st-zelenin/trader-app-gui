@@ -7,6 +7,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { interval, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
@@ -15,10 +16,19 @@ import {
   Balances,
   FILTERING_TYPE,
   OpenOrdersByPairs,
+  OrderSide,
   Tickers,
 } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogData,
+} from '../confirmation-dialog/confirmation-dialog.component';
 import { FilteringService } from '../filtering.service';
+import {
+  RecentOrdersComponent,
+  RecentOrdersData,
+} from '../recent-orders/recent-orders.component';
 import { SortingService } from '../sorting.service';
 
 @Component({
@@ -50,7 +60,8 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   constructor(
     private readonly facade: AppStoreFacade,
     private readonly filteringService: FilteringService,
-    private readonly sortingService: SortingService
+    private readonly sortingService: SortingService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -125,19 +136,33 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   }
 
   public removePair(pair: string) {
-    const index = this.notSortedPairs.indexOf(pair);
+    const dialogRef = this.dialog.open<
+      ConfirmationDialogComponent,
+      ConfirmationDialogData,
+      boolean
+    >(ConfirmationDialogComponent, {
+      data: {
+        title: 'Remove currency pair',
+        message: `This will remove ${pair}. Are you sure?`,
+      },
+    });
 
-    if (index > -1) {
-      this.notSortedPairs.splice(index, 1);
-      this.updatePairs.emit({
-        exchange: this.exchange,
-        pairs: this.notSortedPairs,
-      });
-    }
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        const index = this.notSortedPairs.indexOf(pair);
+
+        if (index > -1) {
+          this.notSortedPairs.splice(index, 1);
+          this.updatePairs.emit({
+            exchange: this.exchange,
+            pairs: this.notSortedPairs,
+          });
+        }
+      }
+    });
   }
 
   public refresh() {
-    console.log('refresh');
     this.facade.getAnalytics(this.exchange);
     this.facade.getOpenOrders(this.exchange);
     this.facade.getTickers(this.exchange);
@@ -154,6 +179,17 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     this.pairs = this.isSorted
       ? this.sortingService.sort(this.pairs, this.openOrders, this.tickers)
       : [...this.notSortedPairs];
+  }
+
+  public showRecent(side: OrderSide) {
+    this.dialog.open<RecentOrdersComponent, RecentOrdersData>(
+      RecentOrdersComponent,
+      {
+        width: '80vw',
+        maxWidth: '1000px',
+        data: { exchange: this.exchange, side },
+      }
+    );
   }
 
   private calcEstimatedTotal() {

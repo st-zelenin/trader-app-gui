@@ -14,12 +14,14 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
 @NgModule({
   declarations: [],
   imports: [CommonModule],
@@ -46,6 +48,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatSelectModule,
     MatCheckboxModule,
     MatButtonToggleModule,
+    MatMenuModule,
   ],
 })
 export class SharedModule {}

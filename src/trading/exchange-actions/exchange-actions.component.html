@@ -69,15 +69,31 @@
       type="button"
       matTooltip="filter by attention message"
     >
-      <mat-icon>warning_amber</mat-icon>
+      <mat-icon class="attention">gpp_maybe</mat-icon>
     </button>
     <button
       mat-icon-button
       (click)="sort.emit()"
       type="button"
-      matTooltip="sort"
+      matTooltip="sort by upcoming sell order fulfillment"
     >
       <mat-icon>sort</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      (click)="showRecent.emit('buy')"
+      type="button"
+      matTooltip="show recent filled BUY orders"
+    >
+      <mat-icon class="buy">gpp_good</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      (click)="showRecent.emit('sell')"
+      type="button"
+      matTooltip="show recent filled SELL orders"
+    >
+      <mat-icon class="sell">gpp_good</mat-icon>
     </button>
   </form>
 </mat-card>

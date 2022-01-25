@@ -1,0 +1,22 @@
+@import '../../variables.scss';
+
+table {
+  width: 100%;
+
+  .pair {
+    font-weight: 500;
+  }
+}
+
+.side {
+  text-transform: uppercase;
+  font-weight: 500;
+
+  &.buy {
+    color: $buy-color;
+  }
+
+  &.sell {
+    color: $sell-color;
+  }
+}

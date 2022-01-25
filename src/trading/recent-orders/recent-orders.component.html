@@ -1,0 +1,58 @@
+<h1 mat-dialog-title>
+  Recent {{ LIMIT }} filled
+  <span
+    class="side"
+    [class.sell]="data.side === 'sell'"
+    [class.buy]="data.side === 'buy'"
+    >{{ data.side }}</span
+  >
+  orders:
+</h1>
+<div mat-dialog-content>
+  <table mat-table [dataSource]="orders">
+    <ng-container matColumnDef="pair">
+      <th mat-header-cell *matHeaderCellDef>pair</th>
+      <td mat-cell *matCellDef="let element" class="pair">
+        {{ element.currencyPair }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="ID">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="update_time_ms">
+      <th mat-header-cell *matHeaderCellDef>date</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.updateTimestamp | date: 'yyyy-MM-dd hh:mm a' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef>amount</th>
+      <td mat-cell *matCellDef="let element">{{ element.amount }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="price">
+      <th mat-header-cell *matHeaderCellDef>price</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.price | number: '1.0-10' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef>total</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.amount * +element.price | number: '1.0-10' }}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close cdkFocusInitial>close</button>
+</div>

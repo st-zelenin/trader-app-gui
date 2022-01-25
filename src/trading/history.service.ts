@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { API_URL, EXCHANGE } from '../constants';
-import { Average, Order } from '../models';
+import { Average, Order, OrderSide } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -71,6 +71,37 @@ export class HistoryService {
         return this.httpClient.get<Order[]>(`${API_URL}/coinbase_getHistory`, {
           params: { pair },
         });
+      }
+      default:
+        throw new Error(`unhandled exchange type: ${exchange}`);
+    }
+  }
+
+  public getRecentHistory(exchange: EXCHANGE, side: OrderSide, limit: number) {
+    switch (exchange) {
+      case EXCHANGE.GATE_IO: {
+        return this.httpClient.get<Order[]>(
+          `${API_URL}/gate_getRecentTradeHistory`,
+          {
+            params: { side, limit },
+          }
+        );
+      }
+      case EXCHANGE.CRYPTO_COM: {
+        return this.httpClient.get<Order[]>(
+          `${API_URL}/crypto_getRecentTradeHistory`,
+          {
+            params: { side, limit },
+          }
+        );
+      }
+      case EXCHANGE.COINBASE: {
+        return this.httpClient.get<Order[]>(
+          `${API_URL}/coinbase_getRecentTradeHistory`,
+          {
+            params: { side, limit },
+          }
+        );
       }
       default:
         throw new Error(`unhandled exchange type: ${exchange}`);

@@ -32,7 +32,7 @@
           *ngIf="attentionMessage"
           class="attention"
           [matTooltip]="attentionMessage"
-          >warning_amber</mat-icon
+          >gpp_maybe</mat-icon
         >
         <sup class="estimated-total" matTooltip="estimated total">{{
           estimatedTotal | number: '1.0-2'
@@ -49,9 +49,9 @@
           matTooltip="remove pair"
           >delete_outline</mat-icon
         >
-        <mat-icon class="drag-handle" cdkDragHandle>drag_indicator</mat-icon>
-        <!-- <mat-panel-description>
-        </mat-panel-description> -->
+        <mat-icon class="drag-handle" cdkDragHandle matTooltip="drag & drop"
+          >drag_indicator</mat-icon
+        >
       </mat-expansion-panel-header>
       <app-pair-card-content
         *ngIf="panelOpenState"

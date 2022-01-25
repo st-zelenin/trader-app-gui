@@ -1,3 +1,5 @@
+@import '../../variables.scss';
+
 :host.hidden {
   display: none;
 }
@@ -44,11 +46,11 @@
   font-weight: 500;
 
   .buy {
-    color: green;
+    color: $buy-color;
   }
 
   .sell {
-    color: red;
+    color: $sell-color;
   }
 }
 
@@ -74,5 +76,5 @@
 .attention {
   position: absolute;
   right: 190px;
-  color: darkorange;
+  color: $warning-color;
 }
