@@ -1,6 +1,7 @@
 import { ActionCreator, Creator, TypedAction } from '@ngrx/store/src/models';
 import { EXCHANGE } from 'src/constants';
 import { AllAverages, Balances, OpenOrdersByPairs, Tickers } from '../models';
+import { actions as bybitActions, BybitEffects } from './bybit';
 import { actions as coinbaseActions, CoinbaseEffects } from './coinbase';
 import { actions as cryptoComActions, CryptoComEffects } from './crypto-com';
 import { createExchangeReducer } from './exchange-reducer';
@@ -45,6 +46,7 @@ export interface AppState {
   gate_io: ExchangeState;
   crypto_com: ExchangeState;
   coinbase: ExchangeState;
+  bybit: ExchangeState;
   shared: SharedState;
 }
 
@@ -53,11 +55,13 @@ export const effects = [
   CryptoComEffects,
   SharedEffects,
   CoinbaseEffects,
+  BybitEffects,
 ];
 
 export const reducers = {
   gate_io: createExchangeReducer(EXCHANGE.GATE_IO, gateIoActions),
   crypto_com: createExchangeReducer(EXCHANGE.CRYPTO_COM, cryptoComActions),
   coinbase: createExchangeReducer(EXCHANGE.COINBASE, coinbaseActions),
+  bybit: createExchangeReducer(EXCHANGE.BYBIT, bybitActions),
   shared: sharedReducer,
 };

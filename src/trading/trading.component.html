@@ -24,4 +24,11 @@
       (updatePairs)="updateUser($event)"
     ></app-exchange>
   </mat-tab>
+  <mat-tab label="Bybit">
+    <app-exchange
+      [exchange]="exchanges.BYBIT"
+      baseCurrency="USDT"
+      (updatePairs)="updateUser($event)"
+    ></app-exchange>
+  </mat-tab>
 </mat-tab-group>

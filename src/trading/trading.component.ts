@@ -22,6 +22,7 @@ export class TradingComponent implements OnInit, OnDestroy {
     EXCHANGE_URL_PARAMS.GATE_IO,
     EXCHANGE_URL_PARAMS.CRYPTO_COM,
     EXCHANGE_URL_PARAMS.COINBASE,
+    EXCHANGE_URL_PARAMS.BYBIT,
   ];
 
   private unsubscribe$ = new Subject<void>();
@@ -72,6 +73,9 @@ export class TradingComponent implements OnInit, OnDestroy {
         break;
       case EXCHANGE.COINBASE:
         this.user.coinbase_pairs = pairs;
+        break;
+      case EXCHANGE.BYBIT:
+        this.user.bybit_pairs = pairs;
         break;
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);

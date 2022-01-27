@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { EXCHANGE } from '../constants';
 import { Multiplicator, User } from '../models';
+import { actions as bybitActions } from './bybit';
 import { actions as coinbaseActions } from './coinbase';
 import { actions as cryptoComActions } from './crypto-com';
 import { ExchangeSelectors } from './exchange-selectors';
@@ -24,6 +25,7 @@ export class AppStoreFacade {
     [EXCHANGE.GATE_IO]: gateIoActions,
     [EXCHANGE.CRYPTO_COM]: cryptoComActions,
     [EXCHANGE.COINBASE]: coinbaseActions,
+    [EXCHANGE.BYBIT]: bybitActions,
   };
 
   constructor(private store: Store<AppState>) {}
@@ -86,6 +88,7 @@ export class AppStoreFacade {
     this.store.dispatch(
       coinbaseActions.setPairs({ pairs: user.coinbase_pairs })
     );
+    this.store.dispatch(bybitActions.setPairs({ pairs: user.bybit_pairs }));
   }
 
   public setBuyMultiplicator(buyMultiplicator: Multiplicator) {

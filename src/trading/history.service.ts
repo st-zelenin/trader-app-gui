@@ -28,6 +28,11 @@ export class HistoryService {
           params: { pair },
         });
       }
+      case EXCHANGE.BYBIT: {
+        return this.httpClient.get(`${API_URL}/bybit_importHistory`, {
+          params: { pair },
+        });
+      }
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);
     }
@@ -47,6 +52,9 @@ export class HistoryService {
         return this.httpClient.get(`${API_URL}/coinbase_updateTradeHistory`, {
           params: { pair },
         });
+      }
+      case EXCHANGE.BYBIT: {
+        return this.httpClient.get(`${API_URL}/bybit_updateTradeHistory`);
       }
       default:
         throw new Error(`unhandled exchange type: ${exchange}`);
@@ -69,6 +77,11 @@ export class HistoryService {
       }
       case EXCHANGE.COINBASE: {
         return this.httpClient.get<Order[]>(`${API_URL}/coinbase_getHistory`, {
+          params: { pair },
+        });
+      }
+      case EXCHANGE.BYBIT: {
+        return this.httpClient.get<Order[]>(`${API_URL}/bybit_getHistory`, {
           params: { pair },
         });
       }
@@ -103,6 +116,14 @@ export class HistoryService {
           }
         );
       }
+      case EXCHANGE.BYBIT: {
+        return this.httpClient.get<Order[]>(
+          `${API_URL}/bybit_getRecentTradeHistory`,
+          {
+            params: { side, limit },
+          }
+        );
+      }
       default:
         throw new Error(`unhandled exchange type: ${exchange}`);
     }
@@ -126,6 +147,14 @@ export class HistoryService {
       case EXCHANGE.COINBASE: {
         return this.httpClient.get<Average>(
           `${API_URL}/coinbase_getRecentBuyAverages`,
+          {
+            params: { pair },
+          }
+        );
+      }
+      case EXCHANGE.BYBIT: {
+        return this.httpClient.get<Average>(
+          `${API_URL}/bybit_getRecentBuyAverages`,
           {
             params: { pair },
           }

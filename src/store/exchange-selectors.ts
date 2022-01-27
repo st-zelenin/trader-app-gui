@@ -13,6 +13,8 @@ export class ExchangeSelectors {
         return state.crypto_com;
       case EXCHANGE.COINBASE:
         return state.coinbase;
+      case EXCHANGE.BYBIT:
+        return state.bybit;
       default:
         throw new Error(`unhandled exchange: ${this.exchange}`);
     }

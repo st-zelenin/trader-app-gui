@@ -27,6 +27,11 @@ export class OrderingService {
           id: order.id,
         });
       }
+      case EXCHANGE.BYBIT: {
+        return this.httpClient.post(`${API_URL}/bybit_cancelOrder`, {
+          id: order.id,
+        });
+      }
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);
     }
@@ -44,6 +49,9 @@ export class OrderingService {
       }
       case EXCHANGE.COINBASE: {
         return this.httpClient.post(`${API_URL}/coinbase_createOrder`, order);
+      }
+      case EXCHANGE.BYBIT: {
+        return this.httpClient.post(`${API_URL}/bybit_createOrder`, order);
       }
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);

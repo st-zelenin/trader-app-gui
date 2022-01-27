@@ -115,13 +115,14 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
         this.checkNeedsAttention();
       });
 
-    this.historyService
-      .getRecentBuyAverages(this.exchange, this.pair)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((recent) => {
-        this.recent = recent;
-        this.checkNeedsAttention();
-      });
+    // TODO: mode this logic to BE
+    // this.historyService
+    //   .getRecentBuyAverages(this.exchange, this.pair)
+    //   .pipe(takeUntil(this.unsubscribe$))
+    //   .subscribe((recent) => {
+    //     this.recent = recent;
+    //     this.checkNeedsAttention();
+    //   });
   }
 
   public get isRed() {
@@ -200,7 +201,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       this.ticker && this.balance
         ? this.ticker.last * (this.balance.available + this.balance.locked)
         : 0;
-    console.log(this.pair, this.estimatedTotal, this.ticker, this.balance);
+    // console.log(this.pair, this.estimatedTotal, this.ticker, this.balance);
   }
 
   private checkNeedsAttention() {

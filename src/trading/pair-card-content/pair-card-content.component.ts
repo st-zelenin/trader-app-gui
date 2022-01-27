@@ -63,7 +63,6 @@ export class PairCardContentComponent
   public isNewOrderExpanded = false;
 
   public balance?: Observable<Balance>;
-  public currency = '';
   public buyMultiplicator?: Multiplicator;
 
   public panelOpenState = false;
@@ -87,12 +86,16 @@ export class PairCardContentComponent
   }
 
   ngOnInit(): void {
-    this.currency = this.pair.split(/_|-/)[0];
+    // TODO: remove this dirty hack
+    const currency =
+      this.exchange === EXCHANGE.BYBIT
+        ? this.pair.replace('USDT', '')
+        : this.pair.split(/_|-/)[0];
 
     this.calcAverages();
     this.updateTickerInfo();
 
-    this.balance = this.facade.balance(this.exchange, this.currency);
+    this.balance = this.facade.balance(this.exchange, currency);
 
     this.facade.buyMultiplicator
       .pipe(takeUntil(this.unsubscribe$))
@@ -148,7 +151,6 @@ export class PairCardContentComponent
 
   public createOrder(formValues: OrderFormValues) {
     const message = this.validateOrder(formValues);
-    debugger;
     if (message) {
       const dialogRef = this.dialog.open<
         ConfirmationDialogComponent,
@@ -163,6 +165,8 @@ export class PairCardContentComponent
           this.placeNewOrder(formValues);
         }
       });
+    } else {
+      this.placeNewOrder(formValues);
     }
   }
 
