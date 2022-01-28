@@ -11,6 +11,7 @@ export const createExchangeReducer = (
     analytics: {},
     openOrders: {},
     balances: {},
+    recentBuyAverages: {},
     pairs: [],
     currencyPairs: [],
   };
@@ -40,6 +41,10 @@ export const createExchangeReducer = (
     on(actions.setCurrencyPairs, (state, { currencyPairs }) => {
       console.log(exchange, 'set currency pairs', currencyPairs);
       return { ...state, currencyPairs };
+    }),
+    on(actions.setRecentBuyAverages, (state, { recentBuyAverages }) => {
+      console.log(exchange, 'set recent BUY averages', recentBuyAverages);
+      return { ...state, recentBuyAverages };
     })
   );
 };

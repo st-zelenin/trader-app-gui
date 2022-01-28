@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { API_URL } from '../constants';
 import {
   AllAverages,
+  Averages,
   Balances,
   ExchangeService,
   OpenOrdersByPairs,
@@ -34,6 +35,12 @@ export class BybitService implements ExchangeService {
   public getAllOpenOrders() {
     return this.httpClient.get<OpenOrdersByPairs>(
       `${API_URL}/bybit_getOpenOrders`
+    );
+  }
+
+  public getRecentBuyAverages() {
+    return this.httpClient.get<Averages>(
+      `${API_URL}/bybit_getRecentBuyAverages`
     );
   }
 }

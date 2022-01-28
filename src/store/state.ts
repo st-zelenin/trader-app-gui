@@ -1,6 +1,12 @@
 import { ActionCreator, Creator, TypedAction } from '@ngrx/store/src/models';
 import { EXCHANGE } from 'src/constants';
-import { AllAverages, Balances, OpenOrdersByPairs, Tickers } from '../models';
+import {
+  AllAverages,
+  Averages,
+  Balances,
+  OpenOrdersByPairs,
+  Tickers,
+} from '../models';
 import { actions as bybitActions, BybitEffects } from './bybit';
 import { actions as coinbaseActions, CoinbaseEffects } from './coinbase';
 import { actions as cryptoComActions, CryptoComEffects } from './crypto-com';
@@ -27,6 +33,9 @@ export interface ExchangeActions {
   getBalances: NoPropsAction;
   getBalancesError: NoPropsAction;
   setBalances: ActionWithProps<{ balances: Balances }>;
+  getRecentBuyAverages: NoPropsAction;
+  getRecentBuyAveragesError: NoPropsAction;
+  setRecentBuyAverages: ActionWithProps<{ recentBuyAverages: Averages }>;
   getCurrencyPairs: NoPropsAction;
   getCurrencyPairsError: NoPropsAction;
   setCurrencyPairs: ActionWithProps<{ currencyPairs: string[] }>;
@@ -38,6 +47,7 @@ export interface ExchangeState {
   analytics: AllAverages;
   openOrders: OpenOrdersByPairs;
   balances: Balances;
+  recentBuyAverages: Averages;
   pairs: string[];
   currencyPairs: string[];
 }

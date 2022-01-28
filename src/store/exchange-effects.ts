@@ -74,4 +74,18 @@ export class ExchangeEffects {
       })
     )
   );
+
+  getRecentBuyAverages = createEffect(() =>
+    this.actions.pipe(
+      ofType(this.exchangeActions.getRecentBuyAverages),
+      mergeMap(() => this.exchangeService.getRecentBuyAverages()),
+      map((recentBuyAverages) =>
+        this.exchangeActions.setRecentBuyAverages({ recentBuyAverages })
+      ),
+      catchError((err) => {
+        console.log(err);
+        return of(this.exchangeActions.getRecentBuyAveragesError());
+      })
+    )
+  );
 }

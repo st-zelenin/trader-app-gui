@@ -45,6 +45,10 @@ export class AppStoreFacade {
     this.store.select(
       this.exchangeSelectors[exchange].pairOpenOrders(currencyPair)
     );
+  public pairRecentBuyAverages = (exchange: EXCHANGE, currencyPair: string) =>
+    this.store.select(
+      this.exchangeSelectors[exchange].pairRecentBuyAverages(currencyPair)
+    );
   public currencyPairs = (exchange: EXCHANGE) =>
     this.store.select(this.exchangeSelectors[exchange].currencyPairs);
   public balance = (exchange: EXCHANGE, currency: string) =>
@@ -61,6 +65,12 @@ export class AppStoreFacade {
   public getAnalytics(exchange: EXCHANGE) {
     return this.store.dispatch(
       this.exchangeActions[exchange].getAllAnalytics()
+    );
+  }
+
+  public getRecentBuyAverages(exchange: EXCHANGE) {
+    return this.store.dispatch(
+      this.exchangeActions[exchange].getRecentBuyAverages()
     );
   }
 

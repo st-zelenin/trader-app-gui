@@ -1,6 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import {
   AllAverages,
+  Averages,
   Balances,
   OpenOrdersByPairs,
   Tickers,
@@ -29,6 +30,10 @@ export enum ACTIONS {
   SET_CURRENCY_PAIRS = '[gate.io][Currency Pairs] set currency pairs',
 
   SET_PAIRS = '[gate.io][Pairs] set pairs',
+
+  GET_RECENT_BUY_AVERAGES = '[gate.io][Recent] get recent buy averages',
+  GET_RECENT_BUY_AVERAGES_ERROR = '[gate.io][Recent] get recent buy averages error',
+  SET_RECENT_BUY_AVERAGES = '[gate.io][Recent] set recent buy averages',
 }
 
 const getTickers = createAction(ACTIONS.GET_ALL_TICKERS);
@@ -78,6 +83,17 @@ const setCurrencyPairs = createAction(
 
 const setPairs = createAction(ACTIONS.SET_PAIRS, props<{ pairs: string[] }>());
 
+const getRecentBuyAverages = createAction(ACTIONS.GET_RECENT_BUY_AVERAGES);
+
+const getRecentBuyAveragesError = createAction(
+  ACTIONS.GET_RECENT_BUY_AVERAGES_ERROR
+);
+
+const setRecentBuyAverages = createAction(
+  ACTIONS.SET_RECENT_BUY_AVERAGES,
+  props<{ recentBuyAverages: Averages }>()
+);
+
 export const actions: ExchangeActions = {
   getTickers,
   getTickersError,
@@ -95,4 +111,7 @@ export const actions: ExchangeActions = {
   getCurrencyPairsError,
   setCurrencyPairs,
   setPairs,
+  getRecentBuyAverages,
+  getRecentBuyAveragesError,
+  setRecentBuyAverages,
 };

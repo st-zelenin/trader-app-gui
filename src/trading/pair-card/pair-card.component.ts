@@ -115,14 +115,13 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
         this.checkNeedsAttention();
       });
 
-    // TODO: mode this logic to BE
-    // this.historyService
-    //   .getRecentBuyAverages(this.exchange, this.pair)
-    //   .pipe(takeUntil(this.unsubscribe$))
-    //   .subscribe((recent) => {
-    //     this.recent = recent;
-    //     this.checkNeedsAttention();
-    //   });
+    this.facade
+      .pairRecentBuyAverages(this.exchange, this.pair)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((recent) => {
+        this.recent = recent;
+        this.checkNeedsAttention();
+      });
   }
 
   public get isRed() {

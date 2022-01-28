@@ -69,5 +69,11 @@ export class ExchangeSelectors {
     (state: ExchangeState) => state.balances
   );
 
+  public pairRecentBuyAverages = (currencyPair: string) =>
+    createSelector(
+      this.selectState,
+      (state: ExchangeState) => state.recentBuyAverages[currencyPair]
+    );
+
   public pairs = createSelector(this.selectState, (state) => state.pairs);
 }

@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { Balances } from './balances';
 import { OpenOrdersByPairs } from './orders';
 import { Tickers } from './tickers';
-import { AllAverages } from './trade-averages';
+import { AllAverages, Averages } from './trade-averages';
 
 export interface ExchangeService {
   getTickers(): Observable<Tickers>;
@@ -10,4 +10,5 @@ export interface ExchangeService {
   getCurrencyPairs(): Observable<string[]>;
   getBalances(): Observable<Balances>;
   getAverages(): Observable<AllAverages>;
+  getRecentBuyAverages(): Observable<Averages>;
 }

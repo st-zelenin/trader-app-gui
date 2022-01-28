@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { API_URL } from '../constants';
 import {
   AllAverages,
+  Averages,
   Balances,
   ExchangeService,
   GateIoCurrencyPair,
@@ -46,5 +47,9 @@ export class GateIoService implements ExchangeService {
 
   public getAverages() {
     return this.httpClient.get<AllAverages>(`${API_URL}/getAverages`);
+  }
+
+  public getRecentBuyAverages() {
+    return this.httpClient.get<Averages>(`${API_URL}/analyzeTrades`);
   }
 }

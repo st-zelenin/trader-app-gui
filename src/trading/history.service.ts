@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { API_URL, EXCHANGE } from '../constants';
-import { Average, Order, OrderSide } from '../models';
+import { Order, OrderSide } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -121,42 +121,6 @@ export class HistoryService {
           `${API_URL}/bybit_getRecentTradeHistory`,
           {
             params: { side, limit },
-          }
-        );
-      }
-      default:
-        throw new Error(`unhandled exchange type: ${exchange}`);
-    }
-  }
-
-  public getRecentBuyAverages(exchange: EXCHANGE, pair: string) {
-    switch (exchange) {
-      case EXCHANGE.GATE_IO: {
-        return this.httpClient.get<Average>(`${API_URL}/analyzeTrades`, {
-          params: { pair },
-        });
-      }
-      case EXCHANGE.CRYPTO_COM: {
-        return this.httpClient.get<Average>(
-          `${API_URL}/crypto_getRecentBuyAverages`,
-          {
-            params: { pair },
-          }
-        );
-      }
-      case EXCHANGE.COINBASE: {
-        return this.httpClient.get<Average>(
-          `${API_URL}/coinbase_getRecentBuyAverages`,
-          {
-            params: { pair },
-          }
-        );
-      }
-      case EXCHANGE.BYBIT: {
-        return this.httpClient.get<Average>(
-          `${API_URL}/bybit_getRecentBuyAverages`,
-          {
-            params: { pair },
           }
         );
       }

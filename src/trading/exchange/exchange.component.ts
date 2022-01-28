@@ -106,6 +106,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
       });
 
     this.facade.getCurrencyPairs(this.exchange);
+    this.facade.getRecentBuyAverages(this.exchange);
 
     this.currencyPairs = this.facade.currencyPairs(this.exchange);
     this.baseCurrencyBalance = this.facade.balance(

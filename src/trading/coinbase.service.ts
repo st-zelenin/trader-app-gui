@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { API_URL } from '../constants';
 import {
   AllAverages,
+  Averages,
   Balances,
   ExchangeService,
   OpenOrdersByPairs,
@@ -37,5 +38,11 @@ export class CoinbaseService implements ExchangeService {
 
   public getAverages() {
     return this.httpClient.get<AllAverages>(`${API_URL}/coinbase_getAverages`);
+  }
+
+  public getRecentBuyAverages() {
+    return this.httpClient.get<Averages>(
+      `${API_URL}/coinbase_getRecentBuyAverages`
+    );
   }
 }
