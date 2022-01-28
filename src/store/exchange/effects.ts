@@ -1,8 +1,19 @@
+import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { ExchangeService } from '../models';
-import { ExchangeActions } from './state';
+import { ExchangeService } from '../../models';
+import { BybitService } from '../../trading/bybit.service';
+import { CoinbaseService } from '../../trading/coinbase.service';
+import { CryptoComService } from '../../trading/crypto-com.service';
+import { GateIoService } from '../../trading/gate-io.service';
+import {
+  BYBIT_ACTIONS,
+  COINBASE_ACTIONS,
+  CRYPTO_COM_ACTIONS,
+  GATE_IO_ACTIONS,
+} from '../models';
+import { ExchangeActions } from './actions';
 
 export class ExchangeEffects {
   constructor(
@@ -88,4 +99,48 @@ export class ExchangeEffects {
       })
     )
   );
+}
+
+@Injectable()
+export class BybitEffects extends ExchangeEffects {
+  constructor(
+    actions: Actions,
+    exchangeService: BybitService,
+    @Inject(BYBIT_ACTIONS) exchangeActions: ExchangeActions
+  ) {
+    super(actions, exchangeService, exchangeActions);
+  }
+}
+
+@Injectable()
+export class CoinbaseEffects extends ExchangeEffects {
+  constructor(
+    actions: Actions,
+    exchangeService: CoinbaseService,
+    @Inject(COINBASE_ACTIONS) exchangeActions: ExchangeActions
+  ) {
+    super(actions, exchangeService, exchangeActions);
+  }
+}
+
+@Injectable()
+export class CryptoComEffects extends ExchangeEffects {
+  constructor(
+    actions: Actions,
+    exchangeService: CryptoComService,
+    @Inject(CRYPTO_COM_ACTIONS) exchangeActions: ExchangeActions
+  ) {
+    super(actions, exchangeService, exchangeActions);
+  }
+}
+
+@Injectable()
+export class GateIoEffects extends ExchangeEffects {
+  constructor(
+    actions: Actions,
+    exchangeService: GateIoService,
+    @Inject(GATE_IO_ACTIONS) exchangeActions: ExchangeActions
+  ) {
+    super(actions, exchangeService, exchangeActions);
+  }
 }

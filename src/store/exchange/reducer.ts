@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
-import { EXCHANGE } from '../constants';
-import { ExchangeActions, ExchangeState } from './state';
+import { EXCHANGE } from '../../constants';
+import { ExchangeState } from '../models';
+import { ExchangeActions } from './actions';
 
 export const createExchangeReducer = (
   exchange: EXCHANGE,

@@ -9,7 +9,7 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { SharedModule } from '../shared/shared.module';
-import { effects, reducers } from '../store/state';
+import { effects, exchangeActionsProviders, reducers } from '../store';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
@@ -56,6 +56,7 @@ import { AppComponent } from './app.component';
       useClass: MsalInterceptor,
       multi: true,
     },
+    ...exchangeActionsProviders,
     MsalGuard,
   ],
   bootstrap: [AppComponent],

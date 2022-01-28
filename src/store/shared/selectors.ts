@@ -1,5 +1,5 @@
 import { createSelector } from '@ngrx/store';
-import { AppState } from '../state';
+import { AppState } from '../models';
 import { SharedState } from './state';
 
 const selectState = (state: AppState) => state.shared;

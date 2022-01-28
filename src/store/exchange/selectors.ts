@@ -1,6 +1,6 @@
 import { createSelector } from '@ngrx/store';
-import { EXCHANGE } from '../constants';
-import { AppState, ExchangeState } from './state';
+import { EXCHANGE } from '../../constants';
+import { AppState, ExchangeState } from '../models';
 
 export class ExchangeSelectors {
   constructor(private readonly exchange: EXCHANGE) {}

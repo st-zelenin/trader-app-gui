@@ -1,15 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { EXCHANGE } from '../constants';
 import { Multiplicator, User } from '../models';
-import { actions as bybitActions } from './bybit';
-import { actions as coinbaseActions } from './coinbase';
-import { actions as cryptoComActions } from './crypto-com';
-import { ExchangeSelectors } from './exchange-selectors';
-import { actions as gateIoActions } from './gate-io';
-import * as sharedActions from './shared/actions';
-import * as sharedSelectors from './shared/selectors';
-import { AppState, ExchangeActions } from './state';
+import { ExchangeActions, ExchangeSelectors } from './exchange';
+import {
+  AppState,
+  BYBIT_ACTIONS,
+  COINBASE_ACTIONS,
+  CRYPTO_COM_ACTIONS,
+  GATE_IO_ACTIONS,
+} from './models';
+import { sharedActions, sharedSelectors } from './shared';
 
 @Injectable({
   providedIn: 'root',
@@ -21,14 +22,22 @@ export class AppStoreFacade {
     [EXCHANGE.COINBASE]: new ExchangeSelectors(EXCHANGE.COINBASE),
     [EXCHANGE.BYBIT]: new ExchangeSelectors(EXCHANGE.BYBIT),
   };
-  private readonly exchangeActions: { [key: string]: ExchangeActions } = {
-    [EXCHANGE.GATE_IO]: gateIoActions,
-    [EXCHANGE.CRYPTO_COM]: cryptoComActions,
-    [EXCHANGE.COINBASE]: coinbaseActions,
-    [EXCHANGE.BYBIT]: bybitActions,
-  };
+  private readonly exchangeActions: { [key: string]: ExchangeActions };
 
-  constructor(private store: Store<AppState>) {}
+  constructor(
+    private store: Store<AppState>,
+    @Inject(GATE_IO_ACTIONS) gateIoActions: ExchangeActions,
+    @Inject(COINBASE_ACTIONS) coinbaseActions: ExchangeActions,
+    @Inject(CRYPTO_COM_ACTIONS) cryptoComActions: ExchangeActions,
+    @Inject(BYBIT_ACTIONS) bybitActions: ExchangeActions
+  ) {
+    this.exchangeActions = {
+      [EXCHANGE.GATE_IO]: gateIoActions,
+      [EXCHANGE.CRYPTO_COM]: cryptoComActions,
+      [EXCHANGE.COINBASE]: coinbaseActions,
+      [EXCHANGE.BYBIT]: bybitActions,
+    };
+  }
 
   public buyMultiplicator = this.store.select(sharedSelectors.buyMultiplicator);
   public pairs = (exchange: EXCHANGE) =>
@@ -91,14 +100,22 @@ export class AppStoreFacade {
   }
 
   public setPairs(user: User) {
-    this.store.dispatch(gateIoActions.setPairs({ pairs: user.pairs }));
     this.store.dispatch(
-      cryptoComActions.setPairs({ pairs: user.crypto_pairs })
+      this.exchangeActions[EXCHANGE.GATE_IO].setPairs({ pairs: user.pairs })
     );
     this.store.dispatch(
-      coinbaseActions.setPairs({ pairs: user.coinbase_pairs })
+      this.exchangeActions[EXCHANGE.CRYPTO_COM].setPairs({
+        pairs: user.crypto_pairs,
+      })
     );
-    this.store.dispatch(bybitActions.setPairs({ pairs: user.bybit_pairs }));
+    this.store.dispatch(
+      this.exchangeActions[EXCHANGE.COINBASE].setPairs({
+        pairs: user.coinbase_pairs,
+      })
+    );
+    this.store.dispatch(
+      this.exchangeActions[EXCHANGE.BYBIT].setPairs({ pairs: user.bybit_pairs })
+    );
   }
 
   public setBuyMultiplicator(buyMultiplicator: Multiplicator) {
