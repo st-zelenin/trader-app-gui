@@ -8,7 +8,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 import {
   EXCHANGE,
   ORDER_TOTAL_MONEY,
@@ -24,6 +24,7 @@ import {
   OrderFormValues,
   OrderSide,
   PairAverages,
+  Product,
   Ticker,
 } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
@@ -63,6 +64,7 @@ export class PairCardContentComponent
   public isNewOrderExpanded = false;
 
   public balance?: Observable<Balance>;
+  public product?: Observable<Product>;
   public buyMultiplicator?: Multiplicator;
 
   public panelOpenState = false;
@@ -96,6 +98,9 @@ export class PairCardContentComponent
     this.updateTickerInfo();
 
     this.balance = this.facade.balance(this.exchange, currency);
+    this.product = this.facade
+      .product(this.exchange, this.pair)
+      .pipe(tap(console.log));
 
     this.facade.buyMultiplicator
       .pipe(takeUntil(this.unsubscribe$))
@@ -179,6 +184,7 @@ export class PairCardContentComponent
         this.isNewOrderExpanded = false;
         this.facade.getOpenOrders(this.exchange);
         this.facade.getBalances(this.exchange);
+        this.facade.getRecentBuyAverages(this.exchange);
       });
   }
 

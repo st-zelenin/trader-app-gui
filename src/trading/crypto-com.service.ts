@@ -7,6 +7,7 @@ import {
   Balances,
   ExchangeService,
   OpenOrdersByPairs,
+  Products,
   Tickers,
 } from '../models';
 
@@ -42,5 +43,9 @@ export class CryptoComService implements ExchangeService {
     return this.httpClient.get<Averages>(
       `${API_URL}/crypto_getRecentBuyAverages`
     );
+  }
+
+  public getProducts() {
+    return this.httpClient.get<Products>(`${API_URL}/crypto_getProducts`);
   }
 }

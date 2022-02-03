@@ -66,6 +66,8 @@ export class AppStoreFacade {
     );
   public balances = (exchange: EXCHANGE) =>
     this.store.select(this.exchangeSelectors[exchange].balances);
+  public product = (exchange: EXCHANGE, currency: string) =>
+    this.store.select(this.exchangeSelectors[exchange].product(currency));
 
   public getTickers(exchange: EXCHANGE) {
     return this.store.dispatch(this.exchangeActions[exchange].getTickers());
@@ -97,6 +99,10 @@ export class AppStoreFacade {
     return this.store.dispatch(
       this.exchangeActions[exchange].getCurrencyPairs()
     );
+  }
+
+  public getProducts(exchange: EXCHANGE) {
+    return this.store.dispatch(this.exchangeActions[exchange].getProducts());
   }
 
   public setPairs(user: User) {

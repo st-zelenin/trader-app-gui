@@ -54,7 +54,9 @@ export class HistoryService {
         });
       }
       case EXCHANGE.BYBIT: {
-        return this.httpClient.get(`${API_URL}/bybit_updateTradeHistory`);
+        return this.httpClient.get(`${API_URL}/bybit_updateTradeHistory`, {
+          params: { pair },
+        });
       }
       default:
         throw new Error(`unhandled exchange type: ${exchange}`);

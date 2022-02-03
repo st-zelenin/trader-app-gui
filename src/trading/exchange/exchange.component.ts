@@ -105,8 +105,8 @@ export class ExchangeComponent implements OnInit, OnDestroy {
         this.calcEstimatedTotal();
       });
 
+    this.facade.getProducts(this.exchange);
     this.facade.getCurrencyPairs(this.exchange);
-    this.facade.getRecentBuyAverages(this.exchange);
 
     this.currencyPairs = this.facade.currencyPairs(this.exchange);
     this.baseCurrencyBalance = this.facade.balance(
@@ -168,6 +168,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     this.facade.getOpenOrders(this.exchange);
     this.facade.getTickers(this.exchange);
     this.facade.getBalances(this.exchange);
+    this.facade.getRecentBuyAverages(this.exchange);
   }
 
   public filter(filteringType: FILTERING_TYPE) {

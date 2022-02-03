@@ -5,6 +5,7 @@ import {
   Averages,
   Balances,
   OpenOrdersByPairs,
+  Products,
   Tickers,
 } from '../../models';
 
@@ -35,6 +36,10 @@ export class ExchangeActions {
     GET_RECENT_BUY_AVERAGES: `${this.exchange}[Recent] get recent buy averages`,
     GET_RECENT_BUY_AVERAGES_ERROR: `${this.exchange}[Recent] get recent buy averages error`,
     SET_RECENT_BUY_AVERAGES: `${this.exchange}[Recent] set recent buy averages`,
+
+    GET_PRODUCTS: `${this.exchange}[Products] get products`,
+    GET_PRODUCTS_ERROR: `${this.exchange}[Products] get products error`,
+    SET_PRODUCTS: `${this.exchange}[Products] set products`,
   };
 
   constructor(private readonly exchange: EXCHANGE) {}
@@ -106,5 +111,14 @@ export class ExchangeActions {
   public setRecentBuyAverages = createAction(
     this.ACTIONS.SET_RECENT_BUY_AVERAGES,
     props<{ recentBuyAverages: Averages }>()
+  );
+
+  public getProducts = createAction(this.ACTIONS.GET_PRODUCTS);
+
+  public getProductsError = createAction(this.ACTIONS.GET_PRODUCTS_ERROR);
+
+  public setProducts = createAction(
+    this.ACTIONS.SET_PRODUCTS,
+    props<{ products: Products }>()
   );
 }

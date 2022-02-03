@@ -23,6 +23,7 @@ import {
   Multiplicator,
   OrderFormValues,
   PairAverages,
+  Product,
   Ticker,
 } from '../../models';
 
@@ -42,10 +43,27 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     this.totalAmount = balance ? balance.available + balance.locked : 0;
   }
 
+  @Input() set product(product: Product | null) {
+    if (product && product.minQuantity) {
+      this.minQuantity = `min. quantity = ${product.minQuantity}`;
+    }
+
+    if (product && product.minTotal) {
+      this.minTotal = `min. total = ${product.minTotal}`;
+    }
+
+    if (product && product.pricePrecision) {
+      this.pricePrecision = `precision = ${product.pricePrecision}`;
+    }
+  }
+
   @Output() create = new EventEmitter<OrderFormValues>();
 
   public totalAmount = 0;
   public orderForm: FormGroup;
+  public pricePrecision = 'precision not specified';
+  public minQuantity = 'min. quantity not limited';
+  public minTotal = 'min. total not limited';
 
   public get market() {
     return this.orderForm.get('market')!;

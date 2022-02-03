@@ -6,7 +6,7 @@ export interface Order {
   createTimestamp: number;
   updateTimestamp: number;
   side: OrderSide;
-  amount: number;
+  amount: number; // TODO: rename to quantity
   price: number;
   status: CommonOrderStatus;
 }

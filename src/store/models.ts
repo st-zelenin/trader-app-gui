@@ -5,6 +5,7 @@ import {
   Averages,
   Balances,
   OpenOrdersByPairs,
+  Products,
   Tickers,
 } from '../models';
 import { ExchangeActions } from './exchange';
@@ -31,6 +32,7 @@ export interface ExchangeState {
   recentBuyAverages: Averages;
   pairs: string[];
   currencyPairs: string[];
+  products: Products;
 }
 
 export interface AppState {

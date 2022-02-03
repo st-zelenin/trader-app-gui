@@ -7,6 +7,7 @@ import {
   Balances,
   ExchangeService,
   OpenOrdersByPairs,
+  Products,
   Tickers,
 } from '../models';
 
@@ -42,5 +43,9 @@ export class BybitService implements ExchangeService {
     return this.httpClient.get<Averages>(
       `${API_URL}/bybit_getRecentBuyAverages`
     );
+  }
+
+  public getProducts() {
+    return this.httpClient.get<Products>(`${API_URL}/bybit_getProducts`);
   }
 }

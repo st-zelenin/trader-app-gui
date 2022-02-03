@@ -10,6 +10,7 @@ import {
   GateIoCurrencyPair,
   OpenOrdersByPairs,
   Order,
+  Products,
   Tickers,
 } from '../models';
 
@@ -51,5 +52,9 @@ export class GateIoService implements ExchangeService {
 
   public getRecentBuyAverages() {
     return this.httpClient.get<Averages>(`${API_URL}/analyzeTrades`);
+  }
+
+  public getProducts() {
+    return this.httpClient.get<Products>(`${API_URL}/gate_getProducts`);
   }
 }

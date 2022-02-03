@@ -7,6 +7,7 @@ import {
   Balances,
   ExchangeService,
   OpenOrdersByPairs,
+  Products,
   Tickers,
 } from '../models';
 
@@ -44,5 +45,9 @@ export class CoinbaseService implements ExchangeService {
     return this.httpClient.get<Averages>(
       `${API_URL}/coinbase_getRecentBuyAverages`
     );
+  }
+
+  public getProducts() {
+    return this.httpClient.get<Products>(`${API_URL}/coinbase_getProducts`);
   }
 }

@@ -4,6 +4,7 @@ export * from './exchange';
 export * from './filterable';
 export * from './multiplicator';
 export * from './orders';
+export * from './products';
 export * from './tickers';
 export * from './trade-averages';
 export * from './trade-pair';

@@ -99,6 +99,18 @@ export class ExchangeEffects {
       })
     )
   );
+
+  getProducts = createEffect(() =>
+    this.actions.pipe(
+      ofType(this.exchangeActions.getProducts),
+      mergeMap(() => this.exchangeService.getProducts()),
+      map((products) => this.exchangeActions.setProducts({ products })),
+      catchError((err) => {
+        console.log(err);
+        return of(this.exchangeActions.getProductsError());
+      })
+    )
+  );
 }
 
 @Injectable()

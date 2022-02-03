@@ -15,6 +15,7 @@ export const createExchangeReducer = (
     recentBuyAverages: {},
     pairs: [],
     currencyPairs: [],
+    products: {},
   };
 
   return createReducer(
@@ -46,6 +47,10 @@ export const createExchangeReducer = (
     on(actions.setRecentBuyAverages, (state, { recentBuyAverages }) => {
       console.log(exchange, 'set recent BUY averages', recentBuyAverages);
       return { ...state, recentBuyAverages };
+    }),
+    on(actions.setProducts, (state, { products }) => {
+      console.log(exchange, 'set products', products);
+      return { ...state, products };
     })
   );
 };
