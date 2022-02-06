@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
-import { OpenOrdersByPairs, Tickers } from '../models';
+import { EXCHANGE } from 'src/constants';
+import { Balances, OpenOrdersByPairs, Tickers } from '../models';
+import { CalculationsService } from './calculations.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SortingService {
-  constructor() {}
+  constructor(private readonly calculationsService: CalculationsService) {}
 
-  public sort(
+  public sortBySellOrder(
     pairs: string[],
     openOrders: OpenOrdersByPairs,
     tickers: Tickers
@@ -39,6 +41,32 @@ export class SortingService {
       .concat(
         ...withDiffs
           .filter(({ diff }) => diff === undefined)
+          .map(({ name }) => name)
+      );
+  }
+
+  public sortByEstimatedTotal(
+    pairs: string[],
+    balances: Balances,
+    tickers: Tickers,
+    exchange: EXCHANGE
+  ) {
+    const withEstimatedTotals = pairs.map((pair) => {
+      const currency = this.calculationsService.getBaseCurrency(pair, exchange);
+      const total = this.calculationsService.calcEstimatedTotal(
+        tickers[pair],
+        balances[currency]
+      );
+      return { name: pair, total };
+    });
+
+    return withEstimatedTotals
+      .filter(({ total }) => total > 0)
+      .sort((a, b) => b.total - a.total)
+      .map(({ name }) => name)
+      .concat(
+        ...withEstimatedTotals
+          .filter(({ total }) => total <= 0)
           .map(({ name }) => name)
       );
   }

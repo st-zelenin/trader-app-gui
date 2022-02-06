@@ -8,7 +8,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import {
   EXCHANGE,
   ORDER_TOTAL_MONEY,
@@ -28,6 +28,7 @@ import {
   Ticker,
 } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
+import { CalculationsService } from '../calculations.service';
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogData,
@@ -76,6 +77,7 @@ export class PairCardContentComponent
   constructor(
     private readonly orderingService: OrderingService,
     private readonly historyService: HistoryService,
+    private readonly calculationsService: CalculationsService,
     private readonly snackBar: MatSnackBar,
     private readonly facade: AppStoreFacade,
     private dialog: MatDialog
@@ -88,19 +90,16 @@ export class PairCardContentComponent
   }
 
   ngOnInit(): void {
-    // TODO: remove this dirty hack
-    const currency =
-      this.exchange === EXCHANGE.BYBIT
-        ? this.pair.replace('USDT', '')
-        : this.pair.split(/_|-/)[0];
+    const currency = this.calculationsService.getBaseCurrency(
+      this.pair,
+      this.exchange
+    );
 
     this.calcAverages();
     this.updateTickerInfo();
 
     this.balance = this.facade.balance(this.exchange, currency);
-    this.product = this.facade
-      .product(this.exchange, this.pair)
-      .pipe(tap(console.log));
+    this.product = this.facade.product(this.exchange, this.pair);
 
     this.facade.buyMultiplicator
       .pipe(takeUntil(this.unsubscribe$))
@@ -180,12 +179,29 @@ export class PairCardContentComponent
     this.orderingService
       .create(this.exchange, order)
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(() => {
-        this.isNewOrderExpanded = false;
-        this.facade.getOpenOrders(this.exchange);
-        this.facade.getBalances(this.exchange);
-        this.facade.getRecentBuyAverages(this.exchange);
-      });
+      .subscribe(
+        () => {
+          this.isNewOrderExpanded = false;
+          this.facade.getOpenOrders(this.exchange);
+          this.facade.getBalances(this.exchange);
+          this.facade.getRecentBuyAverages(this.exchange);
+        },
+        (err) => {
+          let message = 'failed to create order';
+          if (err.error?.message) {
+            message = err.error.label
+              ? `${err.error.label}: ${err.error?.message}`
+              : err.error?.message;
+          }
+
+          this.snackBar.open(message, 'x', {
+            // duration: 3000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['warning'],
+          });
+        }
+      );
   }
 
   private validateOrder(formValues: OrderFormValues): string {

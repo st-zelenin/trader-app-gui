@@ -6,7 +6,6 @@ import { Filterable, FILTERING_TYPE } from '../models';
 })
 export class FilteringService {
   private cards: Filterable[] = [];
-  private isFiltered = false;
 
   public register(card: Filterable) {
     this.cards.push(card);
@@ -21,7 +20,7 @@ export class FilteringService {
   }
 
   public toggleFilter(filteringType: FILTERING_TYPE) {
-    if (this.isFiltered) {
+    if (filteringType === FILTERING_TYPE.NONE) {
       for (const card of this.cards) {
         card.hidden = false;
       }
@@ -30,8 +29,6 @@ export class FilteringService {
         card.hidden = this.getHidden(filteringType, card);
       }
     }
-
-    this.isFiltered = !this.isFiltered;
   }
 
   private getHidden(filteringType: FILTERING_TYPE, card: Filterable) {

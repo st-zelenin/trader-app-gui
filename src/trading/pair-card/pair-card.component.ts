@@ -19,8 +19,8 @@ import {
   Ticker,
 } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
+import { CalculationsService } from '../calculations.service';
 import { FilteringService } from '../filtering.service';
-import { HistoryService } from '../history.service';
 
 @Component({
   selector: 'app-pair-card',
@@ -56,7 +56,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
   constructor(
     private readonly filteringService: FilteringService,
-    private readonly historyService: HistoryService,
+    private readonly calculationsService: CalculationsService,
     private readonly facade: AppStoreFacade
   ) {}
 
@@ -77,7 +77,10 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
           : false;
         this.headerColor = this.updateHeaderColor();
 
-        this.calcEstimatedTotal();
+        this.estimatedTotal = this.calculationsService.calcEstimatedTotal(
+          this.ticker,
+          this.balance
+        );
       });
 
     const currency = this.pair.split(/_|-/)[0];
@@ -87,7 +90,10 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       .subscribe((balance) => {
         this.balance = balance;
 
-        this.calcEstimatedTotal();
+        this.estimatedTotal = this.calculationsService.calcEstimatedTotal(
+          this.ticker,
+          this.balance
+        );
       });
 
     this.facade
@@ -193,14 +199,6 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   public removeCard(event: Event) {
     event.stopPropagation();
     this.remove.emit(this.pair);
-  }
-
-  private calcEstimatedTotal() {
-    this.estimatedTotal =
-      this.ticker && this.balance
-        ? this.ticker.last * (this.balance.available + this.balance.locked)
-        : 0;
-    // console.log(this.pair, this.estimatedTotal, this.ticker, this.balance);
   }
 
   private checkNeedsAttention() {

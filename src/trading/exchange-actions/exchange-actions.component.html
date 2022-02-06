@@ -57,25 +57,37 @@
     </button>
     <button
       mat-icon-button
-      (click)="filter.emit(filteringTypes.MISSING_BUY)"
+      (click)="updateFiltering(filteringTypes.MISSING_BUY)"
       type="button"
       matTooltip="filter by missing buy order"
+      [class.active]="currentFiltering === filteringTypes.MISSING_BUY"
     >
       <mat-icon>shopping_cart</mat-icon>
     </button>
     <button
       mat-icon-button
-      (click)="filter.emit(filteringTypes.ATTENTION_MESSAGE)"
+      (click)="updateFiltering(filteringTypes.ATTENTION_MESSAGE)"
       type="button"
       matTooltip="filter by attention message"
+      [class.active]="currentFiltering === filteringTypes.ATTENTION_MESSAGE"
     >
       <mat-icon class="attention">gpp_maybe</mat-icon>
     </button>
     <button
       mat-icon-button
-      (click)="sort.emit()"
+      (click)="updateSorting(sortingTypes.UPCOMING_SELL)"
       type="button"
       matTooltip="sort by upcoming sell order fulfillment"
+      [class.active]="currentSorting === sortingTypes.UPCOMING_SELL"
+    >
+      <mat-icon>sort</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      (click)="updateSorting(sortingTypes.ESTIMATED_TOTAL)"
+      type="button"
+      matTooltip="sort by estimated total value of the coins"
+      [class.active]="currentSorting === sortingTypes.ESTIMATED_TOTAL"
     >
       <mat-icon>sort</mat-icon>
     </button>

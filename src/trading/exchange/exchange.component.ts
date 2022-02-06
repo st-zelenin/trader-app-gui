@@ -10,7 +10,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { interval, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { EXCHANGE } from '../../constants';
+import { EXCHANGE, SORTING_TYPES } from '../../constants';
 import {
   Balance,
   Balances,
@@ -20,6 +20,7 @@ import {
   Tickers,
 } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
+import { CalculationsService } from '../calculations.service';
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogData,
@@ -61,6 +62,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     private readonly facade: AppStoreFacade,
     private readonly filteringService: FilteringService,
     private readonly sortingService: SortingService,
+    private readonly calculationsService: CalculationsService,
     private dialog: MatDialog
   ) {}
 
@@ -77,7 +79,11 @@ export class ExchangeComponent implements OnInit, OnDestroy {
         this.notSortedPairs = [...pairs];
 
         this.pairs = this.isSorted
-          ? this.sortingService.sort([...pairs], this.openOrders, this.tickers)
+          ? this.sortingService.sortBySellOrder(
+              [...pairs],
+              this.openOrders,
+              this.tickers
+            )
           : [...pairs];
         this.facade.getTickers(this.exchange);
       });
@@ -175,12 +181,32 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     this.filteringService.toggleFilter(filteringType);
   }
 
-  public sort() {
-    this.isSorted = !this.isSorted;
+  public sort(sortingType: SORTING_TYPES) {
+    this.isSorted = sortingType !== SORTING_TYPES.NONE;
 
-    this.pairs = this.isSorted
-      ? this.sortingService.sort(this.pairs, this.openOrders, this.tickers)
-      : [...this.notSortedPairs];
+    this.pairs = this.getSortedCards(sortingType);
+  }
+
+  private getSortedCards(sortingType: SORTING_TYPES) {
+    switch (sortingType) {
+      case SORTING_TYPES.NONE:
+        return [...this.notSortedPairs];
+      case SORTING_TYPES.UPCOMING_SELL:
+        return this.sortingService.sortBySellOrder(
+          [...this.notSortedPairs],
+          this.openOrders,
+          this.tickers
+        );
+      case SORTING_TYPES.ESTIMATED_TOTAL:
+        return this.sortingService.sortByEstimatedTotal(
+          [...this.notSortedPairs],
+          this.balances,
+          this.tickers,
+          this.exchange
+        );
+      default:
+        throw new Error(`unhandled sorting type: ${sortingType}`);
+    }
   }
 
   public showRecent(side: OrderSide) {
@@ -196,15 +222,16 @@ export class ExchangeComponent implements OnInit, OnDestroy {
 
   private calcEstimatedTotal() {
     const coins = Object.keys(this.balances);
-    this.estimated = coins.reduce((total, coin) => {
-      const pair =
-        this.exchange === EXCHANGE.COINBASE ? `${coin}-EUR` : `${coin}_USDT`;
-      if (this.tickers[pair]) {
-        total +=
-          this.tickers[pair].last *
-          (this.balances[coin].available + this.balances[coin].locked);
-      }
+    this.estimated = coins.reduce((total, baseCurrency) => {
+      const pair = this.calculationsService.getCurrencyPair(
+        baseCurrency,
+        this.exchange
+      );
 
+      total += this.calculationsService.calcEstimatedTotal(
+        this.tickers[pair],
+        this.balances[baseCurrency]
+      );
       return total;
     }, 0);
   }

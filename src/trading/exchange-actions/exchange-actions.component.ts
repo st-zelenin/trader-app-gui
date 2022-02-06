@@ -9,7 +9,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
-import { BUY_MULTIPLICATORS } from '../../constants';
+import { BUY_MULTIPLICATORS, SORTING_TYPES } from '../../constants';
 import { FILTERING_TYPE, OrderSide } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 
@@ -28,11 +28,12 @@ export class ExchangeActionsComponent implements OnDestroy {
   @Output() addCurrencyPair = new EventEmitter<string>();
   @Output() refresh = new EventEmitter<void>();
   @Output() filter = new EventEmitter<FILTERING_TYPE>();
-  @Output() sort = new EventEmitter<void>();
+  @Output() sort = new EventEmitter<SORTING_TYPES>();
   @Output() showRecent = new EventEmitter<OrderSide>();
 
   public multiplicators = BUY_MULTIPLICATORS;
   public filteringTypes = FILTERING_TYPE;
+  public sortingTypes = SORTING_TYPES;
 
   public currencyPairControl = new FormControl();
   public buyMultiplicatorControl = new FormControl('');
@@ -40,6 +41,9 @@ export class ExchangeActionsComponent implements OnDestroy {
   public filteredOptions: Observable<string[]>;
 
   private unsubscribe$ = new Subject<void>();
+
+  public currentSorting: SORTING_TYPES = SORTING_TYPES.NONE;
+  public currentFiltering: FILTERING_TYPE = FILTERING_TYPE.NONE;
 
   constructor(private readonly facade: AppStoreFacade) {
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(
@@ -73,6 +77,20 @@ export class ExchangeActionsComponent implements OnDestroy {
 
     this.addCurrencyPair.emit(this.currencyPairControl.value);
     this.currencyPairControl.setValue('');
+  }
+
+  public updateSorting(sortingType: SORTING_TYPES) {
+    this.currentSorting =
+      this.currentSorting === sortingType ? SORTING_TYPES.NONE : sortingType;
+    this.sort.emit(this.currentSorting);
+  }
+
+  public updateFiltering(filteringType: FILTERING_TYPE) {
+    this.currentFiltering =
+      this.currentFiltering === filteringType
+        ? FILTERING_TYPE.NONE
+        : filteringType;
+    this.filter.emit(this.currentFiltering);
   }
 
   private filterPairs(value: string): string[] {
