@@ -90,7 +90,7 @@ export class PairCardContentComponent
   }
 
   ngOnInit(): void {
-    const currency = this.calculationsService.getBaseCurrency(
+    const baseCurrency = this.calculationsService.getBaseCurrency(
       this.pair,
       this.exchange
     );
@@ -98,7 +98,7 @@ export class PairCardContentComponent
     this.calcAverages();
     this.updateTickerInfo();
 
-    this.balance = this.facade.balance(this.exchange, currency);
+    this.balance = this.facade.balance(this.exchange, baseCurrency);
     this.product = this.facade.product(this.exchange, this.pair);
 
     this.facade.buyMultiplicator

@@ -45,13 +45,17 @@
       <mat-label>Quantity</mat-label>
       <input matInput placeholder="" formControlName="amount" />
       <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
-      <mat-hint>{{ minQuantity }}</mat-hint>
+      <mat-hint (click)="setMinQuantity()" class="clickable">{{
+        minQuantityText
+      }}</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="standard">
       <mat-label>Total</mat-label>
       <input matInput placeholder="" formControlName="total" />
       <mat-icon matSuffix>attach_money</mat-icon>
-      <mat-hint>{{ minTotal }}</mat-hint>
+      <mat-hint (click)="setMinTotal()" class="clickable">{{
+        minTotalText
+      }}</mat-hint>
     </mat-form-field>
   </div>
   <div class="form-row">

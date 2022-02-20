@@ -39,7 +39,7 @@ import { SortingService } from '../sorting.service';
 })
 export class ExchangeComponent implements OnInit, OnDestroy {
   @Input() exchange!: EXCHANGE;
-  @Input() baseCurrency!: string;
+  @Input() quoteCurrency!: string;
 
   @Output() updatePairs = new EventEmitter<{
     exchange: EXCHANGE;
@@ -48,7 +48,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
 
   public pairs: string[] = [];
   public currencyPairs?: Observable<string[]>;
-  public baseCurrencyBalance?: Observable<Balance>;
+  public quoteCurrencyBalance?: Observable<Balance>;
   public estimated: number = 0;
 
   private openOrders: OpenOrdersByPairs = {};
@@ -115,9 +115,9 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     this.facade.getCurrencyPairs(this.exchange);
 
     this.currencyPairs = this.facade.currencyPairs(this.exchange);
-    this.baseCurrencyBalance = this.facade.balance(
+    this.quoteCurrencyBalance = this.facade.balance(
       this.exchange,
-      this.baseCurrency
+      this.quoteCurrency
     );
     this.refresh();
   }

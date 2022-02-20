@@ -1,7 +1,7 @@
 <app-exchange-actions
   [currencyPairs]="(currencyPairs | async) || []"
-  [balance]="(baseCurrencyBalance | async)?.available"
-  [currencyLabel]="baseCurrency"
+  [balance]="(quoteCurrencyBalance | async)?.available"
+  [currencyLabel]="quoteCurrency"
   [estimated]="estimated"
   (addCurrencyPair)="addPair($event)"
   (refresh)="refresh()"

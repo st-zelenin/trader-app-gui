@@ -44,12 +44,14 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   }
 
   @Input() set product(product: Product | null) {
+    this.productDetails = product;
+
     if (product && product.minQuantity) {
-      this.minQuantity = `min. quantity = ${product.minQuantity}`;
+      this.minQuantityText = `min. quantity = ${product.minQuantity}`;
     }
 
     if (product && product.minTotal) {
-      this.minTotal = `min. total = ${product.minTotal}`;
+      this.minTotalText = `min. total = ${product.minTotal}`;
     }
 
     if (product && product.pricePrecision) {
@@ -62,8 +64,8 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   public totalAmount = 0;
   public orderForm: FormGroup;
   public pricePrecision = 'precision not specified';
-  public minQuantity = 'min. quantity not limited';
-  public minTotal = 'min. total not limited';
+  public minQuantityText = 'min. quantity not limited';
+  public minTotalText = 'min. total not limited';
 
   public get market() {
     return this.orderForm.get('market')!;
@@ -91,6 +93,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject<void>();
   private readonly LOCALE = 'en';
+  private productDetails: Product | null = null;
 
   constructor(private readonly fb: FormBuilder) {
     this.orderForm = this.fb.group({
@@ -293,6 +296,18 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     this.price.setValue(
       formatNumber(value, this.LOCALE, '1.0-10').replace(',', '')
     );
+  }
+
+  public setMinQuantity() {
+    if (this.productDetails?.minQuantity) {
+      this.amount.setValue(this.productDetails.minQuantity);
+    }
+  }
+
+  public setMinTotal() {
+    if (this.productDetails?.minTotal) {
+      this.total.setValue(this.productDetails.minTotal);
+    }
   }
 
   ngOnDestroy(): void {
