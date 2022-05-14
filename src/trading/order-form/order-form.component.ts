@@ -24,8 +24,10 @@ import {
   OrderFormValues,
   PairAverages,
   Product,
+  SelectedOrdersInfo,
   Ticker,
 } from '../../models';
+import { PRICE_SOURCE } from './constants';
 
 @Component({
   selector: 'app-order-form',
@@ -38,6 +40,16 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   @Input() averages?: PairAverages;
   @Input() recent?: Average;
   @Input() buyMultiplicator?: Multiplicator = undefined;
+
+  @Input() set selectedOrdersInfo(value: SelectedOrdersInfo) {
+    this.selectedInfo = value;
+
+    if (this.priceSource.value === PRICE_SOURCE.SELECTED_ORDERS) {
+      this.setSelectedBuyPrice();
+      this.amount.setValue('');
+      this.total.setValue('');
+    }
+  }
 
   @Input() set balance(balance: Balance | null) {
     this.totalAmount = balance ? balance.available + balance.locked : 0;
@@ -66,6 +78,8 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   public pricePrecision = 'precision not specified';
   public minQuantityText = 'min. quantity not limited';
   public minTotalText = 'min. total not limited';
+  public selectedInfo?: SelectedOrdersInfo;
+  public priceSourceTypes = PRICE_SOURCE;
 
   public get market() {
     return this.orderForm.get('market')!;
@@ -189,15 +203,17 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       });
     this.priceSource.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((val) => {
+      .subscribe((val: PRICE_SOURCE) => {
         switch (val) {
-          case 'current':
+          case PRICE_SOURCE.CURRENT_PRICE:
             return this.setCurrentPrice();
-          case 'recent':
+          case PRICE_SOURCE.RECENT_SELL:
             return this.setRecentBuyPrice();
-          case 'buy':
+          case PRICE_SOURCE.SELECTED_ORDERS:
+            return this.setSelectedBuyPrice();
+          case PRICE_SOURCE.AVERAGE_BUY:
             return this.setAverageBuy();
-          case 'sell':
+          case PRICE_SOURCE.AVERAGE_SELL:
             return this.setAverageSell();
           default:
             this.price.setValue('');
@@ -236,6 +252,12 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  private setSelectedBuyPrice() {
+    if (this.selectedInfo) {
+      this.setPriceValue(this.selectedInfo.price);
+    }
+  }
+
   public increasePrice(event: Event) {
     event.stopPropagation();
     if (this.buyMultiplicator && this.price.value) {
@@ -262,8 +284,13 @@ export class OrderFormComponent implements OnInit, OnDestroy {
 
   public setOneThird() {
     if (this.totalAmount > 0) {
-      if (this.priceSource.value === 'recent' && this.recent) {
+      if (this.priceSource.value === PRICE_SOURCE.RECENT_SELL && this.recent) {
         this.amount.setValue(this.recent.volume / 3);
+      } else if (
+        this.priceSource.value === PRICE_SOURCE.SELECTED_ORDERS &&
+        this.selectedInfo
+      ) {
+        this.amount.setValue(this.selectedInfo.amount / 3);
       } else {
         this.amount.setValue(this.totalAmount / 3);
       }

@@ -11,6 +11,16 @@ export interface Order {
   status: CommonOrderStatus;
 }
 
+export interface OrderRow extends Order {
+  selected: boolean;
+}
+
+export interface SelectedOrdersInfo {
+  amount: number;
+  total: number;
+  price: number;
+}
+
 export interface NewOrder extends OrderFormValues {
   currencyPair: string;
 }

@@ -15,3 +15,24 @@ table {
     font-weight: 600;
   }
 }
+
+.checkbox {
+  padding-right: 5px;
+}
+
+.selection-info {
+  font-size: 12px;
+  text-align: end;
+  margin: 5px 0;
+}
+
+.row {
+  &:hover {
+    background: whitesmoke;
+  }
+}
+
+.copy-button {
+  font-weight: initial;
+  padding: initial;
+}

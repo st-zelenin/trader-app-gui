@@ -5,6 +5,9 @@ import { SharedState } from './state';
 
 export const initialState: SharedState = {
   buyMultiplicator: BUY_MULTIPLICATORS[0],
+  orderDefaultTotalAmount: 4,
+  defaultSellVolumeDivider: 3,
+  defaultSellPriceMultiplicator: 1.5,
 };
 
 export const sharedReducer = createReducer(

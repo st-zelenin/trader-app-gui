@@ -30,6 +30,7 @@ export class ExchangeActionsComponent implements OnDestroy {
   @Output() filter = new EventEmitter<FILTERING_TYPE>();
   @Output() sort = new EventEmitter<SORTING_TYPES>();
   @Output() showRecent = new EventEmitter<OrderSide>();
+  @Output() showSetting = new EventEmitter<void>();
 
   public multiplicators = BUY_MULTIPLICATORS;
   public filteringTypes = FILTERING_TYPE;

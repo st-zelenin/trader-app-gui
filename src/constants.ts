@@ -9,6 +9,9 @@ export const BUY_MULTIPLICATORS: Multiplicator[] = [
   { text: '5 %', value: 0.05 },
   { text: '10 %', value: 0.1 },
   { text: '20 %', value: 0.2 },
+  { text: '30 %', value: 0.3 },
+  { text: '40 %', value: 0.4 },
+  { text: '50 %', value: 0.5 },
 ];
 
 export enum EXCHANGE {
@@ -24,10 +27,6 @@ export enum EXCHANGE_URL_PARAMS {
   COINBASE = 'coinbase',
   BYBIT = 'bybit',
 }
-
-export const ORDER_TOTAL_MONEY = 4;
-export const SELL_VOLUME_DIVIDER = 3;
-export const SELL_PRICE_MULTIPLICATOR = 1.5;
 
 export enum SORTING_TYPES {
   NONE = 'NONE',

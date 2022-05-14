@@ -9,12 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import {
-  EXCHANGE,
-  ORDER_TOTAL_MONEY,
-  SELL_PRICE_MULTIPLICATOR,
-  SELL_VOLUME_DIVIDER,
-} from '../../constants';
+import { EXCHANGE } from '../../constants';
 import {
   Average,
   Balance,
@@ -25,6 +20,7 @@ import {
   OrderSide,
   PairAverages,
   Product,
+  SelectedOrdersInfo,
   Ticker,
 } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
@@ -67,6 +63,15 @@ export class PairCardContentComponent
   public balance?: Observable<Balance>;
   public product?: Observable<Product>;
   public buyMultiplicator?: Multiplicator;
+  public orderDefaultTotalAmount?: number;
+  public defaultSellVolumeDivider?: number;
+  public defaultSellPriceMultiplicator?: number;
+
+  public selectedOrdersInfo: SelectedOrdersInfo = {
+    price: 0,
+    amount: 0,
+    total: 0,
+  };
 
   public panelOpenState = false;
   private closeTimeout?: any;
@@ -105,6 +110,24 @@ export class PairCardContentComponent
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((buyMultiplicator) => {
         this.buyMultiplicator = buyMultiplicator;
+      });
+
+    this.facade.orderDefaultTotalAmount
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((total) => {
+        this.orderDefaultTotalAmount = total;
+      });
+
+    this.facade.defaultSellVolumeDivider
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((divider) => {
+        this.defaultSellVolumeDivider = divider;
+      });
+
+    this.facade.defaultSellPriceMultiplicator
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((multiplicator) => {
+        this.defaultSellPriceMultiplicator = multiplicator;
       });
   }
 
@@ -245,9 +268,13 @@ export class PairCardContentComponent
   }
 
   public sellRecent() {
-    if (this.recent) {
-      const price = this.recent.price * SELL_PRICE_MULTIPLICATOR;
-      const amount = this.recent.volume / SELL_VOLUME_DIVIDER;
+    if (
+      this.recent &&
+      this.defaultSellPriceMultiplicator &&
+      this.defaultSellVolumeDivider
+    ) {
+      const price = this.recent.price * this.defaultSellPriceMultiplicator;
+      const amount = this.recent.volume / this.defaultSellVolumeDivider;
       const order = this.getOrderFormValues('sell', price, amount);
 
       this.createOrder(order);
@@ -255,9 +282,9 @@ export class PairCardContentComponent
   }
 
   public buyByMultiplicator() {
-    if (this.ticker && this.buyMultiplicator) {
+    if (this.ticker && this.buyMultiplicator && this.orderDefaultTotalAmount) {
       const price = this.ticker.last * (1 - this.buyMultiplicator.value);
-      const amount = ORDER_TOTAL_MONEY / price;
+      const amount = this.orderDefaultTotalAmount / price;
       const order = this.getOrderFormValues('buy', price, amount);
 
       this.createOrder(order);

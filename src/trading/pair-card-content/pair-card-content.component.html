@@ -61,6 +61,7 @@
     [product]="product | async"
     [recent]="recent"
     [buyMultiplicator]="buyMultiplicator"
+    [selectedOrdersInfo]="selectedOrdersInfo"
     (create)="createOrder($event)"
   >
   </app-order-form>
@@ -136,6 +137,7 @@
   <app-trade-history
     [pair]="pair"
     [exchange]="exchange"
+    [(selectedOrdersInfo)]="selectedOrdersInfo"
     *ngIf="panelOpenState"
   ></app-trade-history>
 </mat-expansion-panel>

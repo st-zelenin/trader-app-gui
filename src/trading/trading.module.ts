@@ -8,6 +8,7 @@ import { OrderFormComponent } from './order-form/order-form.component';
 import { PairCardContentComponent } from './pair-card-content/pair-card-content.component';
 import { PairCardComponent } from './pair-card/pair-card.component';
 import { RecentOrdersComponent } from './recent-orders/recent-orders.component';
+import { SettingsComponent } from './settings/settings.component';
 import { TradeHistoryComponent } from './trade-history/trade-history.component';
 import { TradingRoutingModule } from './trading-routing.module';
 import { TradingComponent } from './trading.component';
@@ -23,6 +24,7 @@ import { TradingComponent } from './trading.component';
     ExchangeComponent,
     RecentOrdersComponent,
     ConfirmationDialogComponent,
+    SettingsComponent,
   ],
   imports: [CommonModule, SharedModule, TradingRoutingModule],
 })

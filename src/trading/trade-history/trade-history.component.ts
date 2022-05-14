@@ -1,8 +1,15 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
-import { Order } from '../../models';
+import { Order, OrderRow, SelectedOrdersInfo } from '../../models';
 import { HistoryService } from '../history.service';
 
 @Component({
@@ -14,8 +21,12 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
   @Input() pair!: string;
   @Input() exchange!: EXCHANGE;
 
-  public orders: Order[] = [];
+  @Input() selectedOrdersInfo!: SelectedOrdersInfo;
+  @Output() selectedOrdersInfoChange = new EventEmitter<SelectedOrdersInfo>();
+
+  public orders: OrderRow[] = [];
   public displayedColumns: string[] = [
+    'checkbox',
     'ID',
     'update_time_ms',
     'side',
@@ -31,7 +42,7 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
   public sellMoney = 0;
   public sellPrice = 0;
 
-  private allOrders: Order[] = [];
+  private allOrders: OrderRow[] = [];
   private unsubscribe$ = new Subject<void>();
 
   constructor(private readonly historyService: HistoryService) {}
@@ -39,7 +50,12 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.historyService
       .getHistory(this.exchange, this.pair)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        map((orders) =>
+          orders.map<OrderRow>((order) => ({ ...order, selected: false }))
+        )
+      )
       .subscribe((orders) => {
         this.allOrders = orders.filter(({ status }) => status !== 'cancelled');
         this.orders = this.allOrders;
@@ -90,6 +106,25 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
       order.price /= 1000;
       order.amount *= 1000;
     }
+  }
+
+  public toggleRowSelection(row: OrderRow) {
+    row.selected = !row.selected;
+
+    const info: SelectedOrdersInfo = this.orders.reduce(
+      (res, order) => {
+        if (order.selected) {
+          res.amount += order.amount;
+          res.total += order.amount * order.price;
+          res.price = res.total / res.amount;
+        }
+
+        return res;
+      },
+      { amount: 0, total: 0, price: 0 }
+    );
+
+    this.selectedOrdersInfoChange.emit(info);
   }
 
   ngOnDestroy(): void {

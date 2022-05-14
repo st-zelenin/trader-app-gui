@@ -30,6 +30,7 @@ import {
   RecentOrdersComponent,
   RecentOrdersData,
 } from '../recent-orders/recent-orders.component';
+import { SettingsComponent } from '../settings/settings.component';
 import { SortingService } from '../sorting.service';
 
 @Component({
@@ -218,6 +219,13 @@ export class ExchangeComponent implements OnInit, OnDestroy {
         data: { exchange: this.exchange, side },
       }
     );
+  }
+
+  public showSetting() {
+    this.dialog.open<SettingsComponent>(SettingsComponent, {
+      width: '80vw',
+      maxWidth: '1000px',
+    });
   }
 
   private calcEstimatedTotal() {

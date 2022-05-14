@@ -61,20 +61,37 @@
   <div class="form-row">
     <ng-container *ngIf="side.value === 'buy'; else sell">
       <mat-button-toggle-group formControlName="priceSource">
-        <mat-button-toggle value="current">current price</mat-button-toggle>
-        <mat-button-toggle value="buy">avg. buy</mat-button-toggle>
+        <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE"
+          >current price</mat-button-toggle
+        >
+        <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY"
+          >avg. buy</mat-button-toggle
+        >
       </mat-button-toggle-group>
     </ng-container>
 
     <ng-template #sell>
       <ng-container>
         <mat-button-toggle-group formControlName="priceSource">
-          <mat-button-toggle value="current">current price</mat-button-toggle>
-          <mat-button-toggle value="recent" *ngIf="recent && recent.price > 0"
+          <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE"
+            >current price</mat-button-toggle
+          >
+          <mat-button-toggle
+            [value]="priceSourceTypes.RECENT_SELL"
+            *ngIf="recent && recent.price > 0"
             >recent</mat-button-toggle
           >
-          <mat-button-toggle value="buy">avg. buy</mat-button-toggle>
-          <mat-button-toggle value="sell">avg. sell</mat-button-toggle>
+          <mat-button-toggle
+            [value]="priceSourceTypes.SELECTED_ORDERS"
+            *ngIf="selectedInfo && selectedInfo.price > 0"
+            >selected</mat-button-toggle
+          >
+          <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY"
+            >avg. buy</mat-button-toggle
+          >
+          <mat-button-toggle [value]="priceSourceTypes.AVERAGE_SELL"
+            >avg. sell</mat-button-toggle
+          >
         </mat-button-toggle-group>
       </ng-container>
 

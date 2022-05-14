@@ -40,6 +40,15 @@ export class AppStoreFacade {
   }
 
   public buyMultiplicator = this.store.select(sharedSelectors.buyMultiplicator);
+  public orderDefaultTotalAmount = this.store.select(
+    sharedSelectors.orderDefaultTotalAmount
+  );
+  public defaultSellVolumeDivider = this.store.select(
+    sharedSelectors.defaultSellVolumeDivider
+  );
+  public defaultSellPriceMultiplicator = this.store.select(
+    sharedSelectors.defaultSellPriceMultiplicator
+  );
   public pairs = (exchange: EXCHANGE) =>
     this.store.select(this.exchangeSelectors[exchange].pairs);
   public tickers = (exchange: EXCHANGE) =>
@@ -127,6 +136,20 @@ export class AppStoreFacade {
   public setBuyMultiplicator(buyMultiplicator: Multiplicator) {
     this.store.dispatch(
       sharedActions.setBuyMultiplicator({ buyMultiplicator })
+    );
+  }
+
+  public setOrderDefaultTotalAmount(total: number) {
+    this.store.dispatch(sharedActions.setOrderDefaultTotalAmount({ total }));
+  }
+
+  public setDefaultSellVolumeDivider(divider: number) {
+    this.store.dispatch(sharedActions.setDefaultSellVolumeDivider({ divider }));
+  }
+
+  public setDefaultSellPriceMultiplicator(multiplicator: number) {
+    this.store.dispatch(
+      sharedActions.setDefaultSellPriceMultiplicator({ multiplicator })
     );
   }
 }
