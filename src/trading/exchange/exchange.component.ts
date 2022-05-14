@@ -223,7 +223,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
 
   public showSetting() {
     this.dialog.open<SettingsComponent>(SettingsComponent, {
-      width: '80vw',
+      minWidth: '300px',
       maxWidth: '1000px',
     });
   }

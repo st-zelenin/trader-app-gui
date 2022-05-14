@@ -1,6 +1,11 @@
 import { createReducer, on } from '@ngrx/store';
 import { BUY_MULTIPLICATORS } from '../../constants';
-import { setBuyMultiplicator } from './actions';
+import {
+  setBuyMultiplicator,
+  setDefaultSellPriceMultiplicator,
+  setDefaultSellVolumeDivider,
+  setOrderDefaultTotalAmount,
+} from './actions';
 import { SharedState } from './state';
 
 export const initialState: SharedState = {
@@ -15,5 +20,17 @@ export const sharedReducer = createReducer(
   on(setBuyMultiplicator, (state, { buyMultiplicator }) => {
     console.log('set buy multiplicator', buyMultiplicator);
     return { ...state, buyMultiplicator };
+  }),
+  on(setOrderDefaultTotalAmount, (state, { total }) => {
+    console.log('setOrderDefaultTotalAmount', total);
+    return { ...state, total };
+  }),
+  on(setDefaultSellVolumeDivider, (state, { divider }) => {
+    console.log('setDefaultSellVolumeDivider', divider);
+    return { ...state, divider };
+  }),
+  on(setDefaultSellPriceMultiplicator, (state, { multiplicator }) => {
+    console.log('setDefaultSellPriceMultiplicator', multiplicator);
+    return { ...state, multiplicator };
   })
 );

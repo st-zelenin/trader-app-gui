@@ -1,24 +1,50 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { BUY_MULTIPLICATORS } from '../../constants';
 import { AppStoreFacade } from '../../store/facade';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent implements OnInit, OnDestroy {
+  public buyMultiplicatorControl = new FormControl('');
   public defaultTotalAmountControl = new FormControl('');
   public defaultSellVolumeDivider = new FormControl('');
   public defaultSellPriceMultiplicator = new FormControl('');
+
+  public multiplicators = BUY_MULTIPLICATORS;
 
   private unsubscribe$ = new Subject<void>();
 
   constructor(private readonly facade: AppStoreFacade) {}
 
   ngOnInit(): void {
+    this.facade.buyMultiplicator
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((buyMultiplicator) => {
+        if (buyMultiplicator) {
+          this.buyMultiplicatorControl.patchValue(buyMultiplicator, {
+            emitEvent: false,
+          });
+        }
+      });
+
+    this.buyMultiplicatorControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((value) => {
+        this.facade.setBuyMultiplicator(value);
+      });
+
     this.facade.orderDefaultTotalAmount
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((total) => {

@@ -1,5 +1,5 @@
 <mat-card class="actions">
-  <form>
+  <form class="form">
     <mat-form-field appearance="standard">
       <mat-label>new currency pair</mat-label>
       <input
@@ -29,91 +29,98 @@
       </mat-autocomplete>
     </mat-form-field>
 
-    <mat-form-field appearance="standard">
-      <mat-label>buy multiplicator</mat-label>
-      <mat-select [formControl]="buyMultiplicatorControl">
-        <mat-option
-          *ngFor="let multiplicator of multiplicators"
-          [value]="multiplicator"
-        >
-          {{ multiplicator.text }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="group">
+      <span class="label">buy mult.:</span>
+      <span class="multiplicator">{{ buyMultiplicator?.text }}</span>
 
-    <span class="label">{{ currencyLabel }}:</span>
-    <span matTooltip="available base currency">{{
-      balance | number: '1.0-2'
-    }}</span>
-    /
-    <span matTooltip="estimated total">{{ estimated | number: '1.0-2' }}</span>
-    <button
-      mat-icon-button
-      (click)="refresh.emit()"
-      type="button"
-      matTooltip="refresh"
-    >
-      <mat-icon>refresh</mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      (click)="updateFiltering(filteringTypes.MISSING_BUY)"
-      type="button"
-      matTooltip="filter by missing buy order"
-      [class.active]="currentFiltering === filteringTypes.MISSING_BUY"
-    >
-      <mat-icon>shopping_cart</mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      (click)="updateFiltering(filteringTypes.ATTENTION_MESSAGE)"
-      type="button"
-      matTooltip="filter by attention message"
-      [class.active]="currentFiltering === filteringTypes.ATTENTION_MESSAGE"
-    >
-      <mat-icon class="attention">gpp_maybe</mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      (click)="updateSorting(sortingTypes.UPCOMING_SELL)"
-      type="button"
-      matTooltip="sort by upcoming sell order fulfillment"
-      [class.active]="currentSorting === sortingTypes.UPCOMING_SELL"
-    >
-      <mat-icon>sort</mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      (click)="updateSorting(sortingTypes.ESTIMATED_TOTAL)"
-      type="button"
-      matTooltip="sort by estimated total value of the coins"
-      [class.active]="currentSorting === sortingTypes.ESTIMATED_TOTAL"
-    >
-      <mat-icon>sort</mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      (click)="showRecent.emit('buy')"
-      type="button"
-      matTooltip="show recent filled BUY orders"
-    >
-      <mat-icon class="buy">gpp_good</mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      (click)="showRecent.emit('sell')"
-      type="button"
-      matTooltip="show recent filled SELL orders"
-    >
-      <mat-icon class="sell">gpp_good</mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      (click)="showSetting.emit()"
-      type="button"
-      matTooltip="show settings"
-    >
-      <mat-icon>settings</mat-icon>
-    </button>
+      <span class="label currency">{{ currencyLabel }}:</span>
+      <span matTooltip="available base currency">{{
+        balance | number: '1.0-2'
+      }}</span>
+      /
+      <span matTooltip="estimated total">{{
+        estimated | number: '1.0-2'
+      }}</span>
+      <button
+        mat-icon-button
+        (click)="refresh.emit()"
+        type="button"
+        matTooltip="refresh"
+      >
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+
+    <div class="group">
+      <button
+        mat-icon-button
+        (click)="updateFiltering(filteringTypes.MISSING_BUY)"
+        type="button"
+        matTooltip="filter by missing buy order"
+        [class.active]="currentFiltering === filteringTypes.MISSING_BUY"
+      >
+        <mat-icon>shopping_cart</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="updateFiltering(filteringTypes.ATTENTION_MESSAGE)"
+        type="button"
+        matTooltip="filter by attention message"
+        [class.active]="currentFiltering === filteringTypes.ATTENTION_MESSAGE"
+      >
+        <mat-icon class="attention">gpp_maybe</mat-icon>
+      </button>
+    </div>
+
+    <div class="group">
+      <button
+        mat-icon-button
+        (click)="updateSorting(sortingTypes.UPCOMING_SELL)"
+        type="button"
+        matTooltip="sort by upcoming sell order fulfillment"
+        [class.active]="currentSorting === sortingTypes.UPCOMING_SELL"
+      >
+        <mat-icon>sort</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="updateSorting(sortingTypes.ESTIMATED_TOTAL)"
+        type="button"
+        matTooltip="sort by estimated total value of the coins"
+        [class.active]="currentSorting === sortingTypes.ESTIMATED_TOTAL"
+      >
+        <mat-icon>sort</mat-icon>
+      </button>
+    </div>
+
+    <div class="group">
+      <button
+        mat-icon-button
+        (click)="showRecent.emit('buy')"
+        type="button"
+        matTooltip="show recent filled BUY orders"
+      >
+        <mat-icon class="buy">gpp_good</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="showRecent.emit('sell')"
+        type="button"
+        matTooltip="show recent filled SELL orders"
+      >
+        <mat-icon class="sell">gpp_good</mat-icon>
+      </button>
+    </div>
+
+    <div class="group settings">
+      <button
+        mat-icon-button
+        (click)="showSetting.emit()"
+        type="button"
+        matTooltip="show settings"
+      >
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
   </form>
 </mat-card>

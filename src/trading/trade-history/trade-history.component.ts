@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -16,6 +17,7 @@ import { HistoryService } from '../history.service';
   selector: 'app-trade-history',
   templateUrl: './trade-history.component.html',
   styleUrls: ['./trade-history.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TradeHistoryComponent implements OnInit, OnDestroy {
   @Input() pair!: string;
@@ -33,7 +35,6 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
     'price',
     'amount',
     'total',
-    'star',
   ];
   public buyVolume = 0;
   public buyMoney = 0;

@@ -2,10 +2,10 @@ import { createAction, props } from '@ngrx/store';
 import { Multiplicator } from '../../models';
 
 export enum ACTIONS {
-  SET_BUY_MULTIPLICATOR = '[shared][Multiplicators] set buy multiplicator',
-  SET_ORDER_DEFAULT_TOTAL_AMOUNT = '[shared][Settings] set order default total amount',
-  SET_DEFAULT_SELL_VOLUME_DIVIDER = '[shared][Settings] set default sell volume divider',
-  SET_DEFAULT_SELL_PRICE_MULTIPLICATOR = '[shared][Settings] set default sell price multiplicator',
+  SET_BUY_MULTIPLICATOR = '[shared] set buy multiplicator',
+  SET_ORDER_DEFAULT_TOTAL_AMOUNT = '[shared] set order default total amount',
+  SET_DEFAULT_SELL_VOLUME_DIVIDER = '[shared] set default sell volume divider',
+  SET_DEFAULT_SELL_PRICE_MULTIPLICATOR = '[shared] set default sell price multiplicator',
 }
 
 export const setBuyMultiplicator = createAction(

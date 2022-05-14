@@ -26,3 +26,17 @@ table {
   font-size: 12px;
   color: $buy-color;
 }
+
+.history-panel-header {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.selected-trades {
+  font-size: 12px;
+}
+
+.order-id-header {
+  padding-left: 14px;
+}

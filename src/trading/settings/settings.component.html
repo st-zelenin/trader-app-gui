@@ -1,6 +1,17 @@
 <h1 mat-dialog-title>Settings</h1>
-<div mat-dialog-content>
-  <form>
+<div mat-dialog-content class="container">
+  <form class="form">
+    <mat-form-field appearance="standard">
+      <mat-label>buy multiplicator</mat-label>
+      <mat-select [formControl]="buyMultiplicatorControl">
+        <mat-option
+          *ngFor="let multiplicator of multiplicators"
+          [value]="multiplicator"
+        >
+          {{ multiplicator.text }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-form-field appearance="standard">
       <mat-label>order default total amount</mat-label>
       <input matInput type="number" [formControl]="defaultTotalAmountControl" />

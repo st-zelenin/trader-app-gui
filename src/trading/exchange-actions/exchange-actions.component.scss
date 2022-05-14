@@ -9,10 +9,27 @@
   }
 }
 
+.form {
+  display: flex;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+}
+
 .label {
   padding: 0 5px;
   font-size: 12px;
+
+  &.currency {
+    font-weight: 600;
+  }
+}
+
+.multiplicator {
   font-weight: 600;
+  padding-right: 10px;
 }
 
 #add-pair {
@@ -34,4 +51,9 @@
 
 .active {
   background-color: $active-action;
+}
+
+.settings {
+  justify-content: end;
+  flex: 1;
 }

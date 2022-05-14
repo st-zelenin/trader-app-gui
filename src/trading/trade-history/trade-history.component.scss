@@ -20,12 +20,6 @@ table {
   padding-right: 5px;
 }
 
-.selection-info {
-  font-size: 12px;
-  text-align: end;
-  margin: 5px 0;
-}
-
 .row {
   &:hover {
     background: whitesmoke;
@@ -35,4 +29,8 @@ table {
 .copy-button {
   font-weight: initial;
   padding: initial;
+}
+
+.order-id-header {
+  padding-left: 14px;
 }

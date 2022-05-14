@@ -1,16 +1,18 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
   OnDestroy,
+  OnInit,
   Output,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
-import { BUY_MULTIPLICATORS, SORTING_TYPES } from '../../constants';
-import { FILTERING_TYPE, OrderSide } from '../../models';
+import { SORTING_TYPES } from '../../constants';
+import { FILTERING_TYPE, Multiplicator, OrderSide } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 
 @Component({
@@ -19,7 +21,7 @@ import { AppStoreFacade } from '../../store/facade';
   styleUrls: ['./exchange-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExchangeActionsComponent implements OnDestroy {
+export class ExchangeActionsComponent implements OnInit, OnDestroy {
   @Input() currencyPairs: string[] = [];
   @Input() balance?: number = 0;
   @Input() estimated!: number;
@@ -32,21 +34,24 @@ export class ExchangeActionsComponent implements OnDestroy {
   @Output() showRecent = new EventEmitter<OrderSide>();
   @Output() showSetting = new EventEmitter<void>();
 
-  public multiplicators = BUY_MULTIPLICATORS;
   public filteringTypes = FILTERING_TYPE;
   public sortingTypes = SORTING_TYPES;
+  public buyMultiplicator?: Multiplicator;
+  public filteredOptions?: Observable<string[]>;
 
   public currencyPairControl = new FormControl();
-  public buyMultiplicatorControl = new FormControl('');
-
-  public filteredOptions: Observable<string[]>;
-
-  private unsubscribe$ = new Subject<void>();
 
   public currentSorting: SORTING_TYPES = SORTING_TYPES.NONE;
   public currentFiltering: FILTERING_TYPE = FILTERING_TYPE.NONE;
 
-  constructor(private readonly facade: AppStoreFacade) {
+  private unsubscribe$ = new Subject<void>();
+
+  constructor(
+    private readonly facade: AppStoreFacade,
+    private readonly cd: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(
       startWith(''),
       debounceTime(500),
@@ -57,17 +62,8 @@ export class ExchangeActionsComponent implements OnDestroy {
     this.facade.buyMultiplicator
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((buyMultiplicator) => {
-        if (buyMultiplicator) {
-          this.buyMultiplicatorControl.patchValue(buyMultiplicator, {
-            emitEvent: false,
-          });
-        }
-      });
-
-    this.buyMultiplicatorControl.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        this.facade.setBuyMultiplicator(value);
+        this.buyMultiplicator = buyMultiplicator;
+        this.cd.markForCheck();
       });
   }
 

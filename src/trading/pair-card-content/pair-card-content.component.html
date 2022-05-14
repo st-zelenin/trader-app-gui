@@ -69,8 +69,19 @@
 
 <table mat-table [dataSource]="openOrders" class="mat-elevation-z8">
   <ng-container matColumnDef="ID">
-    <th mat-header-cell *matHeaderCellDef>ID</th>
-    <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+    <th mat-header-cell *matHeaderCellDef>
+      <span class="order-id-header">ID</span>
+    </th>
+    <td mat-cell *matCellDef="let element">
+      <button
+        mat-icon-button
+        matTooltip="copy order ID"
+        [cdkCopyToClipboard]="element.id"
+        (click)="$event.stopPropagation()"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="update_time_ms">
@@ -132,7 +143,15 @@
   [@.disabled]="disableAnimation"
 >
   <mat-expansion-panel-header>
-    <mat-panel-title> Trade History </mat-panel-title>
+    <mat-panel-title>
+      <div class="history-panel-header">
+        <div>Trade History</div>
+        <div *ngIf="selectedOrdersInfo.price" class="selected-trades">
+          selected: {{ selectedOrdersInfo.price }} /
+          {{ selectedOrdersInfo.amount }} / {{ selectedOrdersInfo.total }}
+        </div>
+      </div>
+    </mat-panel-title>
   </mat-expansion-panel-header>
   <app-trade-history
     [pair]="pair"
