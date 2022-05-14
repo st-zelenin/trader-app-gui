@@ -3,19 +3,26 @@
 .actions {
   margin: 0 5px;
   border-radius: 0;
-
-  .mat-form-field {
-    padding: 0 5px;
-  }
+  padding: 0;
 }
 
 .form {
   display: flex;
+  gap: 10px;
 }
 
 .group {
   display: flex;
   align-items: center;
+}
+
+.pair-container {
+  width: 150px;
+  padding-left: 10px;
+}
+
+.pair-label {
+  font-size: 12px;
 }
 
 .label {

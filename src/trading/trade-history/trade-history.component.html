@@ -1,34 +1,37 @@
-<p>
-  <button mat-raised-button type="button" (click)="filterBuy()">
-    <span>buy:</span>
-    <span class="averages-value" matTooltip="price">{{
-      buyPrice | number: '1.0-10'
-    }}</span>
-    /
-    <span class="averages-value" matTooltip="volume">{{
-      buyVolume | number: '1.0-5'
-    }}</span>
-    /
-    <span class="averages-value" matTooltip="money">{{
-      buyMoney | number: '1.0-2'
-    }}</span>
+<p class="filters">
+  <button mat-raised-button type="button" (click)="filterBuy()" class="filter">
+    <div class="filter">
+      <div>buy:</div>
+      <div class="small-text" matTooltip="price">
+        {{ buyPrice | number: '1.0-10' }}
+      </div>
+      /
+      <div class="small-text" matTooltip="volume">
+        {{ buyVolume | number: '1.0-5' }}
+      </div>
+      /
+      <div matTooltip="money">
+        {{ buyMoney | number: '1.0-2' }}
+      </div>
+    </div>
   </button>
-  <button mat-raised-button type="button" (click)="filterSell()">
-    <span>sell:</span>
-    <span class="averages-value" matTooltip="price">{{
-      sellPrice | number: '1.0-10'
-    }}</span>
-    /
-    <span class="averages-value" matTooltip="volume">{{
-      sellVolume | number: '1.0-5'
-    }}</span>
-    /
-    <span class="averages-value" matTooltip="money">{{
-      sellMoney | number: '1.0-2'
-    }}</span>
-    /
+  <button mat-raised-button type="button" (click)="filterSell()" class="filter">
+    <div class="filter">
+      <div>sell:</div>
+      <div class="small-text" matTooltip="price">
+        {{ sellPrice | number: '1.0-10' }}
+      </div>
+      /
+      <div class="small-text" matTooltip="volume">
+        {{ sellVolume | number: '1.0-5' }}
+      </div>
+      /
+      <div matTooltip="money">
+        {{ sellMoney | number: '1.0-2' }}
+      </div>
+    </div>
   </button>
-  <button mat-raised-button type="button" (click)="removeFilter()">
+  <button mat-icon-button type="button" (click)="removeFilter()">
     <mat-icon>filter_alt_off</mat-icon>
   </button>
 </p>

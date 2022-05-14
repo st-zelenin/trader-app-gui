@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -46,7 +47,10 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
   private allOrders: OrderRow[] = [];
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private readonly historyService: HistoryService) {}
+  constructor(
+    private readonly historyService: HistoryService,
+    private readonly cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.historyService
@@ -82,6 +86,8 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
         this.buyPrice = this.buyVolume > 0 ? this.buyMoney / this.buyVolume : 0;
         this.sellPrice =
           this.sellVolume > 0 ? this.sellMoney / this.sellVolume : 0;
+
+        this.cd.markForCheck();
       });
   }
 

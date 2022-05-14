@@ -2,9 +2,21 @@ table {
   width: 100%;
 }
 
-.averages-value {
-  padding: 0 5px;
-  font-size: 12px;
+.filters {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.filter {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.small-text {
+  font-size: 11px;
 }
 
 .side {

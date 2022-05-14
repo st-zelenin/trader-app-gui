@@ -1,7 +1,7 @@
 <mat-card class="actions">
   <form class="form">
-    <mat-form-field appearance="standard">
-      <mat-label>new currency pair</mat-label>
+    <mat-form-field appearance="standard" class="pair-container">
+      <mat-label class="pair-label">new currency pair</mat-label>
       <input
         type="text"
         placeholder="Pick one"
@@ -19,7 +19,7 @@
       >
         +
       </button>
-      <mat-autocomplete #auto="matAutocomplete">
+      <mat-autocomplete #auto="matAutocomplete" panelWidth="auto">
         <mat-option
           *ngFor="let option of filteredOptions | async"
           [value]="option"
@@ -29,6 +29,7 @@
       </mat-autocomplete>
     </mat-form-field>
 
+    <mat-divider vertical></mat-divider>
     <div class="group">
       <span class="label">buy mult.:</span>
       <span class="multiplicator">{{ buyMultiplicator?.text }}</span>
@@ -51,6 +52,7 @@
       </button>
     </div>
 
+    <mat-divider vertical></mat-divider>
     <div class="group">
       <button
         mat-icon-button
@@ -72,6 +74,7 @@
       </button>
     </div>
 
+    <mat-divider vertical></mat-divider>
     <div class="group">
       <button
         mat-icon-button
@@ -93,6 +96,7 @@
       </button>
     </div>
 
+    <mat-divider vertical></mat-divider>
     <div class="group">
       <button
         mat-icon-button
@@ -112,6 +116,7 @@
       </button>
     </div>
 
+    <mat-divider vertical></mat-divider>
     <div class="group settings">
       <button
         mat-icon-button
