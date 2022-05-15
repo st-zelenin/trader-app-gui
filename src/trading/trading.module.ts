@@ -4,6 +4,7 @@ import { SharedModule } from '../shared/shared.module';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { ExchangeActionsComponent } from './exchange-actions/exchange-actions.component';
 import { ExchangeComponent } from './exchange/exchange.component';
+import { FishnetComponent } from './fishnet/fishnet.component';
 import { OrderFormComponent } from './order-form/order-form.component';
 import { PairCardContentComponent } from './pair-card-content/pair-card-content.component';
 import { PairCardComponent } from './pair-card/pair-card.component';
@@ -25,6 +26,7 @@ import { TradingComponent } from './trading.component';
     RecentOrdersComponent,
     ConfirmationDialogComponent,
     SettingsComponent,
+    FishnetComponent,
   ],
   imports: [CommonModule, SharedModule, TradingRoutingModule],
 })

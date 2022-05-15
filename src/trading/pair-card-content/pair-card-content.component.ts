@@ -59,6 +59,7 @@ export class PairCardContentComponent
 
   public disableAnimation = true;
   public isNewOrderExpanded = false;
+  public showFishnet = false;
 
   public balance?: Observable<Balance>;
   public product?: Observable<Product>;
@@ -289,6 +290,10 @@ export class PairCardContentComponent
 
       this.createOrder(order);
     }
+  }
+
+  public toggleFishnet() {
+    this.showFishnet = !this.showFishnet;
   }
 
   private getOrderFormValues(

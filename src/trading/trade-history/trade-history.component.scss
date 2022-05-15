@@ -1,3 +1,5 @@
+@import '../../variables.scss';
+
 table {
   width: 100%;
 }
@@ -20,10 +22,10 @@ table {
 }
 
 .side {
-  color: rgb(3, 121, 3);
+  color: $buy-color;
 
   &.sell {
-    color: rgb(204, 84, 84);
+    color: $sell-color;
     font-weight: 600;
   }
 }

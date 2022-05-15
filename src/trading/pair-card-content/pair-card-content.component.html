@@ -38,9 +38,26 @@
   <button mat-raised-button (click)="buyByMultiplicator()" class="buy-recent">
     buy: -mult.
   </button>
+  <button
+    mat-raised-button
+    (click)="toggleFishnet()"
+    class="buy-recent"
+    matTooltip="{{ showFishnet ? 'close' : 'open' }}"
+  >
+    <mat-icon>phishing</mat-icon>
+  </button>
 </mat-card-actions>
 
+<app-fishnet
+  *ngIf="showFishnet"
+  [product]="product | async"
+  [ticker]="ticker"
+  (create)="createOrder($event)"
+>
+</app-fishnet>
+
 <mat-expansion-panel
+  *ngIf="!showFishnet"
   hideToggle
   [expanded]="isNewOrderExpanded"
   (opened)="isNewOrderExpanded = true"
