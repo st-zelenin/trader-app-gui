@@ -12,6 +12,7 @@ import { RecentOrdersComponent } from './recent-orders/recent-orders.component';
 import { SettingsComponent } from './settings/settings.component';
 import { TradeHistoryComponent } from './trade-history/trade-history.component';
 import { TradingRoutingModule } from './trading-routing.module';
+import { TradingViewWidgetComponent } from './trading-view-widget/trading-view-widget.component';
 import { TradingComponent } from './trading.component';
 
 @NgModule({
@@ -27,6 +28,7 @@ import { TradingComponent } from './trading.component';
     ConfirmationDialogComponent,
     SettingsComponent,
     FishnetComponent,
+    TradingViewWidgetComponent,
   ],
   imports: [CommonModule, SharedModule, TradingRoutingModule],
 })

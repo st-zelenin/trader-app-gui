@@ -27,6 +27,23 @@ export class CalculationsService {
     }
   }
 
+  // TODO: move to another service or rename this one
+  public buildTradingViewSymbol(currencyPair: string, exchange: EXCHANGE) {
+    switch (exchange) {
+      case EXCHANGE.GATE_IO:
+        return `GATEIO:${currencyPair.replace('_', '')}`;
+      case EXCHANGE.CRYPTO_COM:
+        // since there is no Crypto.com in TV, Gate.io is used
+        return `GATEIO:${currencyPair.replace('_', '')}`;
+      case EXCHANGE.COINBASE:
+        return `COINBASE:${currencyPair.replace('-', '')}`;
+      case EXCHANGE.BYBIT:
+        return `BYBIT:${currencyPair}`;
+      default:
+        throw new Error(`unhandled exchange: ${exchange}`);
+    }
+  }
+
   public getBaseCurrency(currencyPair: string, exchange: EXCHANGE) {
     // TODO: remove this dirty hack
     return exchange === EXCHANGE.BYBIT

@@ -84,6 +84,11 @@
   </app-order-form>
 </mat-expansion-panel>
 
+<app-trading-view-widget
+  [exchange]="exchange"
+  [pair]="pair"
+></app-trading-view-widget>
+
 <table mat-table [dataSource]="openOrders" class="mat-elevation-z8">
   <ng-container matColumnDef="ID">
     <th mat-header-cell *matHeaderCellDef>
