@@ -46,6 +46,7 @@ export class PairCardContentComponent
   @Input() averages?: PairAverages;
   @Input() recent?: Average;
   @Input() openOrders: Order[] = [];
+  @Input() isExpanded!: boolean;
 
   public displayedColumns: string[] = [
     'ID',
@@ -74,7 +75,7 @@ export class PairCardContentComponent
     total: 0,
   };
 
-  public panelOpenState = false;
+  public isOpened = false;
   private closeTimeout?: any;
   private openTimeout?: any;
 
@@ -253,7 +254,7 @@ export class PairCardContentComponent
     }
 
     this.openTimeout = setTimeout(() => {
-      this.panelOpenState = true;
+      this.isOpened = true;
     }, 0);
   }
 
@@ -264,7 +265,7 @@ export class PairCardContentComponent
     }
 
     this.closeTimeout = setTimeout(() => {
-      this.panelOpenState = false;
+      this.isOpened = false;
     }, 2000);
   }
 

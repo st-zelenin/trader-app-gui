@@ -85,6 +85,7 @@
 </mat-expansion-panel>
 
 <app-trading-view-widget
+  *ngIf="isExpanded"
   [exchange]="exchange"
   [pair]="pair"
 ></app-trading-view-widget>
@@ -179,6 +180,6 @@
     [pair]="pair"
     [exchange]="exchange"
     [(selectedOrdersInfo)]="selectedOrdersInfo"
-    *ngIf="panelOpenState"
+    *ngIf="isOpened"
   ></app-trade-history>
 </mat-expansion-panel>

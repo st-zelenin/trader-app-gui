@@ -52,15 +52,22 @@
         <mat-icon class="drag-handle" cdkDragHandle matTooltip="drag & drop"
           >drag_indicator</mat-icon
         >
+        <mat-icon
+          class="expand"
+          matTooltip="expand"
+          (click)="toggleExpand($event)"
+          >open_in_full</mat-icon
+        >
       </mat-expansion-panel-header>
       <app-pair-card-content
-        *ngIf="panelOpenState"
+        *ngIf="isOpened"
         [pair]="pair"
         [ticker]="ticker"
         [averages]="averages"
         [recent]="recent"
         [openOrders]="openOrders"
         [exchange]="exchange"
+        [isExpanded]="isExpanded"
       >
       </app-pair-card-content>
     </mat-expansion-panel>

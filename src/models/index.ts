@@ -7,5 +7,4 @@ export * from './orders';
 export * from './products';
 export * from './tickers';
 export * from './trade-averages';
-export * from './trade-pair';
 export * from './user';

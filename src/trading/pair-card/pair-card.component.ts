@@ -26,6 +26,9 @@ import { FilteringService } from '../filtering.service';
   selector: 'app-pair-card',
   templateUrl: './pair-card.component.html',
   styleUrls: ['./pair-card.component.scss'],
+  host: {
+    '[class.expanded]': 'isExpanded',
+  },
 })
 export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   @Input() pair!: string;
@@ -33,7 +36,9 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
   @Output() remove = new EventEmitter<string>();
 
-  public panelOpenState = false;
+  public isOpened = false;
+  public isExpanded = false;
+
   public ticker?: Ticker;
   public balance?: Balance;
   public averages?: PairAverages;
@@ -185,24 +190,34 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
     }
 
     this.openTimeout = setTimeout(() => {
-      this.panelOpenState = true;
+      this.isOpened = true;
     }, 0);
   }
 
   public onPanelClose() {
+    this.isExpanded = false;
+
     if (this.openTimeout) {
       clearTimeout(this.openTimeout);
       this.openTimeout = undefined;
     }
 
     this.closeTimeout = setTimeout(() => {
-      this.panelOpenState = false;
+      this.isOpened = false;
     }, 2000);
   }
 
   public removeCard(event: Event) {
     event.stopPropagation();
     this.remove.emit(this.pair);
+  }
+
+  public toggleExpand(event: Event) {
+    if (this.isOpened) {
+      event.stopPropagation();
+    }
+
+    this.isExpanded = !this.isExpanded;
   }
 
   private checkNeedsAttention() {
