@@ -22,10 +22,10 @@ import { AppStoreFacade } from '../../store/facade';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExchangeActionsComponent implements OnInit, OnDestroy {
+  @Input() baseCurrencies!: string[];
   @Input() currencyPairs: string[] = [];
   @Input() balance?: number = 0;
   @Input() estimated!: number;
-  @Input() currencyLabel!: string;
 
   @Output() addCurrencyPair = new EventEmitter<string>();
   @Output() refresh = new EventEmitter<void>();
@@ -33,6 +33,7 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
   @Output() sort = new EventEmitter<SORTING_TYPES>();
   @Output() showRecent = new EventEmitter<OrderSide>();
   @Output() showSetting = new EventEmitter<void>();
+  @Output() baseCurrency = new EventEmitter<string>();
 
   public filteringTypes = FILTERING_TYPE;
   public sortingTypes = SORTING_TYPES;
@@ -40,9 +41,14 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
   public filteredOptions?: Observable<string[]>;
 
   public currencyPairControl = new FormControl();
+  public baseCurrencyControl = new FormControl();
 
   public currentSorting: SORTING_TYPES = SORTING_TYPES.NONE;
   public currentFiltering: FILTERING_TYPE = FILTERING_TYPE.NONE;
+
+  public get currencyLabel() {
+    return this.baseCurrencyControl.value;
+  }
 
   private unsubscribe$ = new Subject<void>();
 
@@ -52,6 +58,12 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.baseCurrencyControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((currency) => this.baseCurrency.emit(currency));
+
+    this.baseCurrencyControl.setValue(this.baseCurrencies[0]);
+
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(
       startWith(''),
       debounceTime(500),

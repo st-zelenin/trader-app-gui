@@ -40,7 +40,7 @@ import { SortingService } from '../sorting.service';
 })
 export class ExchangeComponent implements OnInit, OnDestroy {
   @Input() exchange!: EXCHANGE;
-  @Input() quoteCurrency!: string;
+  @Input() baseCurrencies!: string[];
 
   @Output() updatePairs = new EventEmitter<{
     exchange: EXCHANGE;
@@ -57,6 +57,8 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   private balances: Balances = {};
   private isSorted = false;
   private notSortedPairs: string[] = [];
+  private restBaseCurrencyPairs: string[] = [];
+  private currentBaseCurrency!: string;
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -72,22 +74,6 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     interval(15 * 60 * 1000)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => this.refresh());
-
-    this.facade
-      .pairs(this.exchange)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((pairs) => {
-        this.notSortedPairs = [...pairs];
-
-        this.pairs = this.isSorted
-          ? this.sortingService.sortBySellOrder(
-              [...pairs],
-              this.openOrders,
-              this.tickers
-            )
-          : [...pairs];
-        this.facade.getTickers(this.exchange);
-      });
 
     this.facade
       .openOrders(this.exchange)
@@ -116,10 +102,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     this.facade.getCurrencyPairs(this.exchange);
 
     this.currencyPairs = this.facade.currencyPairs(this.exchange);
-    this.quoteCurrencyBalance = this.facade.balance(
-      this.exchange,
-      this.quoteCurrency
-    );
+
     this.refresh();
   }
 
@@ -139,7 +122,10 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     moveItemInArray(this.pairs, event.previousIndex, event.currentIndex);
 
     if (!this.isSorted) {
-      this.updatePairs.emit({ exchange: this.exchange, pairs: this.pairs });
+      this.updatePairs.emit({
+        exchange: this.exchange,
+        pairs: [...this.pairs, ...this.restBaseCurrencyPairs],
+      });
     }
   }
 
@@ -189,18 +175,22 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   }
 
   private getSortedCards(sortingType: SORTING_TYPES) {
+    const pairsByBaseCurrency = this.notSortedPairs.filter((pair) =>
+      pair.endsWith(this.currentBaseCurrency)
+    );
+
     switch (sortingType) {
       case SORTING_TYPES.NONE:
-        return [...this.notSortedPairs];
+        return [...pairsByBaseCurrency];
       case SORTING_TYPES.UPCOMING_SELL:
         return this.sortingService.sortBySellOrder(
-          [...this.notSortedPairs],
+          [...this.pairs],
           this.openOrders,
           this.tickers
         );
       case SORTING_TYPES.ESTIMATED_TOTAL:
         return this.sortingService.sortByEstimatedTotal(
-          [...this.notSortedPairs],
+          [...pairsByBaseCurrency],
           this.balances,
           this.tickers,
           this.exchange
@@ -219,6 +209,43 @@ export class ExchangeComponent implements OnInit, OnDestroy {
         data: { exchange: this.exchange, side },
       }
     );
+  }
+
+  public changeBaseCurrency(currency: string): void {
+    this.currentBaseCurrency = currency;
+
+    this.quoteCurrencyBalance = this.facade.balance(this.exchange, currency);
+
+    this.facade
+      .pairs(this.exchange)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((pairs) => {
+        this.notSortedPairs = [...pairs];
+
+        const { current, rest } = pairs.reduce(
+          (res, pair) => {
+            if (pair.endsWith(currency)) {
+              res.current.push(pair);
+            } else {
+              res.rest.push(pair);
+            }
+
+            return res;
+          },
+          { current: [] as string[], rest: [] as string[] }
+        );
+
+        this.restBaseCurrencyPairs = rest;
+
+        this.pairs = this.isSorted
+          ? this.sortingService.sortBySellOrder(
+              [...current],
+              this.openOrders,
+              this.tickers
+            )
+          : [...current];
+        this.facade.getTickers(this.exchange);
+      });
   }
 
   public showSetting() {

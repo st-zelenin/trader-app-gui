@@ -1,7 +1,7 @@
 <mat-card class="actions">
   <form class="form">
     <mat-form-field appearance="standard" class="pair-container">
-      <mat-label class="pair-label">new currency pair</mat-label>
+      <mat-label class="input-label">new currency pair</mat-label>
       <input
         type="text"
         placeholder="Pick one"
@@ -28,6 +28,22 @@
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
+
+    <mat-divider vertical></mat-divider>
+
+    <div class="group">
+      <mat-form-field appearance="standard" class="currency-container">
+        <mat-label class="input-label">base currency</mat-label>
+        <mat-select [formControl]="baseCurrencyControl">
+          <mat-option
+            *ngFor="let currency of baseCurrencies"
+            [value]="currency"
+          >
+            {{ currency }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
     <mat-divider vertical></mat-divider>
     <div class="group">

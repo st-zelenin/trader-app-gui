@@ -31,7 +31,12 @@ export class CalculationsService {
   public buildTradingViewSymbol(currencyPair: string, exchange: EXCHANGE) {
     switch (exchange) {
       case EXCHANGE.GATE_IO:
-        return `GATEIO:${currencyPair.replace('_', '')}`;
+        const [currency, base] = currencyPair.split('_');
+        if (base === 'BTC') {
+          return `BINANCE:${currency}${base}`;
+        }
+
+        return `GATEIO:${currency}${base}`;
       case EXCHANGE.CRYPTO_COM:
         // since there is no Crypto.com in TV, Gate.io is used
         return `GATEIO:${currencyPair.replace('_', '')}`;

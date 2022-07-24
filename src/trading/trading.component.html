@@ -6,28 +6,28 @@
   <mat-tab label="Gate.io">
     <app-exchange
       [exchange]="exchanges.GATE_IO"
-      quoteCurrency="USDT"
+      [baseCurrencies]="gateIoBaseCurrencies"
       (updatePairs)="updateUser($event)"
     ></app-exchange>
   </mat-tab>
   <mat-tab label="Crypto.com">
     <app-exchange
       [exchange]="exchanges.CRYPTO_COM"
-      quoteCurrency="USDT"
+      [baseCurrencies]="cryptoComBaseCurrencies"
       (updatePairs)="updateUser($event)"
     ></app-exchange>
   </mat-tab>
   <mat-tab label="Coinbase">
     <app-exchange
       [exchange]="exchanges.COINBASE"
-      quoteCurrency="EUR"
+      [baseCurrencies]="coinbaseBaseCurrencies"
       (updatePairs)="updateUser($event)"
     ></app-exchange>
   </mat-tab>
   <mat-tab label="Bybit">
     <app-exchange
       [exchange]="exchanges.BYBIT"
-      quoteCurrency="USDT"
+      [baseCurrencies]="bybitBaseCurrencies"
       (updatePairs)="updateUser($event)"
     ></app-exchange>
   </mat-tab>

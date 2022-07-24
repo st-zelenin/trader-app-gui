@@ -18,6 +18,12 @@ export class TradingComponent implements OnInit, OnDestroy {
   public activeTabIndex: number;
   public exchanges = EXCHANGE;
 
+  // TODO: should be part of user entity
+  public gateIoBaseCurrencies = ['USDT', 'BTC'];
+  public cryptoComBaseCurrencies = ['USDT'];
+  public coinbaseBaseCurrencies = ['EUR'];
+  public bybitBaseCurrencies = ['USDT'];
+
   private tabs: string[] = [
     EXCHANGE_URL_PARAMS.GATE_IO,
     EXCHANGE_URL_PARAMS.CRYPTO_COM,
