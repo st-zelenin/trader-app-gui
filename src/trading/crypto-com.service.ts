@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { API_URL } from '../constants';
+import { API_URL_CRYPTO } from '../constants';
 import {
   AllAverages,
   Averages,
@@ -18,34 +18,34 @@ export class CryptoComService implements ExchangeService {
   constructor(private httpClient: HttpClient) {}
 
   public getTickers() {
-    return this.httpClient.get<Tickers>(`${API_URL}/crypto_getTickers`);
+    return this.httpClient.get<Tickers>(`${API_URL_CRYPTO}/GetTickers`);
   }
 
   public getCurrencyPairs() {
-    return this.httpClient.get<string[]>(`${API_URL}/crypto_getCurrencyPairs`);
+    return this.httpClient.get<string[]>(`${API_URL_CRYPTO}/GetCurrencyPairs`);
   }
 
   public getBalances() {
-    return this.httpClient.get<Balances>(`${API_URL}/crypto_getBalances`);
+    return this.httpClient.get<Balances>(`${API_URL_CRYPTO}/GetBalances`);
   }
 
   public getAverages() {
-    return this.httpClient.get<AllAverages>(`${API_URL}/crypto_getAverages`);
+    return this.httpClient.get<AllAverages>(`${API_URL_CRYPTO}/GetAverages`);
   }
 
   public getAllOpenOrders() {
     return this.httpClient.get<OpenOrdersByPairs>(
-      `${API_URL}/crypto_getOpenOrders`
+      `${API_URL_CRYPTO}/GetOpenOrders`
     );
   }
 
   public getRecentBuyAverages() {
     return this.httpClient.get<Averages>(
-      `${API_URL}/crypto_getRecentBuyAverages`
+      `${API_URL_CRYPTO}/GetRecentBuyAverages`
     );
   }
 
   public getProducts() {
-    return this.httpClient.get<Products>(`${API_URL}/crypto_getProducts`);
+    return this.httpClient.get<Products>(`${API_URL_CRYPTO}/GetProducts`);
   }
 }

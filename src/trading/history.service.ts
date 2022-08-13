@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { API_URL, EXCHANGE } from '../constants';
+import { API_URL, API_URL_BYBIT, API_URL_CRYPTO, EXCHANGE } from '../constants';
 import { Order, OrderSide } from '../models';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class HistoryService {
       }
       case EXCHANGE.CRYPTO_COM: {
         return this.httpClient.post(
-          `${API_URL}/orchestrators/crypto_importHistory_orchestrator`,
+          `${API_URL_CRYPTO}/ImportHistory_HttpStart`,
           { periodMonths: 12 }
         );
       }
@@ -29,7 +29,7 @@ export class HistoryService {
         });
       }
       case EXCHANGE.BYBIT: {
-        return this.httpClient.get(`${API_URL}/bybit_importHistory`, {
+        return this.httpClient.get(`${API_URL_BYBIT}/ImportHistory`, {
           params: { pair },
         });
       }
@@ -46,7 +46,7 @@ export class HistoryService {
         });
       }
       case EXCHANGE.CRYPTO_COM: {
-        return this.httpClient.get(`${API_URL}/crypto_updateTradeHistory`);
+        return this.httpClient.get(`${API_URL_CRYPTO}/UpdateRecentHistory`);
       }
       case EXCHANGE.COINBASE: {
         return this.httpClient.get(`${API_URL}/coinbase_updateTradeHistory`, {
@@ -54,7 +54,7 @@ export class HistoryService {
         });
       }
       case EXCHANGE.BYBIT: {
-        return this.httpClient.get(`${API_URL}/bybit_updateTradeHistory`, {
+        return this.httpClient.get(`${API_URL_BYBIT}/UpdateRecentHistory`, {
           params: { pair },
         });
       }
@@ -73,7 +73,7 @@ export class HistoryService {
           .pipe(map(({ res }) => res));
       }
       case EXCHANGE.CRYPTO_COM: {
-        return this.httpClient.get<Order[]>(`${API_URL}/crypto_getHistory`, {
+        return this.httpClient.get<Order[]>(`${API_URL_CRYPTO}/GetHistory`, {
           params: { pair },
         });
       }
@@ -83,7 +83,7 @@ export class HistoryService {
         });
       }
       case EXCHANGE.BYBIT: {
-        return this.httpClient.get<Order[]>(`${API_URL}/bybit_getHistory`, {
+        return this.httpClient.get<Order[]>(`${API_URL_BYBIT}/GetHistory`, {
           params: { pair },
         });
       }
@@ -104,7 +104,7 @@ export class HistoryService {
       }
       case EXCHANGE.CRYPTO_COM: {
         return this.httpClient.get<Order[]>(
-          `${API_URL}/crypto_getRecentTradeHistory`,
+          `${API_URL_CRYPTO}/GetRecentTradeHistory`,
           {
             params: { side, limit },
           }
@@ -120,7 +120,7 @@ export class HistoryService {
       }
       case EXCHANGE.BYBIT: {
         return this.httpClient.get<Order[]>(
-          `${API_URL}/bybit_getRecentTradeHistory`,
+          `${API_URL_BYBIT}/GetRecentTradeHistory`,
           {
             params: { side, limit },
           }

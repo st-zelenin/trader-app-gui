@@ -2,6 +2,8 @@ import { environment } from './environments/environment';
 import { Multiplicator } from './models/multiplicator';
 
 export const API_URL = environment.API_URL;
+export const API_URL_CRYPTO = environment.API_URL_CRYPTO;
+export const API_URL_BYBIT = environment.API_URL_BYBIT;
 
 export const BUY_MULTIPLICATORS: Multiplicator[] = [
   { text: '0.5 %', value: 0.005 },

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { API_URL, EXCHANGE } from '../constants';
+import { API_URL, API_URL_BYBIT, API_URL_CRYPTO, EXCHANGE } from '../constants';
 import { NewOrder, Order } from '../models';
 
 @Injectable({
@@ -17,7 +17,7 @@ export class OrderingService {
         });
       }
       case EXCHANGE.CRYPTO_COM: {
-        return this.httpClient.post(`${API_URL}/crypto_cancelOrder`, {
+        return this.httpClient.post(`${API_URL_CRYPTO}/CancelOrder`, {
           id: order.id,
           pair: order.currencyPair,
         });
@@ -28,7 +28,7 @@ export class OrderingService {
         });
       }
       case EXCHANGE.BYBIT: {
-        return this.httpClient.post(`${API_URL}/bybit_cancelOrder`, {
+        return this.httpClient.post(`${API_URL_BYBIT}/CancelOrder`, {
           id: order.id,
         });
       }
@@ -45,13 +45,13 @@ export class OrderingService {
         });
       }
       case EXCHANGE.CRYPTO_COM: {
-        return this.httpClient.post(`${API_URL}/crypto_createOrder`, order);
+        return this.httpClient.post(`${API_URL_CRYPTO}/CreateOrder`, order);
       }
       case EXCHANGE.COINBASE: {
         return this.httpClient.post(`${API_URL}/coinbase_createOrder`, order);
       }
       case EXCHANGE.BYBIT: {
-        return this.httpClient.post(`${API_URL}/bybit_createOrder`, order);
+        return this.httpClient.post(`${API_URL_BYBIT}/CreateOrder`, order);
       }
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);
