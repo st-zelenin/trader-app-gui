@@ -271,7 +271,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     if (this.buyMultiplicator && this.price.value) {
       this.setPriceValue(
-        Number(this.price.value) * (1 - this.buyMultiplicator.value)
+        Number(this.price.value) / (1 + this.buyMultiplicator.value)
       );
     }
   }
