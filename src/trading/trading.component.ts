@@ -20,7 +20,7 @@ export class TradingComponent implements OnInit, OnDestroy {
 
   // TODO: should be part of user entity
   public gateIoBaseCurrencies = ['USDT', 'BTC'];
-  public cryptoComBaseCurrencies = ['USDT'];
+  public cryptoComBaseCurrencies = ['USDT', 'USDC'];
   public coinbaseBaseCurrencies = ['EUR'];
   public bybitBaseCurrencies = ['USDT'];
 

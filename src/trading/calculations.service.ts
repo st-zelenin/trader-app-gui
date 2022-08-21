@@ -30,16 +30,28 @@ export class CalculationsService {
   // TODO: move to another service or rename this one
   public buildTradingViewSymbol(currencyPair: string, exchange: EXCHANGE) {
     switch (exchange) {
-      case EXCHANGE.GATE_IO:
+      case EXCHANGE.GATE_IO: {
         const [currency, base] = currencyPair.split('_');
         if (base === 'BTC') {
           return `BINANCE:${currency}${base}`;
         }
 
         return `GATEIO:${currency}${base}`;
-      case EXCHANGE.CRYPTO_COM:
-        // since there is no Crypto.com in TV, Gate.io is used
-        return `GATEIO:${currencyPair.replace('_', '')}`;
+      }
+      case EXCHANGE.CRYPTO_COM: {
+        let [currency, base] = currencyPair.split('_');
+        if (base === 'USDC') {
+          // as there is not enough history for USDC
+          base = 'USDT';
+        }
+
+        if (currency === 'CRO') {
+          return `GATEIO:${currency}${base}`;
+        }
+
+        // since there is no Crypto.com in TV, BINANCE is used
+        return `BINANCE:${currency}${base}`;
+      }
       case EXCHANGE.COINBASE:
         return `COINBASE:${currencyPair.replace('-', '')}`;
       case EXCHANGE.BYBIT:
