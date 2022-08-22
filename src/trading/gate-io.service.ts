@@ -1,15 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { API_URL } from '../constants';
+import { API_URL_GATE } from '../constants';
 import {
   AllAverages,
   Averages,
   Balances,
   ExchangeService,
-  GateIoCurrencyPair,
   OpenOrdersByPairs,
-  Order,
   Products,
   Tickers,
 } from '../models';
@@ -21,40 +18,34 @@ export class GateIoService implements ExchangeService {
   constructor(private httpClient: HttpClient) {}
 
   public getTickers() {
-    return this.httpClient.get<Tickers>(`${API_URL}/tickerInfo`);
-  }
-
-  public getOpenOrders(pair: string) {
-    return this.httpClient.get<Order[]>(`${API_URL}/getOpenOrders`, {
-      params: { pair },
-    });
+    return this.httpClient.get<Tickers>(`${API_URL_GATE}/GetTickers`);
   }
 
   public getAllOpenOrders() {
     return this.httpClient.get<OpenOrdersByPairs>(
-      `${API_URL}/getAllOpenOrders`
+      `${API_URL_GATE}/GetOpenOrders`
     );
   }
 
   public getCurrencyPairs() {
-    return this.httpClient
-      .get<GateIoCurrencyPair[]>(`${API_URL}/getCurrencyPairs`)
-      .pipe(map((p) => p.map(({ id }) => id)));
+    return this.httpClient.get<string[]>(`${API_URL_GATE}/GetCurrencyPairs`);
   }
 
   public getBalances() {
-    return this.httpClient.get<Balances>(`${API_URL}/getBalance`);
+    return this.httpClient.get<Balances>(`${API_URL_GATE}/GetBalances`);
   }
 
   public getAverages() {
-    return this.httpClient.get<AllAverages>(`${API_URL}/getAverages`);
+    return this.httpClient.get<AllAverages>(`${API_URL_GATE}/GetAverages`);
   }
 
   public getRecentBuyAverages() {
-    return this.httpClient.get<Averages>(`${API_URL}/analyzeTrades`);
+    return this.httpClient.get<Averages>(
+      `${API_URL_GATE}/GetRecentBuyAverages`
+    );
   }
 
   public getProducts() {
-    return this.httpClient.get<Products>(`${API_URL}/gate_getProducts`);
+    return this.httpClient.get<Products>(`${API_URL_GATE}/GetProducts`);
   }
 }

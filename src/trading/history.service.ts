@@ -1,7 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { API_URL, API_URL_BYBIT, API_URL_CRYPTO, EXCHANGE } from '../constants';
+import {
+  API_URL,
+  API_URL_BYBIT,
+  API_URL_CRYPTO,
+  API_URL_GATE,
+  EXCHANGE,
+} from '../constants';
 import { Order, OrderSide } from '../models';
 
 @Injectable({
@@ -13,7 +18,7 @@ export class HistoryService {
   public importAll(exchange: EXCHANGE, pair: string) {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
-        return this.httpClient.get(`${API_URL}/importAllHistory`, {
+        return this.httpClient.get(`${API_URL_GATE}/ImportHistory`, {
           params: { pair },
         });
       }
@@ -41,7 +46,7 @@ export class HistoryService {
   public updateRecent(exchange: EXCHANGE, pair: string) {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
-        return this.httpClient.get(`${API_URL}/updateRecentHistory`, {
+        return this.httpClient.get(`${API_URL_GATE}/UpdateRecentHistory`, {
           params: { pair },
         });
       }
@@ -66,11 +71,9 @@ export class HistoryService {
   public getHistory(exchange: EXCHANGE, pair: string) {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
-        return this.httpClient
-          .get<{ total: number; res: Order[] }>(`${API_URL}/getHistory`, {
-            params: { pair },
-          })
-          .pipe(map(({ res }) => res));
+        return this.httpClient.get<Order[]>(`${API_URL_GATE}/GetHistory`, {
+          params: { pair },
+        });
       }
       case EXCHANGE.CRYPTO_COM: {
         return this.httpClient.get<Order[]>(`${API_URL_CRYPTO}/GetHistory`, {
@@ -96,7 +99,7 @@ export class HistoryService {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
         return this.httpClient.get<Order[]>(
-          `${API_URL}/gate_getRecentTradeHistory`,
+          `${API_URL_GATE}/GetRecentTradeHistory`,
           {
             params: { side, limit },
           }

@@ -1,6 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { API_URL, API_URL_BYBIT, API_URL_CRYPTO, EXCHANGE } from '../constants';
+import {
+  API_URL,
+  API_URL_BYBIT,
+  API_URL_CRYPTO,
+  API_URL_GATE,
+  EXCHANGE,
+} from '../constants';
 import { NewOrder, Order } from '../models';
 
 @Injectable({
@@ -12,8 +18,9 @@ export class OrderingService {
   public cancel(exchange: EXCHANGE, order: Order) {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
-        return this.httpClient.delete(`${API_URL}/cancelOrder`, {
-          params: { id: order.id, pair: order.currencyPair },
+        return this.httpClient.post(`${API_URL_GATE}/CancelOrder`, {
+          id: order.id,
+          pair: order.currencyPair,
         });
       }
       case EXCHANGE.CRYPTO_COM: {
@@ -40,9 +47,7 @@ export class OrderingService {
   public create(exchange: EXCHANGE, order: NewOrder) {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
-        return this.httpClient.post(`${API_URL}/createOrder`, {
-          order,
-        });
+        return this.httpClient.post(`${API_URL_GATE}/CreateOrder`, order);
       }
       case EXCHANGE.CRYPTO_COM: {
         return this.httpClient.post(`${API_URL_CRYPTO}/CreateOrder`, order);
