@@ -15,7 +15,7 @@ export const createExchangeReducer = (
     recentBuyAverages: {},
     pairs: [],
     currencyPairs: [],
-    products: {},
+    products: undefined,
   };
 
   return createReducer(

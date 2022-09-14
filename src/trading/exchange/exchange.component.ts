@@ -8,8 +8,8 @@ import {
   Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { interval, Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { interval, Observable, of, Subject } from 'rxjs';
+import { catchError, take, takeUntil, tap } from 'rxjs/operators';
 import { EXCHANGE, SORTING_TYPES } from '../../constants';
 import {
   Balance,
@@ -42,6 +42,12 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   @Input() exchange!: EXCHANGE;
   @Input() baseCurrencies!: string[];
 
+  @Input() set baseCurrency(value: string) {
+    this.currentBaseCurrency = value;
+    this.updateBaseCurrencyRelatedData();
+  }
+  @Output() baseCurrencyChange = new EventEmitter<string>();
+
   @Output() updatePairs = new EventEmitter<{
     exchange: EXCHANGE;
     pairs: string[];
@@ -51,6 +57,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   public currencyPairs?: Observable<string[]>;
   public quoteCurrencyBalance?: Observable<Balance>;
   public estimated: number = 0;
+  public currentBaseCurrency = '';
 
   private openOrders: OpenOrdersByPairs = {};
   private tickers: Tickers = {};
@@ -58,7 +65,6 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   private isSorted = false;
   private notSortedPairs: string[] = [];
   private restBaseCurrencyPairs: string[] = [];
-  private currentBaseCurrency!: string;
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -72,7 +78,11 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // 15 minutes
     interval(15 * 60 * 1000)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        // hide error for now
+        catchError(() => of())
+      )
       .subscribe(() => this.refresh());
 
     this.facade
@@ -98,10 +108,26 @@ export class ExchangeComponent implements OnInit, OnDestroy {
         this.calcEstimatedTotal();
       });
 
-    this.facade.getProducts(this.exchange);
-    this.facade.getCurrencyPairs(this.exchange);
+    // cache products and currency pairs
+    this.facade
+      .products(this.exchange)
+      .pipe(
+        take(1),
+        tap((products) => {
+          if (!products) {
+            this.facade.getProducts(this.exchange);
+          }
+        })
+      )
+      .subscribe();
 
-    this.currencyPairs = this.facade.currencyPairs(this.exchange);
+    this.currencyPairs = this.facade.currencyPairs(this.exchange).pipe(
+      tap((pairs) => {
+        if (!pairs || !pairs.length) {
+          this.facade.getCurrencyPairs(this.exchange);
+        }
+      })
+    );
 
     this.refresh();
   }
@@ -212,9 +238,14 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   }
 
   public changeBaseCurrency(currency: string): void {
-    this.currentBaseCurrency = currency;
+    this.baseCurrencyChange.emit(currency);
+  }
 
-    this.quoteCurrencyBalance = this.facade.balance(this.exchange, currency);
+  private updateBaseCurrencyRelatedData(): void {
+    this.quoteCurrencyBalance = this.facade.balance(
+      this.exchange,
+      this.currentBaseCurrency
+    );
 
     this.facade
       .pairs(this.exchange)
@@ -224,7 +255,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
 
         const { current, rest } = pairs.reduce(
           (res, pair) => {
-            if (pair.endsWith(currency)) {
+            if (pair.endsWith(this.currentBaseCurrency)) {
               res.current.push(pair);
             } else {
               res.rest.push(pair);

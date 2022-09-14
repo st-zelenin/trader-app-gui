@@ -77,9 +77,10 @@ export class ExchangeSelectors {
 
   public pairs = createSelector(this.selectState, (state) => state.pairs);
 
+  public products = createSelector(this.selectState, (state) => state.products);
+
   public product = (currencyPair: string) =>
-    createSelector(
-      this.selectState,
-      (state: ExchangeState) => state.products[currencyPair]
+    createSelector(this.selectState, (state: ExchangeState) =>
+      state.products ? state.products[currencyPair] : undefined
     );
 }

@@ -27,13 +27,15 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
   @Input() balance?: number = 0;
   @Input() estimated!: number;
 
+  @Input() baseCurrency!: string;
+  @Output() baseCurrencyChange = new EventEmitter<string>();
+
   @Output() addCurrencyPair = new EventEmitter<string>();
   @Output() refresh = new EventEmitter<void>();
   @Output() filter = new EventEmitter<FILTERING_TYPE>();
   @Output() sort = new EventEmitter<SORTING_TYPES>();
   @Output() showRecent = new EventEmitter<OrderSide>();
   @Output() showSetting = new EventEmitter<void>();
-  @Output() baseCurrency = new EventEmitter<string>();
 
   public filteringTypes = FILTERING_TYPE;
   public sortingTypes = SORTING_TYPES;
@@ -58,11 +60,11 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.baseCurrencyControl.setValue(this.baseCurrency);
+
     this.baseCurrencyControl.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((currency) => this.baseCurrency.emit(currency));
-
-    this.baseCurrencyControl.setValue(this.baseCurrencies[0]);
+      .subscribe((currency) => this.baseCurrencyChange.emit(currency));
 
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(
       startWith(''),

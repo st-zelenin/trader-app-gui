@@ -23,3 +23,8 @@ export const defaultSellPriceMultiplicator = createSelector(
   selectState,
   (state: SharedState) => state.defaultSellPriceMultiplicator
 );
+
+export const activeTab = createSelector(
+  selectState,
+  (state: SharedState) => state.activeTab
+);

@@ -1,34 +1,16 @@
 <mat-tab-group
   animationDuration="0ms"
   (selectedTabChange)="selectedTabChange($event)"
-  [selectedIndex]="activeTabIndex"
+  [selectedIndex]="exchangeTabs.indexOf(activeTab)"
 >
-  <mat-tab label="Gate.io">
+  <mat-tab *ngFor="let tab of exchangeTabs" [label]="tab.label">
     <app-exchange
-      [exchange]="exchanges.GATE_IO"
-      [baseCurrencies]="gateIoBaseCurrencies"
+      *ngIf="tab.id === activeTab.id"
+      [exchange]="tab.id"
+      [baseCurrencies]="tab.baseCurrencies"
+      [(baseCurrency)]="tab.activeBaseCurrency"
       (updatePairs)="updateUser($event)"
-    ></app-exchange>
-  </mat-tab>
-  <mat-tab label="Crypto.com">
-    <app-exchange
-      [exchange]="exchanges.CRYPTO_COM"
-      [baseCurrencies]="cryptoComBaseCurrencies"
-      (updatePairs)="updateUser($event)"
-    ></app-exchange>
-  </mat-tab>
-  <!-- <mat-tab label="Coinbase">
-    <app-exchange
-      [exchange]="exchanges.COINBASE"
-      [baseCurrencies]="coinbaseBaseCurrencies"
-      (updatePairs)="updateUser($event)"
-    ></app-exchange>
-  </mat-tab> -->
-  <mat-tab label="Bybit">
-    <app-exchange
-      [exchange]="exchanges.BYBIT"
-      [baseCurrencies]="bybitBaseCurrencies"
-      (updatePairs)="updateUser($event)"
-    ></app-exchange>
+    >
+    </app-exchange>
   </mat-tab>
 </mat-tab-group>

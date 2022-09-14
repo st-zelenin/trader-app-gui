@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
-import { BUY_MULTIPLICATORS } from '../../constants';
+import { BUY_MULTIPLICATORS, EXCHANGE } from '../../constants';
 import {
+  setActiveTab,
   setBuyMultiplicator,
   setDefaultSellPriceMultiplicator,
   setDefaultSellVolumeDivider,
@@ -13,6 +14,7 @@ export const initialState: SharedState = {
   orderDefaultTotalAmount: 4,
   defaultSellVolumeDivider: 3,
   defaultSellPriceMultiplicator: 1.5,
+  activeTab: EXCHANGE.GATE_IO,
 };
 
 export const sharedReducer = createReducer(
@@ -32,5 +34,9 @@ export const sharedReducer = createReducer(
   on(setDefaultSellPriceMultiplicator, (state, { multiplicator }) => {
     console.log('setDefaultSellPriceMultiplicator', multiplicator);
     return { ...state, multiplicator };
+  }),
+  on(setActiveTab, (state, { activeTab }) => {
+    console.log('setActiveTab', activeTab);
+    return { ...state, activeTab };
   })
 );

@@ -1,3 +1,4 @@
+import { EXCHANGE } from '../../constants';
 import { Multiplicator } from '../../models';
 
 export interface SharedState {
@@ -5,4 +6,5 @@ export interface SharedState {
   orderDefaultTotalAmount: number;
   defaultSellVolumeDivider: number;
   defaultSellPriceMultiplicator: number;
+  activeTab: EXCHANGE;
 }

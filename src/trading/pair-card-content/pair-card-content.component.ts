@@ -8,7 +8,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
 import {
   Average,
@@ -106,7 +106,11 @@ export class PairCardContentComponent
     this.updateTickerInfo();
 
     this.balance = this.facade.balance(this.exchange, baseCurrency);
-    this.product = this.facade.product(this.exchange, this.pair);
+    this.product = this.facade.product(this.exchange, this.pair).pipe(
+      // filter out falsy and cast to Product for proper compilation
+      filter((p) => !p),
+      map((p) => p as Product)
+    );
 
     this.facade.buyMultiplicator
       .pipe(takeUntil(this.unsubscribe$))

@@ -32,7 +32,7 @@ export interface ExchangeState {
   recentBuyAverages: Averages;
   pairs: string[];
   currencyPairs: string[];
-  products: Products;
+  products?: Products;
 }
 
 export interface AppState {

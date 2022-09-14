@@ -3,6 +3,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ExchangeTab } from 'src/models/exchange-tab';
 import { EXCHANGE, EXCHANGE_URL_PARAMS } from '../constants';
 import { User } from '../models';
 import { AppStoreFacade } from '../store/facade';
@@ -15,20 +16,37 @@ import { UserService } from '../user.service';
 })
 export class TradingComponent implements OnInit, OnDestroy {
   public user: User;
-  public activeTabIndex: number;
-  public exchanges = EXCHANGE;
+  public activeTab: ExchangeTab;
 
-  // TODO: should be part of user entity
-  public gateIoBaseCurrencies = ['USDT', 'BTC'];
-  public cryptoComBaseCurrencies = ['USDT', 'USDC'];
-  public coinbaseBaseCurrencies = ['EUR'];
-  public bybitBaseCurrencies = ['USDT'];
-
-  private tabs: string[] = [
-    EXCHANGE_URL_PARAMS.GATE_IO,
-    EXCHANGE_URL_PARAMS.CRYPTO_COM,
-    EXCHANGE_URL_PARAMS.COINBASE,
-    EXCHANGE_URL_PARAMS.BYBIT,
+  public exchangeTabs: ExchangeTab[] = [
+    {
+      id: EXCHANGE.GATE_IO,
+      label: 'Gate.io',
+      urlParam: EXCHANGE_URL_PARAMS.GATE_IO,
+      baseCurrencies: ['USDT', 'BTC'],
+      activeBaseCurrency: 'USDT',
+    },
+    {
+      id: EXCHANGE.CRYPTO_COM,
+      label: 'Crypto.com',
+      urlParam: EXCHANGE_URL_PARAMS.CRYPTO_COM,
+      baseCurrencies: ['USDT', 'USDC'],
+      activeBaseCurrency: 'USDC',
+    },
+    // {
+    //   id: EXCHANGE.COINBASE,
+    //   label: 'Coinbase',
+    //   urlParam: EXCHANGE_URL_PARAMS.COINBASE,
+    //   baseCurrencies: ['EUR'],
+    //   activeBaseCurrency: 'EUR',
+    // },
+    {
+      id: EXCHANGE.BYBIT,
+      label: 'Bybit',
+      urlParam: EXCHANGE_URL_PARAMS.BYBIT,
+      baseCurrencies: ['USDT'],
+      activeBaseCurrency: 'USDT',
+    },
   ];
 
   private unsubscribe$ = new Subject<void>();
@@ -40,15 +58,28 @@ export class TradingComponent implements OnInit, OnDestroy {
     private readonly userService: UserService
   ) {
     this.user = this.route.snapshot.data.user;
-    this.activeTabIndex = this.tabs.indexOf(
-      this.route.snapshot.paramMap.get('tab')!
-    );
 
-    this.route.paramMap
+    this.activeTab = this.exchangeTabs[0];
+
+    this.facade.activeTab
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((paramMap) => {
-        this.activeTabIndex = this.tabs.indexOf(paramMap.get('tab')!);
+      .subscribe((activeTab) => {
+        const tab = this.exchangeTabs.find(({ id }) => id === activeTab);
+        if (tab) {
+          this.activeTab = tab;
+          this.router.navigate([`trades/${this.activeTab.urlParam}`]);
+        }
       });
+
+    const exchangeParam = this.route.snapshot.paramMap.get('tab');
+    if (exchangeParam) {
+      const exchange = this.exchangeTabs.find(
+        ({ urlParam }) => urlParam === exchangeParam
+      );
+      if (exchange) {
+        this.facade.setActiveTab(exchange.id);
+      }
+    }
   }
 
   ngOnInit(): void {
@@ -56,8 +87,7 @@ export class TradingComponent implements OnInit, OnDestroy {
   }
 
   public selectedTabChange(event: MatTabChangeEvent) {
-    this.activeTabIndex = event.index;
-    this.router.navigate([`trades/${this.tabs[event.index]}`]);
+    this.facade.setActiveTab(this.exchangeTabs[event.index].id);
   }
 
   public updateUser({

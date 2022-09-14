@@ -1,6 +1,7 @@
 <app-exchange-actions
   [baseCurrencies]="baseCurrencies"
-  (baseCurrency)="changeBaseCurrency($event)"
+  [baseCurrency]="currentBaseCurrency"
+  (baseCurrencyChange)="changeBaseCurrency($event)"
   [currencyPairs]="(currencyPairs | async) || []"
   [balance]="(quoteCurrencyBalance | async)?.available"
   [estimated]="estimated"
