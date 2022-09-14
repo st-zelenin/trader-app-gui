@@ -49,7 +49,6 @@ export class AppStoreFacade {
   public defaultSellPriceMultiplicator = this.store.select(
     sharedSelectors.defaultSellPriceMultiplicator
   );
-  public activeTab = this.store.select(sharedSelectors.activeTab);
   public pairs = (exchange: EXCHANGE) =>
     this.store.select(this.exchangeSelectors[exchange].pairs);
   public tickers = (exchange: EXCHANGE) =>
@@ -155,9 +154,5 @@ export class AppStoreFacade {
     this.store.dispatch(
       sharedActions.setDefaultSellPriceMultiplicator({ multiplicator })
     );
-  }
-
-  public setActiveTab(activeTab: EXCHANGE) {
-    this.store.dispatch(sharedActions.setActiveTab({ activeTab }));
   }
 }

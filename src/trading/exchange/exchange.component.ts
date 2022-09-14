@@ -8,6 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { interval, Observable, of, Subject } from 'rxjs';
 import { catchError, take, takeUntil, tap } from 'rxjs/operators';
 import { EXCHANGE, SORTING_TYPES } from '../../constants';
@@ -72,6 +73,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     private readonly filteringService: FilteringService,
     private readonly sortingService: SortingService,
     private readonly calculationsService: CalculationsService,
+    private readonly snackBar: MatSnackBar,
     private dialog: MatDialog
   ) {}
 
@@ -80,8 +82,17 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     interval(15 * 60 * 1000)
       .pipe(
         takeUntil(this.unsubscribe$),
-        // hide error for now
-        catchError(() => of())
+        catchError(() => {
+          this.snackBar.open('failed to refresh data', 'x', {
+            // 1 minute
+            duration: 60 * 1000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['warning'],
+          });
+
+          return of();
+        })
       )
       .subscribe(() => this.refresh());
 

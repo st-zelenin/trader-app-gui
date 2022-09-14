@@ -16,7 +16,7 @@ import { UserService } from '../user.service';
 })
 export class TradingComponent implements OnInit, OnDestroy {
   public user: User;
-  public activeTab: ExchangeTab;
+  public selectedIndex: number = 0;
 
   public exchangeTabs: ExchangeTab[] = [
     {
@@ -59,26 +59,11 @@ export class TradingComponent implements OnInit, OnDestroy {
   ) {
     this.user = this.route.snapshot.data.user;
 
-    this.activeTab = this.exchangeTabs[0];
-
-    this.facade.activeTab
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((activeTab) => {
-        const tab = this.exchangeTabs.find(({ id }) => id === activeTab);
-        if (tab) {
-          this.activeTab = tab;
-          this.router.navigate([`trades/${this.activeTab.urlParam}`]);
-        }
-      });
-
     const exchangeParam = this.route.snapshot.paramMap.get('tab');
     if (exchangeParam) {
-      const exchange = this.exchangeTabs.find(
+      this.selectedIndex = this.exchangeTabs.findIndex(
         ({ urlParam }) => urlParam === exchangeParam
       );
-      if (exchange) {
-        this.facade.setActiveTab(exchange.id);
-      }
     }
   }
 
@@ -87,7 +72,7 @@ export class TradingComponent implements OnInit, OnDestroy {
   }
 
   public selectedTabChange(event: MatTabChangeEvent) {
-    this.facade.setActiveTab(this.exchangeTabs[event.index].id);
+    this.router.navigate([`trades/${this.exchangeTabs[event.index].urlParam}`]);
   }
 
   public updateUser({
