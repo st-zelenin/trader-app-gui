@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   API_URL,
+  API_URL_BINANCE,
   API_URL_BYBIT,
   API_URL_CRYPTO,
   API_URL_GATE,
@@ -39,6 +40,11 @@ export class OrderingService {
           id: order.id,
         });
       }
+      case EXCHANGE.BINANCE: {
+        return this.httpClient.post(`${API_URL_BINANCE}/CancelOrder`, {
+          id: order.id,
+        });
+      }
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);
     }
@@ -57,6 +63,9 @@ export class OrderingService {
       }
       case EXCHANGE.BYBIT: {
         return this.httpClient.post(`${API_URL_BYBIT}/CreateOrder`, order);
+      }
+      case EXCHANGE.BINANCE: {
+        return this.httpClient.post(`${API_URL_BINANCE}/CreateOrder`, order);
       }
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);

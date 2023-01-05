@@ -8,7 +8,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
 import {
   Average,
@@ -62,8 +62,8 @@ export class PairCardContentComponent
   public isNewOrderExpanded = false;
   public showFishnet = false;
 
-  public balance?: Observable<Balance>;
-  public product?: Observable<Product>;
+  public balance: Observable<Balance> | undefined = undefined;
+  public product: Observable<Product | null> | null = null;
   public buyMultiplicator?: Multiplicator;
   public orderDefaultTotalAmount?: number;
   public defaultSellVolumeDivider?: number;
@@ -106,11 +106,7 @@ export class PairCardContentComponent
     this.updateTickerInfo();
 
     this.balance = this.facade.balance(this.exchange, baseCurrency);
-    this.product = this.facade.product(this.exchange, this.pair).pipe(
-      // filter out falsy and cast to Product for proper compilation
-      filter((p) => !p),
-      map((p) => p as Product)
-    );
+    this.product = this.facade.product(this.exchange, this.pair);
 
     this.facade.buyMultiplicator
       .pipe(takeUntil(this.unsubscribe$))

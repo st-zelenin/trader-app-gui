@@ -23,6 +23,9 @@ export const CRYPTO_COM_ACTIONS = new InjectionToken<ExchangeActions>(
 export const BYBIT_ACTIONS = new InjectionToken<ExchangeActions>(
   EXCHANGE.BYBIT
 );
+export const BINANCE_ACTIONS = new InjectionToken<ExchangeActions>(
+  EXCHANGE.BINANCE
+);
 
 export interface ExchangeState {
   tickers: Tickers;
@@ -40,5 +43,6 @@ export interface AppState {
   crypto_com: ExchangeState;
   coinbase: ExchangeState;
   bybit: ExchangeState;
+  binance: ExchangeState;
   shared: SharedState;
 }

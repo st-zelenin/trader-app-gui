@@ -5,4 +5,5 @@ export interface User {
   crypto_pairs: string[];
   coinbase_pairs: string[];
   bybit_pairs: string[];
+  binance_pairs: string[];
 }

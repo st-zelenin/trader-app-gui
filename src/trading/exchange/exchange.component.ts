@@ -261,7 +261,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     this.facade
       .pairs(this.exchange)
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((pairs) => {
+      .subscribe((pairs = []) => {
         this.notSortedPairs = [...pairs];
 
         const { current, rest } = pairs.reduce(

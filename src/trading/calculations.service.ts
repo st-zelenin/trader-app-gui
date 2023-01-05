@@ -22,6 +22,8 @@ export class CalculationsService {
         return `${baseCurrency}-EUR`;
       case EXCHANGE.BYBIT:
         return `${baseCurrency}USDT`;
+      case EXCHANGE.BINANCE:
+        return `${baseCurrency}USDT`;
       default:
         throw new Error(`unhandled get currency pair for ${exchange}`);
     }
@@ -56,6 +58,8 @@ export class CalculationsService {
         return `COINBASE:${currencyPair.replace('-', '')}`;
       case EXCHANGE.BYBIT:
         return `BYBIT:${currencyPair}`;
+      case EXCHANGE.BINANCE:
+        return `BINANCE:${currencyPair}`;
       default:
         throw new Error(`unhandled exchange: ${exchange}`);
     }
@@ -63,7 +67,7 @@ export class CalculationsService {
 
   public getBaseCurrency(currencyPair: string, exchange: EXCHANGE) {
     // TODO: remove this dirty hack
-    return exchange === EXCHANGE.BYBIT
+    return exchange === EXCHANGE.BYBIT || exchange === EXCHANGE.BINANCE
       ? currencyPair.replace('USDT', '')
       : currencyPair.split(/_|-/)[0];
   }

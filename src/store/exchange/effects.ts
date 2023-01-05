@@ -2,12 +2,14 @@ import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
+import { BinanceService } from 'src/trading/binance.service';
 import { ExchangeService } from '../../models';
 import { BybitService } from '../../trading/bybit.service';
 import { CoinbaseService } from '../../trading/coinbase.service';
 import { CryptoComService } from '../../trading/crypto-com.service';
 import { GateIoService } from '../../trading/gate-io.service';
 import {
+  BINANCE_ACTIONS,
   BYBIT_ACTIONS,
   COINBASE_ACTIONS,
   CRYPTO_COM_ACTIONS,
@@ -152,6 +154,17 @@ export class GateIoEffects extends ExchangeEffects {
     actions: Actions,
     exchangeService: GateIoService,
     @Inject(GATE_IO_ACTIONS) exchangeActions: ExchangeActions
+  ) {
+    super(actions, exchangeService, exchangeActions);
+  }
+}
+
+@Injectable()
+export class BinanceEffects extends ExchangeEffects {
+  constructor(
+    actions: Actions,
+    exchangeService: BinanceService,
+    @Inject(BINANCE_ACTIONS) exchangeActions: ExchangeActions
   ) {
     super(actions, exchangeService, exchangeActions);
   }

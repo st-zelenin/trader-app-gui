@@ -5,6 +5,7 @@ import { Multiplicator, User } from '../models';
 import { ExchangeActions, ExchangeSelectors } from './exchange';
 import {
   AppState,
+  BINANCE_ACTIONS,
   BYBIT_ACTIONS,
   COINBASE_ACTIONS,
   CRYPTO_COM_ACTIONS,
@@ -21,6 +22,7 @@ export class AppStoreFacade {
     [EXCHANGE.CRYPTO_COM]: new ExchangeSelectors(EXCHANGE.CRYPTO_COM),
     [EXCHANGE.COINBASE]: new ExchangeSelectors(EXCHANGE.COINBASE),
     [EXCHANGE.BYBIT]: new ExchangeSelectors(EXCHANGE.BYBIT),
+    [EXCHANGE.BINANCE]: new ExchangeSelectors(EXCHANGE.BINANCE),
   };
   private readonly exchangeActions: { [key: string]: ExchangeActions };
 
@@ -29,13 +31,15 @@ export class AppStoreFacade {
     @Inject(GATE_IO_ACTIONS) gateIoActions: ExchangeActions,
     @Inject(COINBASE_ACTIONS) coinbaseActions: ExchangeActions,
     @Inject(CRYPTO_COM_ACTIONS) cryptoComActions: ExchangeActions,
-    @Inject(BYBIT_ACTIONS) bybitActions: ExchangeActions
+    @Inject(BYBIT_ACTIONS) bybitActions: ExchangeActions,
+    @Inject(BINANCE_ACTIONS) binanceActions: ExchangeActions
   ) {
     this.exchangeActions = {
       [EXCHANGE.GATE_IO]: gateIoActions,
       [EXCHANGE.CRYPTO_COM]: cryptoComActions,
       [EXCHANGE.COINBASE]: coinbaseActions,
       [EXCHANGE.BYBIT]: bybitActions,
+      [EXCHANGE.BINANCE]: binanceActions,
     };
   }
 
@@ -133,6 +137,11 @@ export class AppStoreFacade {
     );
     this.store.dispatch(
       this.exchangeActions[EXCHANGE.BYBIT].setPairs({ pairs: user.bybit_pairs })
+    );
+    this.store.dispatch(
+      this.exchangeActions[EXCHANGE.BINANCE].setPairs({
+        pairs: user.binance_pairs,
+      })
     );
   }
 

@@ -15,6 +15,8 @@ export class ExchangeSelectors {
         return state.coinbase;
       case EXCHANGE.BYBIT:
         return state.bybit;
+      case EXCHANGE.BINANCE:
+        return state.binance;
       default:
         throw new Error(`unhandled exchange: ${this.exchange}`);
     }
@@ -81,6 +83,6 @@ export class ExchangeSelectors {
 
   public product = (currencyPair: string) =>
     createSelector(this.selectState, (state: ExchangeState) =>
-      state.products ? state.products[currencyPair] : undefined
+      state.products ? state.products[currencyPair] : null
     );
 }

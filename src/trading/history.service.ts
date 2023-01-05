@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   API_URL,
+  API_URL_BINANCE,
   API_URL_BYBIT,
   API_URL_CRYPTO,
   API_URL_GATE,
@@ -38,6 +39,11 @@ export class HistoryService {
           params: { pair },
         });
       }
+      case EXCHANGE.BINANCE: {
+        return this.httpClient.get(`${API_URL_BINANCE}/ImportHistory`, {
+          params: { pair },
+        });
+      }
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);
     }
@@ -60,6 +66,11 @@ export class HistoryService {
       }
       case EXCHANGE.BYBIT: {
         return this.httpClient.get(`${API_URL_BYBIT}/UpdateRecentHistory`, {
+          params: { pair },
+        });
+      }
+      case EXCHANGE.BINANCE: {
+        return this.httpClient.get(`${API_URL_BINANCE}/UpdateRecentHistory`, {
           params: { pair },
         });
       }
@@ -87,6 +98,11 @@ export class HistoryService {
       }
       case EXCHANGE.BYBIT: {
         return this.httpClient.get<Order[]>(`${API_URL_BYBIT}/GetHistory`, {
+          params: { pair },
+        });
+      }
+      case EXCHANGE.BINANCE: {
+        return this.httpClient.get<Order[]>(`${API_URL_BINANCE}/GetHistory`, {
           params: { pair },
         });
       }
@@ -124,6 +140,14 @@ export class HistoryService {
       case EXCHANGE.BYBIT: {
         return this.httpClient.get<Order[]>(
           `${API_URL_BYBIT}/GetRecentTradeHistory`,
+          {
+            params: { side, limit },
+          }
+        );
+      }
+      case EXCHANGE.BINANCE: {
+        return this.httpClient.get<Order[]>(
+          `${API_URL_BINANCE}/GetRecentTradeHistory`,
           {
             params: { side, limit },
           }

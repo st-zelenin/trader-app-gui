@@ -27,6 +27,13 @@ export class TradingComponent implements OnInit, OnDestroy {
       activeBaseCurrency: 'USDT',
     },
     {
+      id: EXCHANGE.BINANCE,
+      label: 'Binance',
+      urlParam: EXCHANGE_URL_PARAMS.BINANCE,
+      baseCurrencies: ['USDT'],
+      activeBaseCurrency: 'USDT',
+    },
+    {
       id: EXCHANGE.CRYPTO_COM,
       label: 'Crypto.com',
       urlParam: EXCHANGE_URL_PARAMS.CRYPTO_COM,
@@ -97,6 +104,9 @@ export class TradingComponent implements OnInit, OnDestroy {
         break;
       case EXCHANGE.BYBIT:
         this.user.bybit_pairs = pairs;
+        break;
+      case EXCHANGE.BINANCE:
+        this.user.binance_pairs = pairs;
         break;
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);

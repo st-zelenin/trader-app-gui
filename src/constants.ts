@@ -6,6 +6,7 @@ export const API_URL_CRYPTO = environment.API_URL_CRYPTO;
 export const API_URL_BYBIT = environment.API_URL_BYBIT;
 export const API_URL_GATE = environment.API_URL_GATE;
 export const API_URL_USER = environment.API_URL_USER;
+export const API_URL_BINANCE = environment.API_URL_BINANCE;
 
 export const BUY_MULTIPLICATORS: Multiplicator[] = [
   { text: '0.5 %', value: 0.005 },
@@ -23,6 +24,7 @@ export enum EXCHANGE {
   CRYPTO_COM = 'CRYPTO_COM',
   COINBASE = 'COINBASE',
   BYBIT = 'BYBIT',
+  BINANCE = 'BINANCE',
 }
 
 export enum EXCHANGE_URL_PARAMS {
@@ -30,6 +32,7 @@ export enum EXCHANGE_URL_PARAMS {
   CRYPTO_COM = 'crypto-com',
   COINBASE = 'coinbase',
   BYBIT = 'bybit',
+  BINANCE = 'binance',
 }
 
 export enum SORTING_TYPES {
