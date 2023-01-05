@@ -1,7 +1,8 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { of, Subject } from 'rxjs';
+import { catchError, takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from 'src/constants';
 import { Order, OrderSide } from '../../models';
 import { HistoryService } from '../history.service';
@@ -33,13 +34,27 @@ export class RecentOrdersComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: RecentOrdersData,
-    private readonly historyService: HistoryService
+    private readonly historyService: HistoryService,
+    private readonly snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.historyService
       .getRecentHistory(this.data.exchange, this.data.side, this.LIMIT)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        catchError(() => {
+          this.snackBar.open('failed to get recent orders', 'x', {
+            // 1 minute
+            duration: 60 * 1000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['warning'],
+          });
+
+          return of([]);
+        })
+      )
       .subscribe((orders) => {
         this.orders = orders;
       });

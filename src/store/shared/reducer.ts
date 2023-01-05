@@ -15,22 +15,26 @@ export const initialState: SharedState = {
   defaultSellPriceMultiplicator: 1.5,
 };
 
+const log = (action: string, payload: unknown) => {
+  // console.log(action, payload);
+};
+
 export const sharedReducer = createReducer(
   initialState,
   on(setBuyMultiplicator, (state, { buyMultiplicator }) => {
-    console.log('set buy multiplicator', buyMultiplicator);
+    log('set buy multiplicator', buyMultiplicator);
     return { ...state, buyMultiplicator };
   }),
   on(setOrderDefaultTotalAmount, (state, { total }) => {
-    console.log('setOrderDefaultTotalAmount', total);
+    log('setOrderDefaultTotalAmount', total);
     return { ...state, total };
   }),
   on(setDefaultSellVolumeDivider, (state, { divider }) => {
-    console.log('setDefaultSellVolumeDivider', divider);
+    log('setDefaultSellVolumeDivider', divider);
     return { ...state, divider };
   }),
   on(setDefaultSellPriceMultiplicator, (state, { multiplicator }) => {
-    console.log('setDefaultSellPriceMultiplicator', multiplicator);
+    log('setDefaultSellPriceMultiplicator', multiplicator);
     return { ...state, multiplicator };
   })
 );
