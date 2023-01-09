@@ -5,6 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MsalService } from '@azure/msal-angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { BUY_MULTIPLICATORS } from '../../constants';
@@ -26,7 +27,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject<void>();
 
-  constructor(private readonly facade: AppStoreFacade) {}
+  constructor(
+    private readonly facade: AppStoreFacade,
+    private readonly authService: MsalService
+  ) {}
 
   ngOnInit(): void {
     this.facade.buyMultiplicator
@@ -101,6 +105,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
           this.facade.setDefaultSellPriceMultiplicator(multiplicator);
         }
       });
+  }
+
+  public signOut() {
+    this.authService.logoutPopup({
+      mainWindowRedirectUri: '/',
+    });
   }
 
   ngOnDestroy(): void {
