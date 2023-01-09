@@ -43,6 +43,7 @@ export class OrderingService {
       case EXCHANGE.BINANCE: {
         return this.httpClient.post(`${API_URL_BINANCE}/CancelOrder`, {
           id: order.id,
+          pair: order.currencyPair,
         });
       }
       default:
