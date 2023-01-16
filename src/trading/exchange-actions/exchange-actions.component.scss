@@ -16,9 +16,12 @@
   align-items: center;
 }
 
-.pair-container {
-  width: 150px;
+.search-container {
   padding-left: 10px;
+}
+
+.suffix-icon {
+  font-size: 100%;
 }
 
 .currency-container {
@@ -60,11 +63,25 @@
   color: $sell-color;
 }
 
+.shopping-bag {
+  color: $carton;
+}
+
+.suitcase {
+  color: $leather;
+}
+
 .active {
   background-color: $active-action;
 }
 
 .settings {
-  justify-content: end;
-  flex: 1;
+  position: fixed;
+  right: 15px;
+  top: 10px;
+  z-index: 1;
+}
+
+.settings-button {
+  background-color: rgba(255, 255, 255, 0.5);
 }

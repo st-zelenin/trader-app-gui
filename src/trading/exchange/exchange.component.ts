@@ -211,6 +211,14 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     this.pairs = this.getSortedCards(sortingType);
   }
 
+  public search(value: string) {
+    this.pairs = value
+      ? this.pairs
+          .filter((p) => p.endsWith(this.currentBaseCurrency))
+          .filter((p) => p.includes(value))
+      : [...this.notSortedPairs];
+  }
+
   private getSortedCards(sortingType: SORTING_TYPES) {
     const pairsByBaseCurrency = this.notSortedPairs.filter((pair) =>
       pair.endsWith(this.currentBaseCurrency)
@@ -231,6 +239,11 @@ export class ExchangeComponent implements OnInit, OnDestroy {
           this.balances,
           this.tickers,
           this.exchange
+        );
+      case SORTING_TYPES.MOST_CHANGE:
+        return this.sortingService.sortByHighestChange(
+          [...pairsByBaseCurrency],
+          this.tickers
         );
       default:
         throw new Error(`unhandled sorting type: ${sortingType}`);

@@ -86,23 +86,16 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
           : false;
         this.headerColor = this.updateHeaderColor();
 
-        this.estimatedTotal = this.calculationsService.calcEstimatedTotal(
-          this.ticker,
-          this.balance
-        );
+        this.calculateEstimatedTotal();
       });
 
-    const currency = this.pair.split(/_|-/)[0];
     this.facade
-      .balance(this.exchange, currency)
+      .balance(this.exchange, baseCurrency)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((balance) => {
         this.balance = balance;
 
-        this.estimatedTotal = this.calculationsService.calcEstimatedTotal(
-          this.ticker,
-          this.balance
-        );
+        this.calculateEstimatedTotal();
       });
 
     this.facade
@@ -233,6 +226,17 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
         }
       }
     }
+  }
+
+  private calculateEstimatedTotal() {
+    if (!this.ticker || !this.balance) {
+      return;
+    }
+
+    this.estimatedTotal = this.calculationsService.calcEstimatedTotal(
+      this.ticker,
+      this.balance
+    );
   }
 
   ngOnDestroy(): void {

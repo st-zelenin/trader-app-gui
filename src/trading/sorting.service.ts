@@ -70,4 +70,11 @@ export class SortingService {
           .map(({ name }) => name)
       );
   }
+
+  public sortByHighestChange(pairs: string[], tickers: Tickers) {
+    return pairs
+      .map((pair) => ({ pair, change: tickers[pair].change_percentage }))
+      .sort((a, b) => b.change - a.change)
+      .map(({ pair }) => pair);
+  }
 }

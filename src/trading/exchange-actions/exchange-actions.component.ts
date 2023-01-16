@@ -34,6 +34,7 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
   @Output() refresh = new EventEmitter<void>();
   @Output() filter = new EventEmitter<FILTERING_TYPE>();
   @Output() sort = new EventEmitter<SORTING_TYPES>();
+  @Output() search = new EventEmitter<string>();
   @Output() showRecent = new EventEmitter<OrderSide>();
   @Output() showSetting = new EventEmitter<void>();
 
@@ -42,6 +43,7 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
   public buyMultiplicator?: Multiplicator;
   public filteredOptions?: Observable<string[]>;
 
+  public pairSearchControl = new FormControl();
   public currencyPairControl = new FormControl();
   public baseCurrencyControl = new FormControl();
 
@@ -65,6 +67,12 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
     this.baseCurrencyControl.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((currency) => this.baseCurrencyChange.emit(currency));
+
+    this.pairSearchControl.valueChanges
+      .pipe(takeUntil(this.unsubscribe$), startWith(''), debounceTime(500))
+      .subscribe((value) => {
+        this.search.emit((value || '').toUpperCase());
+      });
 
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(
       startWith(''),

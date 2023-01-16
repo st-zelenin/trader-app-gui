@@ -1,10 +1,23 @@
 <mat-card class="actions">
   <form class="form">
-    <mat-form-field appearance="standard" class="pair-container">
+    <mat-form-field appearance="standard" class="search-container">
+      <mat-label class="input-label">search</mat-label>
+      <input
+        type="text"
+        matInput
+        [formControl]="pairSearchControl"
+        [matAutocomplete]="auto"
+      />
+      <mat-icon matSuffix class="suffix-icon">search</mat-icon>
+    </mat-form-field>
+
+    <mat-divider vertical></mat-divider>
+
+    <mat-form-field appearance="standard">
       <mat-label class="input-label">new currency pair</mat-label>
       <input
         type="text"
-        placeholder="Pick one"
+        placeholder="pick one"
         matInput
         [formControl]="currencyPairControl"
         [matAutocomplete]="auto"
@@ -17,7 +30,7 @@
         matTooltip="add new pair"
         id="add-pair"
       >
-        +
+        <mat-icon matSuffix class="suffix-icon">add</mat-icon>
       </button>
       <mat-autocomplete #auto="matAutocomplete" panelWidth="auto">
         <mat-option
@@ -99,7 +112,7 @@
         matTooltip="sort by upcoming sell order fulfillment"
         [class.active]="currentSorting === sortingTypes.UPCOMING_SELL"
       >
-        <mat-icon>sort</mat-icon>
+        <mat-icon class="shopping-bag">shopping_bag</mat-icon>
       </button>
       <button
         mat-icon-button
@@ -108,7 +121,16 @@
         matTooltip="sort by estimated total value of the coins"
         [class.active]="currentSorting === sortingTypes.ESTIMATED_TOTAL"
       >
-        <mat-icon>sort</mat-icon>
+        <mat-icon class="suitcase">work</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="updateSorting(sortingTypes.MOST_CHANGE)"
+        type="button"
+        matTooltip="sort by highest 24h change"
+        [class.active]="currentSorting === sortingTypes.MOST_CHANGE"
+      >
+        <mat-icon>percent</mat-icon>
       </button>
     </div>
 
@@ -135,10 +157,11 @@
     <mat-divider vertical></mat-divider>
     <div class="group settings">
       <button
-        mat-icon-button
+        mat-mini-fab
         (click)="showSetting.emit()"
         type="button"
         matTooltip="show settings"
+        class="settings-button"
       >
         <mat-icon>settings</mat-icon>
       </button>

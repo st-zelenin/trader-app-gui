@@ -1,4 +1,9 @@
-<h1 mat-dialog-title>Settings</h1>
+<h1 mat-dialog-title class="header">
+  <span>Settings</span>
+  <button mat-icon-button (click)="signOut()" matTooltip="logout">
+    <mat-icon>logout</mat-icon>
+  </button>
+</h1>
 <div mat-dialog-content class="container">
   <form class="form">
     <mat-form-field appearance="standard">
@@ -32,6 +37,5 @@
 </div>
 
 <div mat-dialog-actions>
-  <button mat-raised-button color="warn" (click)="signOut()">sign-out</button>
   <button mat-button mat-dialog-close cdkFocusInitial>close</button>
 </div>
