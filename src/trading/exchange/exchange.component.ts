@@ -63,9 +63,10 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   private openOrders: OpenOrdersByPairs = {};
   private tickers: Tickers = {};
   private balances: Balances = {};
-  private isSorted = false;
-  private notSortedPairs: string[] = [];
-  private restBaseCurrencyPairs: string[] = [];
+  private sortingType = SORTING_TYPES.NONE;
+  private allCurrencyPairs: string[] = [];
+  private currentBaseCurrencyPairs: string[] = [];
+  private otherCurrencyPairs: string[] = [];
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -144,24 +145,24 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   }
 
   public addPair(currencyPair: string) {
-    if (!currencyPair || this.notSortedPairs.includes(currencyPair)) {
+    if (!currencyPair || this.allCurrencyPairs.includes(currencyPair)) {
       return;
     }
 
-    this.notSortedPairs.push(currencyPair);
+    this.allCurrencyPairs.push(currencyPair);
     this.updatePairs.emit({
       exchange: this.exchange,
-      pairs: this.notSortedPairs,
+      pairs: this.allCurrencyPairs,
     });
   }
 
   public drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.pairs, event.previousIndex, event.currentIndex);
 
-    if (!this.isSorted) {
+    if (this.sortingType === SORTING_TYPES.NONE) {
       this.updatePairs.emit({
         exchange: this.exchange,
-        pairs: [...this.pairs, ...this.restBaseCurrencyPairs],
+        pairs: [...this.pairs, ...this.otherCurrencyPairs],
       });
     }
   }
@@ -180,13 +181,13 @@ export class ExchangeComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        const index = this.notSortedPairs.indexOf(pair);
+        const index = this.allCurrencyPairs.indexOf(pair);
 
         if (index > -1) {
-          this.notSortedPairs.splice(index, 1);
+          this.allCurrencyPairs.splice(index, 1);
           this.updatePairs.emit({
             exchange: this.exchange,
-            pairs: this.notSortedPairs,
+            pairs: this.allCurrencyPairs,
           });
         }
       }
@@ -206,47 +207,41 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   }
 
   public sort(sortingType: SORTING_TYPES) {
-    this.isSorted = sortingType !== SORTING_TYPES.NONE;
+    this.sortingType = sortingType;
 
-    this.pairs = this.getSortedCards(sortingType);
+    this.pairs = this.getSortedCards();
   }
 
   public search(value: string) {
     this.pairs = value
-      ? this.pairs
-          .filter((p) => p.endsWith(this.currentBaseCurrency))
-          .filter((p) => p.includes(value))
-      : [...this.notSortedPairs];
+      ? this.currentBaseCurrencyPairs.filter((p) => p.includes(value))
+      : [...this.allCurrencyPairs];
   }
 
-  private getSortedCards(sortingType: SORTING_TYPES) {
-    const pairsByBaseCurrency = this.notSortedPairs.filter((pair) =>
-      pair.endsWith(this.currentBaseCurrency)
-    );
-
-    switch (sortingType) {
+  private getSortedCards() {
+    switch (this.sortingType) {
       case SORTING_TYPES.NONE:
-        return [...pairsByBaseCurrency];
+        return [...this.currentBaseCurrencyPairs];
       case SORTING_TYPES.UPCOMING_SELL:
         return this.sortingService.sortBySellOrder(
-          [...this.pairs],
+          [...this.currentBaseCurrencyPairs],
           this.openOrders,
           this.tickers
         );
       case SORTING_TYPES.ESTIMATED_TOTAL:
         return this.sortingService.sortByEstimatedTotal(
-          [...pairsByBaseCurrency],
+          [...this.currentBaseCurrencyPairs],
           this.balances,
           this.tickers,
           this.exchange
         );
       case SORTING_TYPES.MOST_CHANGE:
         return this.sortingService.sortByHighestChange(
-          [...pairsByBaseCurrency],
+          [...this.currentBaseCurrencyPairs],
           this.tickers
         );
       default:
-        throw new Error(`unhandled sorting type: ${sortingType}`);
+        throw new Error(`unhandled sorting type: ${this.sortingType}`);
     }
   }
 
@@ -275,7 +270,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
       .pairs(this.exchange)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((pairs = []) => {
-        this.notSortedPairs = [...pairs];
+        this.allCurrencyPairs = [...pairs];
 
         const { current, rest } = pairs.reduce(
           (res, pair) => {
@@ -290,15 +285,10 @@ export class ExchangeComponent implements OnInit, OnDestroy {
           { current: [] as string[], rest: [] as string[] }
         );
 
-        this.restBaseCurrencyPairs = rest;
+        this.currentBaseCurrencyPairs = current;
+        this.otherCurrencyPairs = rest;
+        this.pairs = this.getSortedCards();
 
-        this.pairs = this.isSorted
-          ? this.sortingService.sortBySellOrder(
-              [...current],
-              this.openOrders,
-              this.tickers
-            )
-          : [...current];
         this.facade.getTickers(this.exchange);
       });
   }

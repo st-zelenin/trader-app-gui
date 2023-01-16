@@ -71,12 +71,17 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
         this.buyMoney = 0;
         this.sellMoney = 0;
 
+        let minBuy = 0;
+
         for (const order of this.orders) {
           this.applyDenomination(order);
 
           if (order.side === 'buy') {
             this.buyVolume += order.amount;
             this.buyMoney += order.amount * order.price;
+
+            minBuy =
+              order.price < minBuy || minBuy === 0 ? order.price : minBuy;
           } else {
             this.sellVolume += order.amount;
             this.sellMoney += order.amount * order.price;
@@ -86,6 +91,8 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
         this.buyPrice = this.buyVolume > 0 ? this.buyMoney / this.buyVolume : 0;
         this.sellPrice =
           this.sellVolume > 0 ? this.sellMoney / this.sellVolume : 0;
+
+        this.calc(minBuy);
 
         this.cd.markForCheck();
       });
@@ -132,6 +139,33 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
     );
 
     this.selectedOrdersInfoChange.emit(info);
+  }
+
+  private calc(b1: number) {
+    const n = 7;
+    const q = 0.9; // 2 / 3;
+    const sum = this.buyVolume;
+
+    const v1 = (sum * (q - 1)) / (Math.pow(q, n) - 1);
+    const total = this.buyMoney / n;
+
+    const res = Array(n)
+      .fill(undefined)
+      .map((_, i) => {
+        const volume = v1 * Math.pow(q, i);
+        const price = total / volume;
+
+        return { amount: volume, price, total: volume * price };
+      });
+
+    console.table(res);
+    console.table({
+      volume: this.buyVolume,
+      money: this.buyMoney,
+      v1,
+      volumeCheck: res.reduce((aggr, { amount }) => aggr + amount, 0),
+      moneyCheck: res.reduce((aggr, { total }) => aggr + total, 0),
+    });
   }
 
   ngOnDestroy(): void {
