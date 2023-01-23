@@ -215,7 +215,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   public search(value: string) {
     this.pairs = value
       ? this.currentBaseCurrencyPairs.filter((p) => p.includes(value))
-      : [...this.allCurrencyPairs];
+      : [...this.currentBaseCurrencyPairs];
   }
 
   private getSortedCards() {
