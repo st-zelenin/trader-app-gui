@@ -35,7 +35,11 @@ export class CalculationsService {
       case EXCHANGE.GATE_IO: {
         const [currency, base] = currencyPair.split('_');
         if (base === 'BTC') {
-          return `GATEIO:${currency}USDT/GATEIO:BTCUSDT`;
+          if (['GT', 'SDN'].includes(currency)) {
+            return `GATEIO:${currency}USDT/GATEIO:BTCUSDT`;
+          }
+          // return `GATEIO:${currency}USDT/GATEIO:BTCUSDT`;
+          return `BINANCE:${currency}BTC`;
         }
 
         return `GATEIO:${currency}${base}`;
