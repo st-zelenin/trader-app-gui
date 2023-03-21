@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
@@ -21,98 +22,138 @@ export class ExchangeEffects {
   constructor(
     private actions: Actions,
     private readonly exchangeService: ExchangeService,
-    private readonly exchangeActions: ExchangeActions
+    private readonly exchangeActions: ExchangeActions,
+    private readonly snackBar: MatSnackBar
   ) {}
 
   getTickers = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getTickers),
-      mergeMap(() => this.exchangeService.getTickers()),
-      map((tickers) => this.exchangeActions.setTickers({ tickers })),
-      catchError((err) => {
-        console.log(err);
-        return of(this.exchangeActions.getTickersError());
-      })
+      mergeMap(() =>
+        this.exchangeService.getTickers().pipe(
+          map((tickers) => this.exchangeActions.setTickers({ tickers })),
+          catchError((err) => {
+            this.showError('failed to get tickers');
+            console.log(err);
+            return of(this.exchangeActions.getTickersError());
+          })
+        )
+      )
     )
   );
 
   getAnalytics = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getAllAnalytics),
-      mergeMap(() => this.exchangeService.getAverages()),
-      map((analytics) => this.exchangeActions.setAllAnalytics({ analytics })),
-      catchError((err) => {
-        console.log(err);
-        return of(this.exchangeActions.getAllAnalyticsError());
-      })
+      mergeMap(() =>
+        this.exchangeService.getAverages().pipe(
+          map((analytics) =>
+            this.exchangeActions.setAllAnalytics({ analytics })
+          ),
+          catchError((err) => {
+            this.showError('failed to get analytics');
+            console.log(err);
+            return of(this.exchangeActions.getAllAnalyticsError());
+          })
+        )
+      )
     )
   );
 
   getAllOpenOrders = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getAllOpenOrders),
-      mergeMap(() => this.exchangeService.getAllOpenOrders()),
-      map((openOrders) =>
-        this.exchangeActions.setAllOpenOrders({ openOrders })
-      ),
-      catchError((err) => {
-        console.log(err);
-        return of(this.exchangeActions.getAllOpenOrdersError());
-      })
+      mergeMap(() =>
+        this.exchangeService.getAllOpenOrders().pipe(
+          map((openOrders) =>
+            this.exchangeActions.setAllOpenOrders({ openOrders })
+          ),
+          catchError((err) => {
+            this.showError('failed to get open orders');
+            console.log(err);
+            return of(this.exchangeActions.getAllOpenOrdersError());
+          })
+        )
+      )
     )
   );
 
   getBalances = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getBalances),
-      mergeMap(() => this.exchangeService.getBalances()),
-      map((balances) => this.exchangeActions.setBalances({ balances })),
-      catchError((err) => {
-        console.log(err);
-        return of(this.exchangeActions.getBalancesError());
-      })
+      mergeMap(() =>
+        this.exchangeService.getBalances().pipe(
+          map((balances) => this.exchangeActions.setBalances({ balances })),
+          catchError((err) => {
+            this.showError('failed to get balances');
+            console.log(err);
+            return of(this.exchangeActions.getBalancesError());
+          })
+        )
+      )
     )
   );
 
   getCurrencyPairs = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getCurrencyPairs),
-      mergeMap(() => this.exchangeService.getCurrencyPairs()),
-      map((currencyPairs) =>
-        this.exchangeActions.setCurrencyPairs({ currencyPairs })
-      ),
-      catchError((err) => {
-        console.log(err);
-        return of(this.exchangeActions.getCurrencyPairsError());
-      })
+      mergeMap(() =>
+        this.exchangeService.getCurrencyPairs().pipe(
+          map((currencyPairs) =>
+            this.exchangeActions.setCurrencyPairs({ currencyPairs })
+          ),
+          catchError((err) => {
+            this.showError('failed to get currency pairs');
+            console.log(err);
+            return of(this.exchangeActions.getCurrencyPairsError());
+          })
+        )
+      )
     )
   );
 
   getRecentBuyAverages = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getRecentBuyAverages),
-      mergeMap(() => this.exchangeService.getRecentBuyAverages()),
-      map((recentBuyAverages) =>
-        this.exchangeActions.setRecentBuyAverages({ recentBuyAverages })
-      ),
-      catchError((err) => {
-        console.log(err);
-        return of(this.exchangeActions.getRecentBuyAveragesError());
-      })
+      mergeMap(() =>
+        this.exchangeService.getRecentBuyAverages().pipe(
+          map((recentBuyAverages) =>
+            this.exchangeActions.setRecentBuyAverages({ recentBuyAverages })
+          ),
+          catchError((err) => {
+            this.showError('failed to get recent buy averages');
+            console.log(err);
+            return of(this.exchangeActions.getRecentBuyAveragesError());
+          })
+        )
+      )
     )
   );
 
   getProducts = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getProducts),
-      mergeMap(() => this.exchangeService.getProducts()),
-      map((products) => this.exchangeActions.setProducts({ products })),
-      catchError((err) => {
-        console.log(err);
-        return of(this.exchangeActions.getProductsError());
-      })
+      mergeMap(() =>
+        this.exchangeService.getProducts().pipe(
+          map((products) => this.exchangeActions.setProducts({ products })),
+          catchError((err) => {
+            this.showError('failed to get products');
+            console.log(err);
+            return of(this.exchangeActions.getProductsError());
+          })
+        )
+      )
     )
   );
+
+  private showError(text: string) {
+    this.snackBar.open(text, 'x', {
+      duration: 60 * 1000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['warning'],
+    });
+  }
 }
 
 @Injectable()
@@ -120,9 +161,10 @@ export class BybitEffects extends ExchangeEffects {
   constructor(
     actions: Actions,
     exchangeService: BybitService,
+    snackBar: MatSnackBar,
     @Inject(BYBIT_ACTIONS) exchangeActions: ExchangeActions
   ) {
-    super(actions, exchangeService, exchangeActions);
+    super(actions, exchangeService, exchangeActions, snackBar);
   }
 }
 
@@ -131,9 +173,10 @@ export class CoinbaseEffects extends ExchangeEffects {
   constructor(
     actions: Actions,
     exchangeService: CoinbaseService,
+    snackBar: MatSnackBar,
     @Inject(COINBASE_ACTIONS) exchangeActions: ExchangeActions
   ) {
-    super(actions, exchangeService, exchangeActions);
+    super(actions, exchangeService, exchangeActions, snackBar);
   }
 }
 
@@ -142,9 +185,10 @@ export class CryptoComEffects extends ExchangeEffects {
   constructor(
     actions: Actions,
     exchangeService: CryptoComService,
+    snackBar: MatSnackBar,
     @Inject(CRYPTO_COM_ACTIONS) exchangeActions: ExchangeActions
   ) {
-    super(actions, exchangeService, exchangeActions);
+    super(actions, exchangeService, exchangeActions, snackBar);
   }
 }
 
@@ -153,9 +197,10 @@ export class GateIoEffects extends ExchangeEffects {
   constructor(
     actions: Actions,
     exchangeService: GateIoService,
+    snackBar: MatSnackBar,
     @Inject(GATE_IO_ACTIONS) exchangeActions: ExchangeActions
   ) {
-    super(actions, exchangeService, exchangeActions);
+    super(actions, exchangeService, exchangeActions, snackBar);
   }
 }
 
@@ -164,8 +209,9 @@ export class BinanceEffects extends ExchangeEffects {
   constructor(
     actions: Actions,
     exchangeService: BinanceService,
+    snackBar: MatSnackBar,
     @Inject(BINANCE_ACTIONS) exchangeActions: ExchangeActions
   ) {
-    super(actions, exchangeService, exchangeActions);
+    super(actions, exchangeService, exchangeActions, snackBar);
   }
 }

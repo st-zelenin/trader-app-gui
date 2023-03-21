@@ -34,10 +34,14 @@ export class FilteringService {
   private getHidden(filteringType: FILTERING_TYPE, card: Filterable) {
     switch (filteringType) {
       case FILTERING_TYPE.MISSING_BUY:
-        return card.isRed
-          ? card.openOrders &&
-              !!card.openOrders.find(({ side }) => side === 'buy')
-          : true;
+        return (
+          card.openOrders &&
+          !!card.openOrders.find(({ side }) => side === 'buy')
+        );
+      // return card.isRed
+      //   ? card.openOrders &&
+      //       !!card.openOrders.find(({ side }) => side === 'buy')
+      //   : true;
       case FILTERING_TYPE.ATTENTION_MESSAGE:
         return !card.attentionMessage;
       default:

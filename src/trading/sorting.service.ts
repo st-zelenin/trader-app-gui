@@ -73,7 +73,7 @@ export class SortingService {
 
   public sortByHighestChange(pairs: string[], tickers: Tickers) {
     return pairs
-      .map((pair) => ({ pair, change: tickers[pair].change_percentage }))
+      .map((pair) => ({ pair, change: tickers[pair]?.change_percentage || 0 }))
       .sort((a, b) => b.change - a.change)
       .map(({ pair }) => pair);
   }
