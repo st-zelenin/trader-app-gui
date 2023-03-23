@@ -11,7 +11,7 @@ import {
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
-import { Order, OrderRow, SelectedOrdersInfo } from '../../models';
+import { Order, OrderRow, Product, SelectedOrdersInfo } from '../../models';
 import { HistoryService } from '../history.service';
 
 @Component({
@@ -26,6 +26,17 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
 
   @Input() selectedOrdersInfo!: SelectedOrdersInfo;
   @Output() selectedOrdersInfoChange = new EventEmitter<SelectedOrdersInfo>();
+
+  @Input() set product(product: Product | null) {
+    if (product) {
+      console.log({ product });
+      this.priceDigitsInfo = this.getDigitsInfo(product.pricePrecision);
+      this.amountDigitsInfo = this.getDigitsInfo(product.minQuantity);
+    }
+  }
+
+  public priceDigitsInfo = '1.0-10';
+  public amountDigitsInfo = '1.0-10';
 
   public orders: OrderRow[] = [];
   public displayedColumns: string[] = [
@@ -62,7 +73,12 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
         )
       )
       .subscribe((orders) => {
-        this.allOrders = orders.filter(({ status }) => status !== 'cancelled');
+        // looks like GATE bug:
+        // completed market/buy orders still have 'cancelled' status
+        // TODO: move this logic to BE?
+        this.allOrders = orders.filter(({ status, type }) =>
+          type === 'market' ? true : status !== 'cancelled'
+        );
         this.orders = this.allOrders;
 
         this.buyVolume = 0;
@@ -166,6 +182,14 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
       volumeCheck: res.reduce((aggr, { amount }) => aggr + amount, 0),
       moneyCheck: res.reduce((aggr, { total }) => aggr + total, 0),
     });
+  }
+
+  private getDigitsInfo(minFraction: number): string {
+    // - additional 1 for decimals
+    // - additional 2 for integers
+    const decimalPlaces =
+      minFraction > 0 ? Math.log10(1 / (minFraction * 0.1)) : 2;
+    return `1.0-${decimalPlaces}`;
   }
 
   ngOnDestroy(): void {

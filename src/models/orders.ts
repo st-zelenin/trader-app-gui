@@ -9,6 +9,7 @@ export interface Order {
   amount: number; // TODO: rename to quantity
   price: number;
   status: CommonOrderStatus;
+  type: CommonOrderType;
 }
 
 export interface OrderRow extends Order {
@@ -38,3 +39,4 @@ export interface OpenOrdersByPairs {
 }
 
 export type CommonOrderStatus = 'closed' | 'open' | 'cancelled';
+export type CommonOrderType = 'limit' | 'market';

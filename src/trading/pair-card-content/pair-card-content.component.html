@@ -179,6 +179,7 @@
   <app-trade-history
     [pair]="pair"
     [exchange]="exchange"
+    [product]="product | async"
     [(selectedOrdersInfo)]="selectedOrdersInfo"
     *ngIf="isOpened"
   ></app-trade-history>
