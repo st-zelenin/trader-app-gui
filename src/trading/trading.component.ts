@@ -37,8 +37,8 @@ export class TradingComponent implements OnInit, OnDestroy {
       id: EXCHANGE.CRYPTO_COM,
       label: 'Crypto.com',
       urlParam: EXCHANGE_URL_PARAMS.CRYPTO_COM,
-      baseCurrencies: ['USDT', 'USDC'],
-      activeBaseCurrency: 'USDC',
+      baseCurrencies: ['USDT', 'USD'],
+      activeBaseCurrency: 'USD',
     },
     // {
     //   id: EXCHANGE.COINBASE,

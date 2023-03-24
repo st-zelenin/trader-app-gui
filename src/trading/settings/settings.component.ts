@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { BUY_MULTIPLICATORS } from '../../constants';
 import { AppStoreFacade } from '../../store/facade';
+import { SettingService } from './settings.service';
 
 @Component({
   selector: 'app-settings',
@@ -29,7 +30,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly facade: AppStoreFacade,
-    private readonly authService: MsalService
+    private readonly authService: MsalService,
+    private readonly settingService: SettingService
   ) {}
 
   ngOnInit(): void {
@@ -111,6 +113,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.authService.logoutPopup({
       mainWindowRedirectUri: '/',
     });
+  }
+
+  public doSomeTechService(): void {
+    this.settingService
+      .doSomeTechService()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe();
   }
 
   ngOnDestroy(): void {
