@@ -9,7 +9,9 @@
         [exchange]="tab.id"
         [baseCurrencies]="tab.baseCurrencies"
         [(baseCurrency)]="tab.activeBaseCurrency"
-        (updatePairs)="updateUser($event)"
+        (pairAdded)="addPair($event)"
+        (pairRemoved)="removePair($event)"
+        (pairsOrdered)="orderPairs($event)"
       >
       </app-exchange>
     </ng-template>

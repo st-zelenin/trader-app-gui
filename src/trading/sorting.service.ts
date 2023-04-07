@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EXCHANGE } from 'src/constants';
-import { Balances, OpenOrdersByPairs, Tickers } from '../models';
+import { Balances, CryptoPair, OpenOrdersByPairs, Tickers } from '../models';
 import { CalculationsService } from './calculations.service';
 
 @Injectable({
@@ -10,15 +10,15 @@ export class SortingService {
   constructor(private readonly calculationsService: CalculationsService) {}
 
   public sortBySellOrder(
-    pairs: string[],
+    pairs: CryptoPair[],
     openOrders: OpenOrdersByPairs,
     tickers: Tickers
   ) {
     const withDiffs = pairs.map((pair) => {
-      const sellOrders = (openOrders[pair] || []).filter(
+      const sellOrders = (openOrders[pair.symbol] || []).filter(
         ({ side }) => side === 'sell'
       );
-      const currPrice = tickers[pair]?.last || 0;
+      const currPrice = tickers[pair.symbol]?.last || 0;
 
       let diff = undefined;
       for (const { price } of sellOrders) {
@@ -46,15 +46,18 @@ export class SortingService {
   }
 
   public sortByEstimatedTotal(
-    pairs: string[],
+    pairs: CryptoPair[],
     balances: Balances,
     tickers: Tickers,
     exchange: EXCHANGE
   ) {
     const withEstimatedTotals = pairs.map((pair) => {
-      const currency = this.calculationsService.getBaseCurrency(pair, exchange);
+      const currency = this.calculationsService.getBaseCurrency(
+        pair.symbol,
+        exchange
+      );
       const total = this.calculationsService.calcEstimatedTotal(
-        tickers[pair],
+        tickers[pair.symbol],
         balances[currency]
       );
       return { name: pair, total };
@@ -71,9 +74,12 @@ export class SortingService {
       );
   }
 
-  public sortByHighestChange(pairs: string[], tickers: Tickers) {
+  public sortByHighestChange(pairs: CryptoPair[], tickers: Tickers) {
     return pairs
-      .map((pair) => ({ pair, change: tickers[pair]?.change_percentage || 0 }))
+      .map((pair) => ({
+        pair,
+        change: tickers[pair.symbol]?.change_percentage || 0,
+      }))
       .sort((a, b) => b.change - a.change)
       .map(({ pair }) => pair);
   }

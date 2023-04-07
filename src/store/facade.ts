@@ -123,24 +123,24 @@ export class AppStoreFacade {
 
   public setPairs(user: User) {
     this.store.dispatch(
-      this.exchangeActions[EXCHANGE.GATE_IO].setPairs({ pairs: user.pairs })
+      this.exchangeActions[EXCHANGE.GATE_IO].setPairs({ pairs: user.gate })
     );
     this.store.dispatch(
       this.exchangeActions[EXCHANGE.CRYPTO_COM].setPairs({
-        pairs: user.crypto_pairs,
+        pairs: user.crypto,
       })
     );
     this.store.dispatch(
       this.exchangeActions[EXCHANGE.COINBASE].setPairs({
-        pairs: user.coinbase_pairs,
+        pairs: user.coinbase,
       })
     );
     this.store.dispatch(
-      this.exchangeActions[EXCHANGE.BYBIT].setPairs({ pairs: user.bybit_pairs })
+      this.exchangeActions[EXCHANGE.BYBIT].setPairs({ pairs: user.bybit })
     );
     this.store.dispatch(
       this.exchangeActions[EXCHANGE.BINANCE].setPairs({
-        pairs: user.binance_pairs,
+        pairs: user.binance,
       })
     );
   }

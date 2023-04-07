@@ -13,6 +13,7 @@ import { EXCHANGE } from '../../constants';
 import {
   Average,
   Balance,
+  CryptoPair,
   Multiplicator,
   NewOrder,
   Order,
@@ -40,7 +41,7 @@ import { OrderingService } from '../ordering.service';
 export class PairCardContentComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
-  @Input() pair!: string;
+  @Input() pair!: CryptoPair;
   @Input() exchange!: EXCHANGE;
   @Input() ticker?: Ticker;
   @Input() averages?: PairAverages;
@@ -98,7 +99,7 @@ export class PairCardContentComponent
 
   ngOnInit(): void {
     const baseCurrency = this.calculationsService.getBaseCurrency(
-      this.pair,
+      this.pair.symbol,
       this.exchange
     );
 
@@ -106,7 +107,7 @@ export class PairCardContentComponent
     this.updateTickerInfo();
 
     this.balance = this.facade.balance(this.exchange, baseCurrency);
-    this.product = this.facade.product(this.exchange, this.pair);
+    this.product = this.facade.product(this.exchange, this.pair.symbol);
 
     this.facade.buyMultiplicator
       .pipe(takeUntil(this.unsubscribe$))
@@ -135,7 +136,7 @@ export class PairCardContentComponent
 
   public importAll(): void {
     this.historyService
-      .importAll(this.exchange, this.pair)
+      .importAll(this.exchange, this.pair.symbol)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((data) => {
         this.showSnackBar('history imported');
@@ -145,7 +146,7 @@ export class PairCardContentComponent
 
   public updateRecent(): void {
     this.historyService
-      .updateRecent(this.exchange, this.pair)
+      .updateRecent(this.exchange, this.pair.symbol)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((data) => {
         this.showSnackBar('recent history updated');
@@ -200,7 +201,7 @@ export class PairCardContentComponent
   }
 
   private placeNewOrder(formValues: OrderFormValues) {
-    const order: NewOrder = { ...formValues, currencyPair: this.pair };
+    const order: NewOrder = { ...formValues, currencyPair: this.pair.symbol };
     this.orderingService
       .create(this.exchange, order)
       .pipe(takeUntil(this.unsubscribe$))

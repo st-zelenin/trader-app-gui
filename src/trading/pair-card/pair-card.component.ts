@@ -13,6 +13,7 @@ import { EXCHANGE } from '../../constants';
 import {
   Average,
   Balance,
+  CryptoPair,
   Filterable,
   Order,
   PairAverages,
@@ -31,7 +32,7 @@ import { FilteringService } from '../filtering.service';
   },
 })
 export class PairCardComponent implements OnInit, OnDestroy, Filterable {
-  @Input() pair!: string;
+  @Input() pair!: CryptoPair;
   @Input() exchange!: EXCHANGE;
 
   @Output() remove = new EventEmitter<string>();
@@ -69,7 +70,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
   ngOnInit(): void {
     const baseCurrency = this.calculationsService.getBaseCurrency(
-      this.pair,
+      this.pair.symbol,
       this.exchange
     );
     this.logoSrc = `assets/coins/${baseCurrency}.png`;
@@ -77,7 +78,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
     this.filteringService.register(this);
 
     this.facade
-      .ticker(this.exchange, this.pair)
+      .ticker(this.exchange, this.pair.symbol)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((ticker) => {
         this.ticker = ticker;
@@ -99,7 +100,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       });
 
     this.facade
-      .analytics(this.exchange, this.pair)
+      .analytics(this.exchange, this.pair.symbol)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((analytics) => {
         this.averages = analytics;
@@ -107,7 +108,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       });
 
     this.facade
-      .pairOpenOrders(this.exchange, this.pair)
+      .pairOpenOrders(this.exchange, this.pair.symbol)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((orders: Order[]) => {
         if (orders && orders.length) {
@@ -124,7 +125,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       });
 
     this.facade
-      .pairRecentBuyAverages(this.exchange, this.pair)
+      .pairRecentBuyAverages(this.exchange, this.pair.symbol)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((recent) => {
         this.recent = recent;
@@ -202,7 +203,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
   public removeCard(event: Event) {
     event.stopPropagation();
-    this.remove.emit(this.pair);
+    this.remove.emit(this.pair.symbol);
   }
 
   public toggleExpand(event: Event) {

@@ -11,7 +11,13 @@ import {
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
-import { Order, OrderRow, Product, SelectedOrdersInfo } from '../../models';
+import {
+  CryptoPair,
+  Order,
+  OrderRow,
+  Product,
+  SelectedOrdersInfo,
+} from '../../models';
 import { HistoryService } from '../history.service';
 
 @Component({
@@ -21,7 +27,7 @@ import { HistoryService } from '../history.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TradeHistoryComponent implements OnInit, OnDestroy {
-  @Input() pair!: string;
+  @Input() pair!: CryptoPair;
   @Input() exchange!: EXCHANGE;
 
   @Input() selectedOrdersInfo!: SelectedOrdersInfo;
@@ -65,7 +71,7 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.historyService
-      .getHistory(this.exchange, this.pair)
+      .getHistory(this.exchange, this.pair.symbol)
       .pipe(
         takeUntil(this.unsubscribe$),
         map((orders) =>

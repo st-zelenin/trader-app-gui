@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ExchangeTab } from 'src/models/exchange-tab';
 import { EXCHANGE, EXCHANGE_URL_PARAMS } from '../constants';
-import { User } from '../models';
+import { ExchangeSymbol, OrderedSymbols, User } from '../models';
 import { AppStoreFacade } from '../store/facade';
 import { UserService } from '../user.service';
 
@@ -82,38 +82,29 @@ export class TradingComponent implements OnInit, OnDestroy {
     this.router.navigate([`trades/${this.exchangeTabs[event.index].urlParam}`]);
   }
 
-  public updateUser({
-    exchange,
-    pairs,
-  }: {
-    exchange: EXCHANGE;
-    pairs: string[];
-  }) {
-    console.log('updateUser', exchange, pairs);
-
-    // TODO: move to store
-    switch (exchange) {
-      case EXCHANGE.GATE_IO:
-        this.user.pairs = pairs;
-        break;
-      case EXCHANGE.CRYPTO_COM:
-        this.user.crypto_pairs = pairs;
-        break;
-      case EXCHANGE.COINBASE:
-        this.user.coinbase_pairs = pairs;
-        break;
-      case EXCHANGE.BYBIT:
-        this.user.bybit_pairs = pairs;
-        break;
-      case EXCHANGE.BINANCE:
-        this.user.binance_pairs = pairs;
-        break;
-      default:
-        throw new Error(`unhabdled exchange type: ${exchange}`);
-    }
-
+  public addPair(newPair: ExchangeSymbol) {
     this.userService
-      .updateUser(this.user)
+      .addPair(newPair)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((data) => {
+        this.user = data;
+        this.facade.setPairs(data);
+      });
+  }
+
+  public removePair(deletedPair: ExchangeSymbol) {
+    this.userService
+      .removePair(deletedPair)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((data) => {
+        this.user = data;
+        this.facade.setPairs(data);
+      });
+  }
+
+  public orderPairs(orderedSymbols: OrderedSymbols) {
+    this.userService
+      .orderPairs(orderedSymbols)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((data) => {
         this.user = data;

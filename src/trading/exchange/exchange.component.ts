@@ -14,8 +14,11 @@ import { EXCHANGE, SORTING_TYPES } from '../../constants';
 import {
   Balance,
   Balances,
+  CryptoPair,
+  ExchangeSymbol,
   FILTERING_TYPE,
   OpenOrdersByPairs,
+  OrderedSymbols,
   OrderSide,
   Tickers,
 } from '../../models';
@@ -48,12 +51,11 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   }
   @Output() baseCurrencyChange = new EventEmitter<string>();
 
-  @Output() updatePairs = new EventEmitter<{
-    exchange: EXCHANGE;
-    pairs: string[];
-  }>();
+  @Output() pairAdded = new EventEmitter<ExchangeSymbol>();
+  @Output() pairRemoved = new EventEmitter<ExchangeSymbol>();
+  @Output() pairsOrdered = new EventEmitter<OrderedSymbols>();
 
-  public pairs: string[] = [];
+  public pairs: CryptoPair[] = [];
   public currencyPairs?: Observable<string[]>;
   public quoteCurrencyBalance?: Observable<Balance>;
   public estimated: number = 0;
@@ -63,9 +65,9 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   private tickers: Tickers = {};
   private balances: Balances = {};
   private sortingType = SORTING_TYPES.NONE;
-  private allCurrencyPairs: string[] = [];
-  private currentBaseCurrencyPairs: string[] = [];
-  private otherCurrencyPairs: string[] = [];
+  private allCurrencyPairs: CryptoPair[] = [];
+  private currentBaseCurrencyPairs: CryptoPair[] = [];
+  private otherCurrencyPairs: CryptoPair[] = [];
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -130,14 +132,17 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   }
 
   public addPair(currencyPair: string) {
-    if (!currencyPair || this.allCurrencyPairs.includes(currencyPair)) {
+    if (
+      !currencyPair ||
+      this.allCurrencyPairs.find(({ symbol }) => symbol === currencyPair)
+    ) {
       return;
     }
 
-    this.allCurrencyPairs.push(currencyPair);
-    this.updatePairs.emit({
+    this.allCurrencyPairs.push({ symbol: currencyPair, isArchived: false });
+    this.pairAdded.emit({
       exchange: this.exchange,
-      pairs: this.allCurrencyPairs,
+      symbol: currencyPair,
     });
   }
 
@@ -145,9 +150,12 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     moveItemInArray(this.pairs, event.previousIndex, event.currentIndex);
 
     if (this.sortingType === SORTING_TYPES.NONE) {
-      this.updatePairs.emit({
+      this.pairsOrdered.emit({
         exchange: this.exchange,
-        pairs: [...this.pairs, ...this.otherCurrencyPairs],
+        symbols: [
+          ...this.pairs.map(({ symbol }) => symbol),
+          ...this.otherCurrencyPairs.map(({ symbol }) => symbol),
+        ],
       });
     }
   }
@@ -166,13 +174,15 @@ export class ExchangeComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        const index = this.allCurrencyPairs.indexOf(pair);
+        const index = this.allCurrencyPairs.findIndex(
+          ({ symbol }) => symbol === pair
+        );
 
         if (index > -1) {
           this.allCurrencyPairs.splice(index, 1);
-          this.updatePairs.emit({
+          this.pairRemoved.emit({
             exchange: this.exchange,
-            pairs: this.allCurrencyPairs,
+            symbol: pair,
           });
         }
       }
@@ -199,7 +209,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
 
   public search(value: string) {
     this.pairs = value
-      ? this.currentBaseCurrencyPairs.filter((p) => p.includes(value))
+      ? this.currentBaseCurrencyPairs.filter((p) => p.symbol.includes(value))
       : [...this.currentBaseCurrencyPairs];
   }
 
@@ -259,7 +269,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
 
         const { current, rest } = pairs.reduce(
           (res, pair) => {
-            if (pair.endsWith(this.currentBaseCurrency)) {
+            if (pair.symbol.endsWith(this.currentBaseCurrency)) {
               res.current.push(pair);
             } else {
               res.rest.push(pair);
@@ -267,7 +277,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
 
             return res;
           },
-          { current: [] as string[], rest: [] as string[] }
+          { current: [] as CryptoPair[], rest: [] as CryptoPair[] }
         );
 
         this.currentBaseCurrencyPairs = current;

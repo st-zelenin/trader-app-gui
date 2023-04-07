@@ -6,6 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { EXCHANGE } from 'src/constants';
+import { CryptoPair } from 'src/models';
 import { CalculationsService } from '../calculations.service';
 
 declare const TradingView: any;
@@ -18,7 +19,7 @@ declare const TradingView: any;
 export class TradingViewWidgetComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
-  @Input() pair!: string;
+  @Input() pair!: CryptoPair;
   @Input() exchange!: EXCHANGE;
 
   public id = `tradingview-${Date.now()}`;
@@ -33,7 +34,7 @@ export class TradingViewWidgetComponent
     this.widget = new TradingView.widget({
       autosize: true,
       symbol: this.calculationsService.buildTradingViewSymbol(
-        this.pair,
+        this.pair.symbol,
         this.exchange
       ),
       interval: 'D',

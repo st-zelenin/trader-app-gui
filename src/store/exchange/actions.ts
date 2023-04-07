@@ -4,6 +4,7 @@ import {
   AllAverages,
   Averages,
   Balances,
+  CryptoPair,
   OpenOrdersByPairs,
   Products,
   Tickers,
@@ -97,7 +98,7 @@ export class ExchangeActions {
 
   public setPairs = createAction(
     this.ACTIONS.SET_PAIRS,
-    props<{ pairs: string[] }>()
+    props<{ pairs: CryptoPair[] }>()
   );
 
   public getRecentBuyAverages = createAction(

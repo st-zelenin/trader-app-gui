@@ -4,6 +4,7 @@ import {
   AllAverages,
   Averages,
   Balances,
+  CryptoPair,
   OpenOrdersByPairs,
   Products,
   Tickers,
@@ -33,7 +34,7 @@ export interface ExchangeState {
   openOrders: OpenOrdersByPairs;
   balances: Balances;
   recentBuyAverages: Averages;
-  pairs: string[];
+  pairs: CryptoPair[];
   currencyPairs: string[];
   products?: Products;
 }
