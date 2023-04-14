@@ -180,14 +180,14 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
         return { amount: volume, price, total: volume * price };
       });
 
-    console.table(res);
-    console.table({
-      volume: this.buyVolume,
-      money: this.buyMoney,
-      v1,
-      volumeCheck: res.reduce((aggr, { amount }) => aggr + amount, 0),
-      moneyCheck: res.reduce((aggr, { total }) => aggr + total, 0),
-    });
+    // console.table(res);
+    // console.table({
+    //   volume: this.buyVolume,
+    //   money: this.buyMoney,
+    //   v1,
+    //   volumeCheck: res.reduce((aggr, { amount }) => aggr + amount, 0),
+    //   moneyCheck: res.reduce((aggr, { total }) => aggr + total, 0),
+    // });
   }
 
   private getDigitsInfo(minFraction: number): string {

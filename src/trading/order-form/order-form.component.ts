@@ -297,6 +297,50 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  public calcRecommendedPriceAndAmount() {
+    console.log(this.averages);
+    if (!this.averages) {
+      return;
+    }
+
+    if (this.side.value === 'sell') {
+      let done = false;
+
+      let nextSellPrice = this.averages.buy.price * 1.5;
+      let nextSellAmount = this.averages.buy.volume / 3;
+      let toBeSold = nextSellAmount;
+      let remainingOversoldAmount = this.averages.sell.volume || 0;
+
+      do {
+        if (nextSellAmount > remainingOversoldAmount) {
+          done = true;
+          console.log('sell:', {
+            price: nextSellPrice,
+            amount: nextSellAmount,
+            remainingOversoldAmount,
+            rest: nextSellAmount - remainingOversoldAmount,
+          });
+        } else {
+          console.log('skipped:', {
+            price: nextSellPrice,
+            amount: nextSellAmount,
+            remainingOversoldAmount,
+          });
+
+          remainingOversoldAmount -= nextSellAmount;
+          nextSellPrice *= 1.5;
+          nextSellAmount = (this.averages.buy.volume - toBeSold) / 3;
+          toBeSold += nextSellAmount;
+        }
+      } while (!done);
+
+      this.orderForm.patchValue({
+        price: nextSellPrice,
+        amount: nextSellAmount - remainingOversoldAmount,
+      });
+    }
+  }
+
   private requiredByMarketType = (
     control: AbstractControl
   ): ValidationErrors | null => {
