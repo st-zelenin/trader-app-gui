@@ -112,7 +112,16 @@
         matTooltip="sort by upcoming sell order fulfillment"
         [class.active]="currentSorting === sortingTypes.UPCOMING_SELL"
       >
-        <mat-icon class="shopping-bag">shopping_bag</mat-icon>
+        <mat-icon class="shopping-bag sell">shopping_bag</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="updateSorting(sortingTypes.UPCOMING_BUY)"
+        type="button"
+        matTooltip="sort by upcoming buy order fulfillment"
+        [class.active]="currentSorting === sortingTypes.UPCOMING_BUY"
+      >
+        <mat-icon class="shopping-bag buy">shopping_bag</mat-icon>
       </button>
       <button
         mat-icon-button

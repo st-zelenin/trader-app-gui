@@ -7,16 +7,16 @@
       >
         <mat-panel-title>
           <img class="logo" [src]="logoSrc" loading="lazy" />
-          <span class="coin-info">
+          <div class="coin-info">
             <strong>{{ pair.symbol }}</strong> /
             <span matTooltip="current price">{{
               ticker?.last | number: '1.0-10'
             }}</span>
-            <sup
-              class="change-percentage"
+            <span
+              class="change-percentage sup"
               [class.down]="priceDown"
               matTooltip="change percentage"
-              >{{ ticker?.change_percentage | number: '1.0-2' }}</sup
+              >{{ ticker?.change_percentage | number: '1.0-2' }}</span
             >
             /
             <span matTooltip="average buy price">{{
@@ -26,7 +26,7 @@
             <span matTooltip="average sell price">{{
               averages?.sell?.price | number: '1.0-10'
             }}</span>
-          </span>
+          </div>
         </mat-panel-title>
         <mat-icon
           *ngIf="attentionMessage"
@@ -34,15 +34,20 @@
           [matTooltip]="attentionMessage"
           >gpp_maybe</mat-icon
         >
-        <sup class="estimated-total" matTooltip="estimated total">{{
+        <mat-icon
+          class="analytics material-icons-outlined"
+          [matTooltip]="analyticsMessage"
+          >analytics</mat-icon
+        >
+        <span class="estimated-total sup" matTooltip="estimated total">{{
           estimatedTotal | number: '1.0-2'
-        }}</sup>
-        <sup class="open-orders">
+        }}</span>
+        <span class="open-orders sup">
           <span class="buy" matTooltip="total buy orders">{{ buyOrders }}</span
           >/<span class="sell" matTooltip="total sell orders">{{
             sellOrders
           }}</span>
-        </sup>
+        </span>
         <mat-icon
           class="remove"
           (click)="removeCard($event)"

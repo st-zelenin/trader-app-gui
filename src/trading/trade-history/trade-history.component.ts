@@ -35,9 +35,13 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
 
   @Input() set product(product: Product | null) {
     if (product) {
-      console.log({ product });
       this.priceDigitsInfo = this.getDigitsInfo(product.pricePrecision);
-      this.amountDigitsInfo = this.getDigitsInfo(product.minQuantity);
+
+      const decimalPlaces =
+        String(product.minQuantity).split('.')[1]?.length || 0;
+      this.amountDigitsInfo = this.getDigitsInfo(
+        1 / Math.pow(10, decimalPlaces)
+      );
     }
   }
 

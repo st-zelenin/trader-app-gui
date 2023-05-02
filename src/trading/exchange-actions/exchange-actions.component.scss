@@ -65,6 +65,14 @@
 
 .shopping-bag {
   color: $carton;
+
+  &.buy {
+    color: $buy-color;
+  }
+
+  &.sell {
+    color: $sell-color;
+  }
 }
 
 .suitcase {

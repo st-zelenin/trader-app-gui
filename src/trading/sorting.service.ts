@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { EXCHANGE } from 'src/constants';
-import { Balances, CryptoPair, OpenOrdersByPairs, Tickers } from '../models';
+import {
+  Balances,
+  CryptoPair,
+  OpenOrdersByPairs,
+  OrderSide,
+  Tickers,
+} from '../models';
 import { CalculationsService } from './calculations.service';
 
 @Injectable({
@@ -9,19 +15,20 @@ import { CalculationsService } from './calculations.service';
 export class SortingService {
   constructor(private readonly calculationsService: CalculationsService) {}
 
-  public sortBySellOrder(
+  public sortByupcomingOrder(
     pairs: CryptoPair[],
     openOrders: OpenOrdersByPairs,
-    tickers: Tickers
+    tickers: Tickers,
+    orderSide: OrderSide
   ) {
     const withDiffs = pairs.map((pair) => {
-      const sellOrders = (openOrders[pair.symbol] || []).filter(
-        ({ side }) => side === 'sell'
+      const orders = (openOrders[pair.symbol] || []).filter(
+        ({ side }) => side === orderSide
       );
       const currPrice = tickers[pair.symbol]?.last || 0;
 
       let diff = undefined;
-      for (const { price } of sellOrders) {
+      for (const { price } of orders) {
         if (diff === undefined) {
           diff = (price - currPrice) / price;
         } else {
@@ -36,7 +43,9 @@ export class SortingService {
 
     return withDiffs
       .filter(({ diff }) => diff !== undefined)
-      .sort((a, b) => a.diff! - b.diff!)
+      .sort((a, b) =>
+        orderSide === 'sell' ? a.diff! - b.diff! : b.diff! - a.diff!
+      )
       .map(({ name }) => name)
       .concat(
         ...withDiffs

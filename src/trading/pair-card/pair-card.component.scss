@@ -77,7 +77,8 @@
 }
 
 .coin-info {
-  line-height: 18px;
+  display: flex;
+  align-items: center;
 }
 
 .estimated-total {
@@ -86,6 +87,21 @@
 
 .attention {
   position: absolute;
-  right: 210px;
+  right: 240px;
   color: $warning-color;
+}
+
+.analytics {
+  position: absolute;
+  right: 210px;
+}
+
+::ng-deep .mat-tooltip {
+  white-space: pre-line;
+}
+
+.sup {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
 }

@@ -54,6 +54,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   public headerColor = 'rgb(255, 255, 255)';
 
   public attentionMessage = '';
+  public analyticsMessage = '';
 
   private closeTimeout?: any;
   private openTimeout?: any;
@@ -104,6 +105,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((analytics) => {
         this.averages = analytics;
+        this.analyticsMessage = this.getAnalyticsMessage(analytics);
         this.headerColor = this.updateHeaderColor();
       });
 
@@ -238,6 +240,20 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       this.ticker,
       this.balance
     );
+  }
+
+  private getAnalyticsMessage(analytics: PairAverages) {
+    const precision = this.pair.symbol.endsWith('BTC') ? 100000000 : 100;
+
+    const totalBuy = Math.round(analytics?.buy.money * precision) / precision;
+    const totalSell = Math.round(analytics?.sell.money * precision) / precision;
+    const diff = Math.round((totalSell - totalBuy) * precision) / precision;
+
+    return `
+    bought: ${totalBuy}
+    sold: ${totalSell}
+    diff: ${diff}
+    `;
   }
 
   ngOnDestroy(): void {

@@ -218,10 +218,18 @@ export class ExchangeComponent implements OnInit, OnDestroy {
       case SORTING_TYPES.NONE:
         return [...this.currentBaseCurrencyPairs];
       case SORTING_TYPES.UPCOMING_SELL:
-        return this.sortingService.sortBySellOrder(
+        return this.sortingService.sortByupcomingOrder(
           [...this.currentBaseCurrencyPairs],
           this.openOrders,
-          this.tickers
+          this.tickers,
+          'sell'
+        );
+      case SORTING_TYPES.UPCOMING_BUY:
+        return this.sortingService.sortByupcomingOrder(
+          [...this.currentBaseCurrencyPairs],
+          this.openOrders,
+          this.tickers,
+          'buy'
         );
       case SORTING_TYPES.ESTIMATED_TOTAL:
         return this.sortingService.sortByEstimatedTotal(
