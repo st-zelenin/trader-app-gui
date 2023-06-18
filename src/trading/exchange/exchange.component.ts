@@ -69,6 +69,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   private currentBaseCurrencyPairs: CryptoPair[] = [];
   private otherCurrencyPairs: CryptoPair[] = [];
   private unsubscribe$ = new Subject<void>();
+  private currencyPairsLoaded = false;
 
   constructor(
     private readonly facade: AppStoreFacade,
@@ -122,7 +123,8 @@ export class ExchangeComponent implements OnInit, OnDestroy {
 
     this.currencyPairs = this.facade.currencyPairs(this.exchange).pipe(
       tap((pairs) => {
-        if (!pairs || !pairs.length) {
+        if (!this.currencyPairsLoaded && (!pairs || !pairs.length)) {
+          this.currencyPairsLoaded = true;
           this.facade.getCurrencyPairs(this.exchange);
         }
       })
