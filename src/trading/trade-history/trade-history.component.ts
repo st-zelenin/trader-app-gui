@@ -174,17 +174,24 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let [curr, ...rest] = [...this.orders].reverse();
+    const orders = [...this.orders].reverse();
+    let curr: OrderRow | undefined = undefined;
     const calculations = [];
 
-    for (const order of rest) {
-      if (curr.side !== order.side) {
-        const diff = curr.amount - order.amount;
-        if (diff >= 0) {
-          curr = { ...curr, amount: diff };
+    for (const order of orders) {
+      if (!curr) {
+        curr = { ...order };
+      } else if (curr.side !== order.side) {
+        const diff: number = curr.amount - order.amount;
+        console.log({ diff });
+
+        if (diff === 0) {
+          curr = undefined;
+        } else if (diff > 0) {
+          curr = { ...(curr as OrderRow), amount: diff };
         } else {
           curr = {
-            ...curr,
+            ...(curr as OrderRow),
             amount: diff * -1,
             side: curr.side === 'sell' ? 'buy' : 'sell',
             price: order.price,
@@ -202,9 +209,9 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
       }
 
       calculations.push({
-        side: curr.side,
-        amount: curr.amount,
-        price: curr.price,
+        side: curr?.side,
+        amount: curr?.amount,
+        price: curr?.price,
         src_side: order.side,
         src_amt: order.amount,
         src_price: order.price,
@@ -213,7 +220,7 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
 
     console.table(calculations);
 
-    if (curr.side === 'buy') {
+    if (curr && curr.side === 'buy') {
       this.sellForBtc.next({ amount: curr.amount, price: curr.price });
     }
   }
