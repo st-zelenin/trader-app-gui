@@ -45,6 +45,8 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
     }
   }
 
+  @Output() sellForBtc = new EventEmitter<{ amount: number; price: number }>();
+
   public priceDigitsInfo = '1.0-10';
   public amountDigitsInfo = '1.0-10';
 
@@ -118,7 +120,7 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
         this.sellPrice =
           this.sellVolume > 0 ? this.sellMoney / this.sellVolume : 0;
 
-        this.calc(minBuy);
+        this.calcBtc();
 
         this.cd.markForCheck();
       });
@@ -167,31 +169,53 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
     this.selectedOrdersInfoChange.emit(info);
   }
 
-  private calc(b1: number) {
-    const n = 7;
-    const q = 0.9; // 2 / 3;
-    const sum = this.buyVolume;
+  private calcBtc() {
+    if (!this.orders.length || !this.pair.symbol.endsWith('_BTC')) {
+      return;
+    }
 
-    const v1 = (sum * (q - 1)) / (Math.pow(q, n) - 1);
-    const total = this.buyMoney / n;
+    let [curr, ...rest] = [...this.orders].reverse();
+    const calculations = [];
 
-    const res = Array(n)
-      .fill(undefined)
-      .map((_, i) => {
-        const volume = v1 * Math.pow(q, i);
-        const price = total / volume;
+    for (const order of rest) {
+      if (curr.side !== order.side) {
+        const diff = curr.amount - order.amount;
+        if (diff >= 0) {
+          curr = { ...curr, amount: diff };
+        } else {
+          curr = {
+            ...curr,
+            amount: diff * -1,
+            side: curr.side === 'sell' ? 'buy' : 'sell',
+            price: order.price,
+          };
+        }
+      } else {
+        curr = {
+          ...curr,
+          amount: curr.amount + order.amount,
+          price:
+            curr.side === 'buy'
+              ? Math.max(curr.price, order.price)
+              : Math.min(curr.price, order.price),
+        };
+      }
 
-        return { amount: volume, price, total: volume * price };
+      calculations.push({
+        side: curr.side,
+        amount: curr.amount,
+        price: curr.price,
+        src_side: order.side,
+        src_amt: order.amount,
+        src_price: order.price,
       });
+    }
 
-    // console.table(res);
-    // console.table({
-    //   volume: this.buyVolume,
-    //   money: this.buyMoney,
-    //   v1,
-    //   volumeCheck: res.reduce((aggr, { amount }) => aggr + amount, 0),
-    //   moneyCheck: res.reduce((aggr, { total }) => aggr + total, 0),
-    // });
+    console.table(calculations);
+
+    if (curr.side === 'buy') {
+      this.sellForBtc.next({ amount: curr.amount, price: curr.price });
+    }
   }
 
   private getDigitsInfo(minFraction: number): string {

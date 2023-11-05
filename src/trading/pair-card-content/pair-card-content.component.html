@@ -79,6 +79,7 @@
     [recent]="recent"
     [buyMultiplicator]="buyMultiplicator"
     [selectedOrdersInfo]="selectedOrdersInfo"
+    [sellForBtc]="sellForBtc"
     (create)="createOrder($event)"
   >
   </app-order-form>
@@ -181,6 +182,7 @@
     [exchange]="exchange"
     [product]="product | async"
     [(selectedOrdersInfo)]="selectedOrdersInfo"
+    (sellForBtc)="sellForBtc = $event"
     *ngIf="isOpened"
   ></app-trade-history>
 </mat-expansion-panel>

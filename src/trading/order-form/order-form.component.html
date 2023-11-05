@@ -3,29 +3,49 @@
     <div>
       <label>Side: </label>
       <mat-radio-group formControlName="side">
-        <mat-radio-button value="buy" class="buy" color="primary">Buy</mat-radio-button>
+        <mat-radio-button value="buy" class="buy" color="primary"
+          >Buy</mat-radio-button
+        >
         <mat-radio-button value="sell" color="warn">Sell</mat-radio-button>
       </mat-radio-group>
     </div>
     <div>
-      <button mat-icon-button type="button" (click)="calcRecommendedPriceAndAmount()"
-        matTooltip="recommended price/amount" class="assistant">
+      <button
+        mat-icon-button
+        type="button"
+        (click)="getRecommendedPriceAndAmount()"
+        matTooltip="recommended price/amount"
+        class="assistant"
+        *ngIf="side.value === 'sell'"
+      >
         <mat-icon matSuffix>assistant</mat-icon>
       </button>
-      <mat-checkbox color="warn" formControlName="market">by market</mat-checkbox>
+      <mat-checkbox color="warn" formControlName="market"
+        >by market</mat-checkbox
+      >
     </div>
   </div>
   <div class="form-row">
     <mat-form-field appearance="standard">
       <mat-label>Price</mat-label>
-      <button matPrefix mat-icon-button type="button" (click)="decreasePrice($event)"
-        matTooltip="- {{ buyMultiplicator?.text || '0%' }}">
+      <button
+        matPrefix
+        mat-icon-button
+        type="button"
+        (click)="decreasePrice($event)"
+        matTooltip="- {{ buyMultiplicator?.text || '0%' }}"
+      >
         -
       </button>
       <input matInput placeholder="" formControlName="price" />
       <!-- <mat-icon matSuffix>attach_money</mat-icon> -->
-      <button matSuffix mat-icon-button type="button" (click)="increasePrice($event)"
-        matTooltip="+ {{ buyMultiplicator?.text || '0%' }}">
+      <button
+        matSuffix
+        mat-icon-button
+        type="button"
+        (click)="increasePrice($event)"
+        matTooltip="+ {{ buyMultiplicator?.text || '0%' }}"
+      >
         +
       </button>
       <mat-hint>{{ pricePrecision }}</mat-hint>
@@ -37,7 +57,7 @@
       <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
       <mat-hint (click)="setMinQuantity()" class="clickable">{{
         minQuantityText
-        }}</mat-hint>
+      }}</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="standard">
       <mat-label>Total</mat-label>
@@ -45,42 +65,78 @@
       <mat-icon matSuffix>attach_money</mat-icon>
       <mat-hint (click)="setMinTotal()" class="clickable">{{
         minTotalText
-        }}</mat-hint>
+      }}</mat-hint>
     </mat-form-field>
   </div>
   <div class="form-row">
     <ng-container *ngIf="side.value === 'buy'; else sell">
       <mat-button-toggle-group formControlName="priceSource">
-        <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE">current price</mat-button-toggle>
-        <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY">avg. buy</mat-button-toggle>
+        <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE"
+          >current price</mat-button-toggle
+        >
+        <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY"
+          >avg. buy</mat-button-toggle
+        >
       </mat-button-toggle-group>
     </ng-container>
 
     <ng-template #sell>
       <ng-container>
         <mat-button-toggle-group formControlName="priceSource">
-          <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE">current price</mat-button-toggle>
-          <mat-button-toggle [value]="priceSourceTypes.RECENT_SELL"
-            *ngIf="recent && recent.price > 0">recent</mat-button-toggle>
-          <mat-button-toggle [value]="priceSourceTypes.SELECTED_ORDERS"
-            *ngIf="selectedInfo && selectedInfo.price > 0">selected</mat-button-toggle>
-          <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY">avg. buy</mat-button-toggle>
-          <mat-button-toggle [value]="priceSourceTypes.AVERAGE_SELL">avg. sell</mat-button-toggle>
+          <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE"
+            >current price</mat-button-toggle
+          >
+          <mat-button-toggle
+            [value]="priceSourceTypes.RECENT_SELL"
+            *ngIf="recent && recent.price > 0"
+            >recent</mat-button-toggle
+          >
+          <mat-button-toggle
+            [value]="priceSourceTypes.SELECTED_ORDERS"
+            *ngIf="selectedInfo && selectedInfo.price > 0"
+            >selected</mat-button-toggle
+          >
+          <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY"
+            >avg. buy</mat-button-toggle
+          >
+          <mat-button-toggle [value]="priceSourceTypes.AVERAGE_SELL"
+            >avg. sell</mat-button-toggle
+          >
         </mat-button-toggle-group>
       </ng-container>
 
-      <button mat-raised-button type="button" (click)="plusPercents(50)" [disabled]="this.market.value">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="plusPercents(50)"
+        [disabled]="this.market.value"
+      >
         + 50%
       </button>
-      <button mat-raised-button type="button" (click)="plusPercents(10)" [disabled]="this.market.value">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="plusPercents(10)"
+        [disabled]="this.market.value"
+      >
         + 10%
       </button>
-      <button mat-raised-button type="button" (click)="setOneThird()" [disabled]="this.market.value">
+      <button
+        mat-raised-button
+        type="button"
+        (click)="setOneThird()"
+        [disabled]="this.market.value"
+      >
         1/3 amount
       </button>
     </ng-template>
 
-    <button mat-raised-button type="submit" [disabled]="!orderForm.valid" color="warn">
+    <button
+      mat-raised-button
+      type="submit"
+      [disabled]="!orderForm.valid"
+      color="warn"
+    >
       Create
     </button>
   </div>

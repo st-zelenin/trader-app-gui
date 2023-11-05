@@ -71,6 +71,8 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  @Input() sellForBtc?: { amount: number; price: number };
+
   @Output() create = new EventEmitter<OrderFormValues>();
 
   public totalAmount = 0;
@@ -297,7 +299,16 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  public calcRecommendedPriceAndAmount() {
+  public getRecommendedPriceAndAmount() {
+    if (this.sellForBtc) {
+      this.orderForm.patchValue({
+        price: this.sellForBtc.price,
+        amount: this.sellForBtc.amount,
+      });
+
+      return;
+    }
+
     console.log(this.averages);
     if (!this.averages) {
       return;
@@ -310,15 +321,21 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       let nextSellAmount = this.averages.buy.volume / 3;
       let toBeSold = nextSellAmount;
       let remainingOversoldAmount = this.averages.sell.volume || 0;
+      const MIN_ORDER_AMOUNT = 4;
 
       do {
-        if (nextSellAmount > remainingOversoldAmount) {
+        const rest = nextSellAmount - remainingOversoldAmount;
+
+        if (
+          nextSellAmount > remainingOversoldAmount &&
+          rest * nextSellPrice > MIN_ORDER_AMOUNT
+        ) {
           done = true;
           console.log('sell:', {
             price: nextSellPrice,
             amount: nextSellAmount,
             remainingOversoldAmount,
-            rest: nextSellAmount - remainingOversoldAmount,
+            rest,
           });
         } else {
           console.log('skipped:', {

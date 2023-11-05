@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { tap } from 'rxjs/operators';
 import { API_URL_GATE } from '../constants';
 import {
   AllAverages,
@@ -36,7 +37,18 @@ export class GateIoService implements ExchangeService {
   }
 
   public getAverages() {
-    return this.httpClient.get<AllAverages>(`${API_URL_GATE}/GetAverages`);
+    return this.httpClient.get<AllAverages>(`${API_URL_GATE}/GetAverages`).pipe(
+      tap((averages) => {
+        const saldo = Object.entries(averages)
+          .filter(([key]) => key.endsWith('_BTC'))
+          .reduce((res, [_, { buy, sell }]) => {
+            res += buy.money - sell.money;
+            return res;
+          }, 0);
+
+        console.log('BTC saldo:', saldo);
+      })
+    );
   }
 
   public getRecentBuyAverages() {

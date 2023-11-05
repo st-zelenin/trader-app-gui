@@ -70,6 +70,8 @@ export class PairCardContentComponent
   public defaultSellVolumeDivider?: number;
   public defaultSellPriceMultiplicator?: number;
 
+  public sellForBtc?: { amount: number; price: number };
+
   public selectedOrdersInfo: SelectedOrdersInfo = {
     price: 0,
     amount: 0,
