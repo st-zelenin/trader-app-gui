@@ -38,6 +38,7 @@ export class OrderingService {
       case EXCHANGE.BYBIT: {
         return this.httpClient.post(`${API_URL_BYBIT}/CancelOrder`, {
           id: order.id,
+          pair: order.currencyPair,
         });
       }
       case EXCHANGE.BINANCE: {
