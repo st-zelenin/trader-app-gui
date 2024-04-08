@@ -2,6 +2,8 @@
   animationDuration="0ms"
   [selectedIndex]="selectedIndex"
   (selectedTabChange)="selectedTabChange($event)"
+  mat-stretch-tabs="false"
+  class="exchange-tabs"
 >
   <mat-tab *ngFor="let tab of exchangeTabs" [label]="tab.label">
     <ng-template matTabContent>

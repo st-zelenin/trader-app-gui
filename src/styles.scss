@@ -1,28 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
-
 html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
   background-color: #32323c;
 }
+
 .mat-mdc-tab-body {
   background-color: #32323c;
 }
-.mat-mdc-card,
-.mat-mdc-tab-header {
-  background-color: #f3faff;
-}
+
 .mat-icon {
   color: rgba(0, 0, 0, 0.54);
-}
-.mat-mdc-tab-header {
-  margin: 5px 5px 0 5px;
 }
 
 .warning {
   background-color: indianred;
+}
+
+:root {
+  --mdc-filled-text-field-container-color: white;
+  --mat-form-field-container-text-size: 16px;
+  --mdc-outlined-text-field-label-text-size: 14px;
+  --mat-form-field-outlined-label-text-populated-size: 14px;
 }

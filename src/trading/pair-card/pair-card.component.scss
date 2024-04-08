@@ -1,11 +1,17 @@
 @import '../../variables.scss';
 
-:host.hidden {
-  display: none;
+:host {
+  &.hidden {
+    display: none;
+  }
+
+  &.expanded {
+    width: 100% !important;
+  }
 }
 
-:host.expanded {
-  width: 100% !important;
+.mat-mdc-card-content {
+  padding: 0;
 }
 
 .card-title {
@@ -25,11 +31,20 @@
   }
 }
 
-.drag-handle,
-.remove,
-.expand {
-  position: absolute;
-  top: 14px;
+.mat-expansion-panel-header {
+  padding: 0 14px;
+
+  ::ng-deep {
+    .mat-content {
+      justify-content: space-between;
+    }
+  }
+}
+
+.right-group {
+  display: flex;
+  gap: 10px;
+  margin: 0 5px;
 }
 
 .mat-expanded {
@@ -39,22 +54,15 @@
 }
 
 .expand {
-  right: 50px;
   font-size: 18px;
   line-height: 26px;
 }
 
 .drag-handle {
-  right: 80px;
   cursor: move;
 }
 
-.remove {
-  right: 110px;
-}
-
 .open-orders {
-  padding-right: 110px;
   font-weight: 500;
 
   .buy {
@@ -64,10 +72,6 @@
   .sell {
     color: $sell-color;
   }
-}
-
-.panel-header {
-  position: relative;
 }
 
 .logo {
@@ -84,17 +88,11 @@
 
 .estimated-total {
   padding-right: 10px;
+  min-width: 40px;
 }
 
 .attention {
-  position: absolute;
-  right: 240px;
   color: $warning-color;
-}
-
-.analytics {
-  position: absolute;
-  right: 210px;
 }
 
 ::ng-deep .mat-mdc-tooltip {

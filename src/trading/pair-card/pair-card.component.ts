@@ -28,6 +28,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { PairCardContentComponent } from '../pair-card-content/pair-card-content.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-pair-card',
@@ -39,6 +40,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTooltipModule,
     MatExpansionModule,
     PairCardContentComponent,
+    DragDropModule,
   ],
   templateUrl: './pair-card.component.html',
   styleUrls: ['./pair-card.component.scss'],

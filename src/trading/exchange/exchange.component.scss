@@ -2,10 +2,11 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
+  gap: 5px;
+  margin: 5px;
 
   .pair {
     width: 100%;
-    margin: 5px 0;
   }
 }
 

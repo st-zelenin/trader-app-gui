@@ -1,7 +1,7 @@
+@use '@angular/material' as mat;
 @import '../../variables.scss';
 
 .actions {
-  margin: 0 5px;
   border-radius: 0;
   padding: 0;
 }
@@ -29,7 +29,7 @@
 }
 
 .input-label {
-  font-size: 12px;
+  // font-size: 12px;
 }
 
 .label {
@@ -92,4 +92,13 @@
 
 .settings-button {
   background-color: rgba(255, 255, 255, 0.5);
+}
+
+.dense-3 {
+  @include mat.all-component-densities(-3);
+  // @include mat.form-field-density(minimum);
+}
+
+.mat-mdc-form-field {
+  padding-top: 22px;
 }

@@ -23,6 +23,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-exchange-actions',
@@ -38,6 +39,7 @@ import { MatCardModule } from '@angular/material/card';
     MatIconModule,
     MatInputModule,
     MatCardModule,
+    MatTooltipModule,
   ],
   templateUrl: './exchange-actions.component.html',
   styleUrls: ['./exchange-actions.component.scss'],
