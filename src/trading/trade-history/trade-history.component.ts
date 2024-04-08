@@ -19,9 +19,26 @@ import {
   SelectedOrdersInfo,
 } from '../../models';
 import { HistoryService } from '../history.service';
+import { CommonModule } from '@angular/common';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-trade-history',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ClipboardModule,
+    MatIconModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatTableModule,
+    MatButtonModule,
+  ],
   templateUrl: './trade-history.component.html',
   styleUrls: ['./trade-history.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

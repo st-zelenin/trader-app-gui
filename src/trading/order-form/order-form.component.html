@@ -26,7 +26,7 @@
     </div>
   </div>
   <div class="form-row">
-    <mat-form-field appearance="standard">
+    <mat-form-field>
       <mat-label>Price</mat-label>
       <button
         matPrefix
@@ -51,7 +51,7 @@
       <mat-hint>{{ pricePrecision }}</mat-hint>
     </mat-form-field>
 
-    <mat-form-field appearance="standard">
+    <mat-form-field>
       <mat-label>Quantity</mat-label>
       <input matInput placeholder="" formControlName="amount" />
       <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
@@ -59,7 +59,7 @@
         minQuantityText
       }}</mat-hint>
     </mat-form-field>
-    <mat-form-field appearance="standard">
+    <mat-form-field>
       <mat-label>Total</mat-label>
       <input matInput placeholder="" formControlName="total" />
       <mat-icon matSuffix>attach_money</mat-icon>
@@ -120,7 +120,7 @@
         + 10%
       </button>
 
-      <!-- <mat-form-field appearance="standard" class="currency-container">
+      <!-- <mat-form-field  class="currency-container">
         <mat-select [formControl]="orderForm.controls.pricePercentage">
           <mat-option *ngFor="let percentage of pricePercentage"
             >{{ percentage }}%</mat-option

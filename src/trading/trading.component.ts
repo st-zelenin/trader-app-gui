@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -8,9 +8,14 @@ import { EXCHANGE, EXCHANGE_URL_PARAMS } from '../constants';
 import { ExchangeSymbol, OrderedSymbols, User } from '../models';
 import { AppStoreFacade } from '../store/facade';
 import { UserService } from '../user.service';
+import { CommonModule } from '@angular/common';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ExchangeComponent } from './exchange/exchange.component';
 
 @Component({
   selector: 'app-trading',
+  standalone: true,
+  imports: [CommonModule, MatTabsModule, ExchangeComponent],
   templateUrl: './trading.component.html',
   styleUrls: ['./trading.component.scss'],
 })

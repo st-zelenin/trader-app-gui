@@ -8,11 +8,14 @@ import {
 import { EXCHANGE } from 'src/constants';
 import { CryptoPair } from 'src/models';
 import { CalculationsService } from '../calculations.service';
+import { CommonModule } from '@angular/common';
 
 declare const TradingView: any;
 
 @Component({
   selector: 'app-trading-view-widget',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './trading-view-widget.component.html',
   styleUrls: ['./trading-view-widget.component.scss'],
 })

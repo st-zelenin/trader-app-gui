@@ -1,11 +1,14 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from 'src/constants';
 import { Order, OrderSide } from '../../models';
 import { HistoryService } from '../history.service';
+import { CommonModule } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface RecentOrdersData {
   exchange: EXCHANGE;
@@ -14,6 +17,8 @@ export interface RecentOrdersData {
 
 @Component({
   selector: 'app-recent-orders',
+  standalone: true,
+  imports: [CommonModule, MatTableModule, MatButtonModule],
   templateUrl: './recent-orders.component.html',
   styleUrls: ['./recent-orders.component.scss'],
 })

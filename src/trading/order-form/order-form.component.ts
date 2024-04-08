@@ -1,4 +1,4 @@
-import { formatNumber } from '@angular/common';
+import { CommonModule, formatNumber } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import {
   AbstractControl,
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   ValidationErrors,
@@ -28,9 +29,27 @@ import {
   Ticker,
 } from '../../models';
 import { PRICE_SOURCE } from './constants';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
   selector: 'app-order-form',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatButtonToggleModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatButtonModule,
+    MatRadioModule,
+    MatCheckboxModule,
+  ],
   templateUrl: './order-form.component.html',
   styleUrls: ['./order-form.component.scss'],
 })

@@ -5,8 +5,6 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
@@ -32,9 +30,36 @@ import {
 } from '../confirmation-dialog/confirmation-dialog.component';
 import { HistoryService } from '../history.service';
 import { OrderingService } from '../ordering.service';
+import { CommonModule } from '@angular/common';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { TradeHistoryComponent } from '../trade-history/trade-history.component';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { MatTableModule } from '@angular/material/table';
+import { TradingViewWidgetComponent } from '../trading-view-widget/trading-view-widget.component';
+import { OrderFormComponent } from '../order-form/order-form.component';
+import { FishnetComponent } from '../fishnet/fishnet.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCardModule } from '@angular/material/card';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-pair-card-content',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ClipboardModule,
+    MatTableModule,
+    MatCardModule,
+    MatExpansionModule,
+    MatTooltipModule,
+    MatIconModule,
+    TradeHistoryComponent,
+    TradingViewWidgetComponent,
+    OrderFormComponent,
+    FishnetComponent,
+  ],
   templateUrl: './pair-card-content.component.html',
   styleUrls: ['./pair-card-content.component.scss'],
 })

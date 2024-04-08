@@ -1,4 +1,8 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import {
   Component,
   EventEmitter,
@@ -7,7 +11,6 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { interval, Observable, Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
 import { EXCHANGE, SORTING_TYPES } from '../../constants';
@@ -35,9 +38,21 @@ import {
 } from '../recent-orders/recent-orders.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { SortingService } from '../sorting.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ExchangeActionsComponent } from '../exchange-actions/exchange-actions.component';
+import { CommonModule } from '@angular/common';
+import { PairCardComponent } from '../pair-card/pair-card.component';
 
 @Component({
   selector: 'app-exchange',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    DragDropModule,
+    ExchangeActionsComponent,
+    PairCardComponent,
+  ],
   templateUrl: './exchange.component.html',
   styleUrls: ['./exchange.component.scss'],
 })
@@ -76,7 +91,7 @@ export class ExchangeComponent implements OnInit, OnDestroy {
     private readonly filteringService: FilteringService,
     private readonly sortingService: SortingService,
     private readonly calculationsService: CalculationsService,
-    private dialog: MatDialog
+    private readonly dialog: MatDialog
   ) {}
 
   ngOnInit(): void {

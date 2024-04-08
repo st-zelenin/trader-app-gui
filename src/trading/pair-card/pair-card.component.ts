@@ -22,9 +22,24 @@ import {
 import { AppStoreFacade } from '../../store/facade';
 import { CalculationsService } from '../calculations.service';
 import { FilteringService } from '../filtering.service';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { PairCardContentComponent } from '../pair-card-content/pair-card-content.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-pair-card',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatExpansionModule,
+    PairCardContentComponent,
+  ],
   templateUrl: './pair-card.component.html',
   styleUrls: ['./pair-card.component.scss'],
   host: {

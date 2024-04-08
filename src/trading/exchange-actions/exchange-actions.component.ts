@@ -8,15 +8,37 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
 import { SORTING_TYPES } from '../../constants';
 import { FILTERING_TYPE, Multiplicator, OrderSide } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-exchange-actions',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatDividerModule,
+    MatAutocompleteModule,
+    MatIconModule,
+    MatInputModule,
+    MatCardModule,
+  ],
   templateUrl: './exchange-actions.component.html',
   styleUrls: ['./exchange-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

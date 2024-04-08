@@ -1,4 +1,4 @@
-import { formatNumber } from '@angular/common';
+import { CommonModule, formatNumber } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -8,6 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import {
+  ReactiveFormsModule,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
@@ -15,9 +16,20 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { OrderFormValues, Product, Ticker } from '../../models';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-fishnet',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatTooltipModule,
+    MatIconModule,
+  ],
   templateUrl: './fishnet.component.html',
   styleUrls: ['./fishnet.component.scss'],
 })

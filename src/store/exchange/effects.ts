@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
@@ -17,6 +16,7 @@ import {
   GATE_IO_ACTIONS,
 } from '../models';
 import { ExchangeActions } from './actions';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export class ExchangeEffects {
   constructor(
