@@ -8,7 +8,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
 import { SORTING_TYPES } from '../../constants';
@@ -43,9 +43,9 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
   public buyMultiplicator?: Multiplicator;
   public filteredOptions?: Observable<string[]>;
 
-  public pairSearchControl = new FormControl();
-  public currencyPairControl = new FormControl();
-  public baseCurrencyControl = new FormControl();
+  public pairSearchControl = new UntypedFormControl();
+  public currencyPairControl = new UntypedFormControl();
+  public baseCurrencyControl = new UntypedFormControl();
 
   public currentSorting: SORTING_TYPES = SORTING_TYPES.NONE;
   public currentFiltering: FILTERING_TYPE = FILTERING_TYPE.NONE;

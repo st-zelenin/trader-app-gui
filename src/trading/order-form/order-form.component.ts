@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import {
   AbstractControl,
-  FormBuilder,
-  FormGroup,
+  UntypedFormBuilder,
+  UntypedFormGroup,
   ValidationErrors,
   Validators,
 } from '@angular/forms';
@@ -76,7 +76,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   @Output() create = new EventEmitter<OrderFormValues>();
 
   public totalAmount = 0;
-  public orderForm: FormGroup;
+  public orderForm: UntypedFormGroup;
   public pricePrecision = 'precision not specified';
   public minQuantityText = 'min. quantity not limited';
   public minTotalText = 'min. total not limited';
@@ -113,7 +113,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   private readonly LOCALE = 'en';
   private productDetails: Product | null = null;
 
-  constructor(private readonly fb: FormBuilder) {
+  constructor(private readonly fb: UntypedFormBuilder) {
     this.orderForm = this.fb.group({
       side: ['buy'],
       price: ['', this.requiredByMarketType],

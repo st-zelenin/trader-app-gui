@@ -4,7 +4,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MsalService } from '@azure/msal-angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -19,10 +19,10 @@ import { SettingService } from './settings.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent implements OnInit, OnDestroy {
-  public buyMultiplicatorControl = new FormControl('');
-  public defaultTotalAmountControl = new FormControl('');
-  public defaultSellVolumeDivider = new FormControl('');
-  public defaultSellPriceMultiplicator = new FormControl('');
+  public buyMultiplicatorControl = new UntypedFormControl('');
+  public defaultTotalAmountControl = new UntypedFormControl('');
+  public defaultSellVolumeDivider = new UntypedFormControl('');
+  public defaultSellPriceMultiplicator = new UntypedFormControl('');
 
   public multiplicators = BUY_MULTIPLICATORS;
 

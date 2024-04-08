@@ -7,7 +7,11 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { OrderFormValues, Product, Ticker } from '../../models';
@@ -34,7 +38,7 @@ export class FishnetComponent implements OnInit, OnDestroy {
 
   @Output() create = new EventEmitter<OrderFormValues>();
 
-  public fishnetForm: FormGroup;
+  public fishnetForm: UntypedFormGroup;
   public currentPrice = 0;
   public minQuantityText = 'min. quantity not limited';
   public minTotalText = 'min. total not limited';
@@ -59,7 +63,7 @@ export class FishnetComponent implements OnInit, OnDestroy {
   private readonly LOCALE = 'en';
   private productDetails: Product | null = null;
 
-  constructor(private readonly fb: FormBuilder) {
+  constructor(private readonly fb: UntypedFormBuilder) {
     this.fishnetForm = this.fb.group({
       price: ['', [Validators.required]],
       step: ['', [Validators.required]],
