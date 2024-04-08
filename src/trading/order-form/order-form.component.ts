@@ -83,6 +83,8 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   public selectedInfo?: SelectedOrdersInfo;
   public priceSourceTypes = PRICE_SOURCE;
 
+  public pricePercentage = Array.from({ length: 20 }, (_, i) => i * 10 - 50);
+
   public get market() {
     return this.orderForm.get('market')!;
   }
@@ -119,6 +121,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       total: ['', this.requiredByMarketType],
       market: [false],
       priceSource: [''],
+      pricePercentage: [50],
     });
   }
 

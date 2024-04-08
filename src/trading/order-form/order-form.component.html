@@ -81,29 +81,27 @@
     </ng-container>
 
     <ng-template #sell>
-      <ng-container>
-        <mat-button-toggle-group formControlName="priceSource">
-          <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE"
-            >current price</mat-button-toggle
-          >
-          <mat-button-toggle
-            [value]="priceSourceTypes.RECENT_SELL"
-            *ngIf="recent && recent.price > 0"
-            >recent</mat-button-toggle
-          >
-          <mat-button-toggle
-            [value]="priceSourceTypes.SELECTED_ORDERS"
-            *ngIf="selectedInfo && selectedInfo.price > 0"
-            >selected</mat-button-toggle
-          >
-          <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY"
-            >avg. buy</mat-button-toggle
-          >
-          <mat-button-toggle [value]="priceSourceTypes.AVERAGE_SELL"
-            >avg. sell</mat-button-toggle
-          >
-        </mat-button-toggle-group>
-      </ng-container>
+      <mat-button-toggle-group formControlName="priceSource">
+        <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE"
+          >current price</mat-button-toggle
+        >
+        <mat-button-toggle
+          [value]="priceSourceTypes.RECENT_SELL"
+          *ngIf="recent && recent.price > 0"
+          >recent</mat-button-toggle
+        >
+        <mat-button-toggle
+          [value]="priceSourceTypes.SELECTED_ORDERS"
+          *ngIf="selectedInfo && selectedInfo.price > 0"
+          >selected</mat-button-toggle
+        >
+        <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY"
+          >avg. buy</mat-button-toggle
+        >
+        <mat-button-toggle [value]="priceSourceTypes.AVERAGE_SELL"
+          >avg. sell</mat-button-toggle
+        >
+      </mat-button-toggle-group>
 
       <button
         mat-raised-button
@@ -121,6 +119,15 @@
       >
         + 10%
       </button>
+
+      <!-- <mat-form-field appearance="standard" class="currency-container">
+        <mat-select [formControl]="orderForm.controls.pricePercentage">
+          <mat-option *ngFor="let percentage of pricePercentage"
+            >{{ percentage }}%</mat-option
+          >
+        </mat-select>
+      </mat-form-field> -->
+
       <button
         mat-raised-button
         type="button"
