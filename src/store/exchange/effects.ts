@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { BinanceService } from 'src/trading/binance.service';
+import { BinanceService } from '../../trading/binance.service';
 import { ExchangeService } from '../../models';
 import { BybitService } from '../../trading/bybit.service';
 import { CoinbaseService } from '../../trading/coinbase.service';

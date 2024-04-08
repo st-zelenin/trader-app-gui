@@ -70,11 +70,11 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "trader-app-gui:build:production"
+              "buildTarget": "trader-app-gui:build:production"
             },
             "development": {
-              "browserTarget": "trader-app-gui:build:development",
-              "port": 4201
+              "port": 4201,
+              "buildTarget": "trader-app-gui:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,7 +82,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "trader-app-gui:build"
+            "buildTarget": "trader-app-gui:build"
           }
         },
         "test": {

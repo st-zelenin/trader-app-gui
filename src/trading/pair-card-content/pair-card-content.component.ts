@@ -43,6 +43,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-pair-card-content',
@@ -52,6 +53,7 @@ import { MatDialog } from '@angular/material/dialog';
     ClipboardModule,
     MatTableModule,
     MatCardModule,
+    MatButtonModule,
     MatExpansionModule,
     MatTooltipModule,
     MatIconModule,
@@ -332,10 +334,10 @@ export class PairCardContentComponent
   ): OrderFormValues {
     return {
       market: false,
-      amount: String(amount),
-      price: String(price),
+      amount,
+      price,
       side,
-      total: String(amount * price),
+      total: amount * price,
     };
   }
 

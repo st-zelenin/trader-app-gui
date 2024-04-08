@@ -2,7 +2,7 @@
   <div class="form-row">
     <div>
       <label>Side: </label>
-      <mat-radio-group formControlName="side">
+      <mat-radio-group [formControl]="orderForm.controls.side">
         <mat-radio-button value="buy" class="buy" color="primary"
           >Buy</mat-radio-button
         >
@@ -16,11 +16,11 @@
         (click)="getRecommendedPriceAndAmount()"
         matTooltip="recommended price/amount"
         class="assistant"
-        *ngIf="side.value === 'sell'"
+        *ngIf="orderForm.controls.side.value === 'sell'"
       >
         <mat-icon matSuffix>assistant</mat-icon>
       </button>
-      <mat-checkbox color="warn" formControlName="market"
+      <mat-checkbox color="warn" [formControl]="orderForm.controls.market"
         >by market</mat-checkbox
       >
     </div>
@@ -37,8 +37,7 @@
       >
         -
       </button>
-      <input matInput placeholder="" formControlName="price" />
-      <!-- <mat-icon matSuffix>attach_money</mat-icon> -->
+      <input matInput placeholder="" [formControl]="orderForm.controls.price" />
       <button
         matSuffix
         mat-icon-button
@@ -53,15 +52,18 @@
 
     <mat-form-field>
       <mat-label>Quantity</mat-label>
-      <input matInput placeholder="" formControlName="amount" />
-      <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+      <input
+        matInput
+        placeholder=""
+        [formControl]="orderForm.controls.amount"
+      />
       <mat-hint (click)="setMinQuantity()" class="clickable">{{
         minQuantityText
       }}</mat-hint>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Total</mat-label>
-      <input matInput placeholder="" formControlName="total" />
+      <input matInput placeholder="" [formControl]="orderForm.controls.total" />
       <mat-icon matSuffix>attach_money</mat-icon>
       <mat-hint (click)="setMinTotal()" class="clickable">{{
         minTotalText
@@ -69,8 +71,8 @@
     </mat-form-field>
   </div>
   <div class="form-row">
-    <ng-container *ngIf="side.value === 'buy'; else sell">
-      <mat-button-toggle-group formControlName="priceSource">
+    <ng-container *ngIf="orderForm.controls.side.value === 'buy'; else sell">
+      <mat-button-toggle-group [formControl]="orderForm.controls.priceSource">
         <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE"
           >current price</mat-button-toggle
         >
@@ -81,7 +83,7 @@
     </ng-container>
 
     <ng-template #sell>
-      <mat-button-toggle-group formControlName="priceSource">
+      <mat-button-toggle-group [formControl]="orderForm.controls.priceSource">
         <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE"
           >current price</mat-button-toggle
         >
@@ -107,7 +109,7 @@
         mat-raised-button
         type="button"
         (click)="plusPercents(50)"
-        [disabled]="this.market.value"
+        [disabled]="orderForm.controls.market.value"
       >
         + 50%
       </button>
@@ -115,12 +117,12 @@
         mat-raised-button
         type="button"
         (click)="plusPercents(10)"
-        [disabled]="this.market.value"
+        [disabled]="orderForm.controls.market.value"
       >
         + 10%
       </button>
 
-      <!-- <mat-form-field  class="currency-container">
+      <!-- <mat-form-field class="currency-container">
         <mat-select [formControl]="orderForm.controls.pricePercentage">
           <mat-option *ngFor="let percentage of pricePercentage"
             >{{ percentage }}%</mat-option
@@ -132,7 +134,7 @@
         mat-raised-button
         type="button"
         (click)="setOneThird()"
-        [disabled]="this.market.value"
+        [disabled]="orderForm.controls.market.value"
       >
         1/3 amount
       </button>

@@ -27,6 +27,7 @@ import { AppComponent } from './app.component';
       maxAge: 25,
       logOnly: environment.production,
       autoPause: true,
+      connectInZone: true,
     }),
 
     MsalModule.forRoot(
