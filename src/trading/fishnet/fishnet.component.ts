@@ -1,4 +1,4 @@
-import { CommonModule, formatNumber } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -7,18 +7,22 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import {
-  ReactiveFormsModule,
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { OrderFormValues, Product, Ticker } from '../../models';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+
+interface FishnetForm {
+  price: FormControl<number | null>;
+  step: FormControl<number | null>;
+  amount: FormControl<number | null>;
+  total: FormControl<number | null>;
+}
 
 @Component({
   selector: 'app-fishnet',
@@ -29,6 +33,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatTooltipModule,
     MatIconModule,
+    MatButtonModule,
+    MatInputModule,
   ],
   templateUrl: './fishnet.component.html',
   styleUrls: ['./fishnet.component.scss'],
@@ -48,127 +54,112 @@ export class FishnetComponent implements OnInit, OnDestroy {
     }
   }
 
-  @Output() create = new EventEmitter<OrderFormValues>();
+  @Output() public readonly create = new EventEmitter<OrderFormValues>();
 
-  public fishnetForm: UntypedFormGroup;
+  public readonly form = new FormGroup<FishnetForm>({
+    price: new FormControl(null),
+    step: new FormControl(null),
+    amount: new FormControl(null),
+    total: new FormControl(null),
+  });
+
   public currentPrice = 0;
   public minQuantityText = 'min. quantity not limited';
   public minTotalText = 'min. total not limited';
 
-  private get price() {
-    return this.fishnetForm.get('price')!;
-  }
-
-  public get step() {
-    return this.fishnetForm.get('step')!;
-  }
-
-  private get amount() {
-    return this.fishnetForm.get('amount')!;
-  }
-
-  private get total() {
-    return this.fishnetForm.get('total')!;
-  }
-
-  private unsubscribe$ = new Subject<void>();
   private readonly LOCALE = 'en';
   private productDetails: Product | null = null;
-
-  constructor(private readonly fb: UntypedFormBuilder) {
-    this.fishnetForm = this.fb.group({
-      price: ['', [Validators.required]],
-      step: ['', [Validators.required]],
-      amount: ['', [Validators.required]],
-      total: ['', [Validators.required]],
-    });
-  }
+  private readonly unsubscribe$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.price.valueChanges
+    this.form.controls.price.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((val) => {
-        if (!val || Number(val) <= 0) {
+        if (!val || !this.form.controls.amount.value) {
           return;
         }
 
-        if (this.amount.value && Number(this.amount.value) > 0) {
-          this.total.patchValue(Number(val) * Number(this.amount.value), {
+        this.form.controls.total.setValue(
+          val * this.form.controls.amount.value,
+          {
             emitEvent: false,
-          });
-        }
+          }
+        );
       });
 
-    this.amount.valueChanges
+    this.form.controls.amount.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((val) => {
-        if (!val || Number(val) <= 0) {
+        if (!val || !this.form.controls.price.value) {
           return;
         }
 
-        if (this.price.value && Number(this.price.value) > 0) {
-          this.total.patchValue(Number(val) * Number(this.price.value), {
+        this.form.controls.total.setValue(
+          val * this.form.controls.price.value,
+          {
             emitEvent: false,
-          });
-        }
+          }
+        );
       });
 
-    this.total.valueChanges
+    this.form.controls.total.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((val) => {
-        if (!val || Number(val) <= 0) {
+        if (!val || !this.form.controls.price.value) {
           return;
         }
 
-        if (this.price.value && Number(this.price.value) > 0) {
-          this.amount.patchValue(Number(val) / Number(this.price.value), {
+        this.form.controls.amount.setValue(
+          val / this.form.controls.price.value,
+          {
             emitEvent: false,
-          });
-        }
+          }
+        );
       });
   }
 
   public onSubmit() {
-    console.log(this.fishnetForm);
+    console.log(this.form);
 
     this.create.emit({
-      ...this.fishnetForm.value,
       side: 'buy',
+      price: this.form.controls.price.value,
+      amount: this.form.controls.amount.value,
+      total: this.form.controls.total.value,
+      market: false,
     });
 
-    if (this.step && this.price.value) {
-      this.setPriceValue(Number(this.price.value) - Number(this.step.value));
+    if (this.form.controls.step.value && this.form.controls.price.value) {
+      this.form.controls.price.setValue(
+        this.form.controls.price.value - this.form.controls.step.value
+      );
     }
   }
 
   public nextPrice(event: Event) {
     event.stopPropagation();
-    if (this.step && this.price.value) {
-      this.setPriceValue(Number(this.price.value) - Number(this.step.value));
+    if (this.form.controls.step.value && this.form.controls.price.value) {
+      this.form.controls.price.setValue(
+        this.form.controls.price.value - this.form.controls.step.value
+      );
     }
-  }
-
-  private setPriceValue(value: number) {
-    this.price.setValue(
-      formatNumber(value, this.LOCALE, '1.0-10').replace(',', '')
-    );
   }
 
   public setMinQuantity() {
     if (this.productDetails?.minQuantity) {
-      this.amount.setValue(this.productDetails.minQuantity);
+      this.form.controls.amount.setValue(this.productDetails.minQuantity);
     }
   }
 
   public setMinTotal() {
     if (this.productDetails?.minTotal) {
-      this.total.setValue(this.productDetails.minTotal);
+      this.form.controls.total.setValue(this.productDetails.minTotal);
     }
   }
 
   public setCurrentPrice() {
     if (this.ticker) {
-      this.setPriceValue(this.ticker.last);
+      this.form.controls.price.setValue(this.ticker.last);
     }
   }
 

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   API_URL,
   API_URL_BINANCE,
@@ -10,11 +10,9 @@ import {
 } from '../constants';
 import { Order, OrderSide } from '../models';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class HistoryService {
-  constructor(private httpClient: HttpClient) {}
+  private readonly httpClient = inject(HttpClient);
 
   public importAll(exchange: EXCHANGE, pair: string) {
     switch (exchange) {

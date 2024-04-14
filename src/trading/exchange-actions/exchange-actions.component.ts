@@ -7,8 +7,9 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
-import { ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
 import { SORTING_TYPES } from '../../constants';
@@ -67,30 +68,25 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
   public buyMultiplicator?: Multiplicator;
   public filteredOptions?: Observable<string[]>;
 
-  public pairSearchControl = new UntypedFormControl();
-  public currencyPairControl = new UntypedFormControl();
-  public baseCurrencyControl = new UntypedFormControl();
+  public pairSearchControl = new FormControl<string | null>(null);
+  public currencyPairControl = new FormControl<string | null>(null);
+  public baseCurrencyControl = new FormControl<string | null>(null);
 
   public currentSorting: SORTING_TYPES = SORTING_TYPES.NONE;
   public currentFiltering: FILTERING_TYPE = FILTERING_TYPE.NONE;
 
-  public get currencyLabel() {
-    return this.baseCurrencyControl.value;
-  }
-
-  private unsubscribe$ = new Subject<void>();
-
-  constructor(
-    private readonly facade: AppStoreFacade,
-    private readonly cd: ChangeDetectorRef
-  ) {}
+  private readonly facade = inject(AppStoreFacade);
+  private readonly cd = inject(ChangeDetectorRef);
+  private readonly unsubscribe$ = new Subject<void>();
 
   ngOnInit(): void {
     this.baseCurrencyControl.setValue(this.baseCurrency);
 
     this.baseCurrencyControl.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((currency) => this.baseCurrencyChange.emit(currency));
+      .subscribe(
+        (currency) => currency && this.baseCurrencyChange.emit(currency)
+      );
 
     this.pairSearchControl.valueChanges
       .pipe(takeUntil(this.unsubscribe$), startWith(''), debounceTime(500))
@@ -101,7 +97,7 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(
       startWith(''),
       debounceTime(500),
-      map((value) => (typeof value === 'string' ? value : value.id)),
+      map((value) => value || ''),
       map((value) => this.filterPairs(value))
     );
 

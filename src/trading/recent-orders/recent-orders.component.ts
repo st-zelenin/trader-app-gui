@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { of, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from 'src/constants';
@@ -7,7 +7,7 @@ import { HistoryService } from '../history.service';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface RecentOrdersData {
@@ -18,7 +18,7 @@ export interface RecentOrdersData {
 @Component({
   selector: 'app-recent-orders',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatDialogModule],
   templateUrl: './recent-orders.component.html',
   styleUrls: ['./recent-orders.component.scss'],
 })
@@ -35,13 +35,11 @@ export class RecentOrdersComponent implements OnInit, OnDestroy {
     'total',
   ];
 
-  private unsubscribe$ = new Subject<void>();
+  public readonly data: RecentOrdersData = inject(MAT_DIALOG_DATA);
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: RecentOrdersData,
-    private readonly historyService: HistoryService,
-    private readonly snackBar: MatSnackBar
-  ) {}
+  private readonly historyService = inject(HistoryService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly unsubscribe$ = new Subject<void>();
 
   ngOnInit(): void {
     this.historyService

@@ -10,6 +10,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
 import { interval, Observable, Subject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
@@ -83,16 +84,14 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   private allCurrencyPairs: CryptoPair[] = [];
   private currentBaseCurrencyPairs: CryptoPair[] = [];
   private otherCurrencyPairs: CryptoPair[] = [];
-  private unsubscribe$ = new Subject<void>();
   private currencyPairsLoaded = false;
 
-  constructor(
-    private readonly facade: AppStoreFacade,
-    private readonly filteringService: FilteringService,
-    private readonly sortingService: SortingService,
-    private readonly calculationsService: CalculationsService,
-    private readonly dialog: MatDialog
-  ) {}
+  private readonly facade = inject(AppStoreFacade);
+  private readonly filteringService = inject(FilteringService);
+  private readonly sortingService = inject(SortingService);
+  private readonly calculationsService = inject(CalculationsService);
+  private readonly dialog = inject(MatDialog);
+  private readonly unsubscribe$ = new Subject<void>();
 
   ngOnInit(): void {
     // 15 minutes
@@ -316,7 +315,6 @@ export class ExchangeComponent implements OnInit, OnDestroy {
   public showSetting() {
     this.dialog.open<SettingsComponent>(SettingsComponent, {
       minWidth: '300px',
-      maxWidth: '1000px',
     });
   }
 

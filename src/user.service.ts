@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_URL_USER } from './constants';
 import { ExchangeSymbol, OrderedSymbols, User } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  constructor(private httpClient: HttpClient) {}
+  private readonly httpClient = inject(HttpClient);
 
   public getUser() {
     return this.httpClient.get<User>(`${API_URL_USER}/GetUser`);

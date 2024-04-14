@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -76,13 +77,10 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   private closeTimeout?: any;
   private openTimeout?: any;
 
-  private unsubscribe$ = new Subject<void>();
-
-  constructor(
-    private readonly filteringService: FilteringService,
-    private readonly calculationsService: CalculationsService,
-    private readonly facade: AppStoreFacade
-  ) {}
+  private readonly filteringService = inject(FilteringService);
+  private readonly calculationsService = inject(CalculationsService);
+  private readonly facade = inject(AppStoreFacade);
+  private readonly unsubscribe$ = new Subject<void>();
 
   @HostBinding('class.hidden') hidden: boolean = false;
 

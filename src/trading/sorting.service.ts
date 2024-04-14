@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { EXCHANGE } from 'src/constants';
 import {
   Balances,
@@ -9,11 +9,9 @@ import {
 } from '../models';
 import { CalculationsService } from './calculations.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class SortingService {
-  constructor(private readonly calculationsService: CalculationsService) {}
+  private readonly calculationsService = inject(CalculationsService);
 
   public sortByupcomingOrder(
     pairs: CryptoPair[],

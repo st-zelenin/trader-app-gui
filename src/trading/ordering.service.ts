@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   API_URL,
   API_URL_BINANCE,
@@ -10,11 +10,9 @@ import {
 } from '../constants';
 import { NewOrder, Order } from '../models';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class OrderingService {
-  constructor(private httpClient: HttpClient) {}
+  private readonly httpClient = inject(HttpClient);
 
   public cancel(exchange: EXCHANGE, order: Order) {
     switch (exchange) {

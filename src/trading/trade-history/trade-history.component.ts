@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -85,12 +86,10 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
   public sellPrice = 0;
 
   private allOrders: OrderRow[] = [];
-  private unsubscribe$ = new Subject<void>();
 
-  constructor(
-    private readonly historyService: HistoryService,
-    private readonly cd: ChangeDetectorRef
-  ) {}
+  private readonly historyService = inject(HistoryService);
+  private readonly cd = inject(ChangeDetectorRef);
+  private readonly unsubscribe$ = new Subject<void>();
 
   ngOnInit(): void {
     this.historyService

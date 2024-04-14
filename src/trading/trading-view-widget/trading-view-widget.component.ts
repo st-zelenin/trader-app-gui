@@ -4,6 +4,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  inject,
 } from '@angular/core';
 import { EXCHANGE } from 'src/constants';
 import { CryptoPair } from 'src/models';
@@ -19,9 +20,7 @@ declare const TradingView: any;
   templateUrl: './trading-view-widget.component.html',
   styleUrls: ['./trading-view-widget.component.scss'],
 })
-export class TradingViewWidgetComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
+export class TradingViewWidgetComponent implements AfterViewInit, OnDestroy {
   @Input() pair!: CryptoPair;
   @Input() exchange!: EXCHANGE;
 
@@ -29,9 +28,7 @@ export class TradingViewWidgetComponent
 
   private widget: any;
 
-  constructor(private readonly calculationsService: CalculationsService) {}
-
-  ngOnInit(): void {}
+  private readonly calculationsService = inject(CalculationsService);
 
   ngAfterViewInit(): void {
     this.widget = new TradingView.widget({

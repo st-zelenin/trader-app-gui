@@ -1,14 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { Observable } from 'rxjs';
 import { User } from '../models';
 import { UserService } from '../user.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  private readonly userService = inject(UserService);
 
   resolve(): Observable<User> {
     return this.userService.getUser();

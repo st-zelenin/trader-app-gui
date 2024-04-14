@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { EXCHANGE } from '../constants';
 import { Multiplicator, User } from '../models';
@@ -13,9 +13,7 @@ import {
 } from './models';
 import { sharedActions, sharedSelectors } from './shared';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AppStoreFacade {
   private readonly exchangeSelectors = {
     [EXCHANGE.GATE_IO]: new ExchangeSelectors(EXCHANGE.GATE_IO),
@@ -26,20 +24,20 @@ export class AppStoreFacade {
   };
   private readonly exchangeActions: { [key: string]: ExchangeActions };
 
-  constructor(
-    private store: Store<AppState>,
-    @Inject(GATE_IO_ACTIONS) gateIoActions: ExchangeActions,
-    @Inject(COINBASE_ACTIONS) coinbaseActions: ExchangeActions,
-    @Inject(CRYPTO_COM_ACTIONS) cryptoComActions: ExchangeActions,
-    @Inject(BYBIT_ACTIONS) bybitActions: ExchangeActions,
-    @Inject(BINANCE_ACTIONS) binanceActions: ExchangeActions
-  ) {
+  private readonly gateIoActions: ExchangeActions = inject(GATE_IO_ACTIONS);
+  private readonly coinbaseActions: ExchangeActions = inject(COINBASE_ACTIONS);
+  private readonly cryptoComActions: ExchangeActions =
+    inject(CRYPTO_COM_ACTIONS);
+  private readonly bybitActions: ExchangeActions = inject(BYBIT_ACTIONS);
+  private readonly binanceActions: ExchangeActions = inject(BINANCE_ACTIONS);
+
+  constructor(private store: Store<AppState>) {
     this.exchangeActions = {
-      [EXCHANGE.GATE_IO]: gateIoActions,
-      [EXCHANGE.CRYPTO_COM]: cryptoComActions,
-      [EXCHANGE.COINBASE]: coinbaseActions,
-      [EXCHANGE.BYBIT]: bybitActions,
-      [EXCHANGE.BINANCE]: binanceActions,
+      [EXCHANGE.GATE_IO]: this.gateIoActions,
+      [EXCHANGE.CRYPTO_COM]: this.cryptoComActions,
+      [EXCHANGE.COINBASE]: this.coinbaseActions,
+      [EXCHANGE.BYBIT]: this.bybitActions,
+      [EXCHANGE.BINANCE]: this.binanceActions,
     };
   }
 

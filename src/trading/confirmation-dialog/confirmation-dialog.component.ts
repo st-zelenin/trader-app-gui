@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 
 export interface ConfirmationDialogData {
@@ -10,12 +11,10 @@ export interface ConfirmationDialogData {
 @Component({
   selector: 'app-confirmation-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule],
+  imports: [CommonModule, MatDialogModule, MatButtonModule],
   templateUrl: './confirmation-dialog.component.html',
   styleUrls: ['./confirmation-dialog.component.scss'],
 })
-export class ConfirmationDialogComponent implements OnInit {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogData) {}
-
-  ngOnInit(): void {}
+export class ConfirmationDialogComponent {
+  public readonly data: ConfirmationDialogData = inject(MAT_DIALOG_DATA);
 }

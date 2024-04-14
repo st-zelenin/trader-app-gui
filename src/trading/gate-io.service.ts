@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { API_URL_GATE } from '../constants';
 import {
@@ -12,11 +12,9 @@ import {
   Tickers,
 } from '../models';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class GateIoService implements ExchangeService {
-  constructor(private httpClient: HttpClient) {}
+  private readonly httpClient = inject(HttpClient);
 
   public getTickers() {
     return this.httpClient.get<Tickers>(`${API_URL_GATE}/GetTickers`);

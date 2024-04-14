@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { API_URL } from '../constants';
 import {
   AllAverages,
@@ -11,11 +11,9 @@ import {
   Tickers,
 } from '../models';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class CoinbaseService implements ExchangeService {
-  constructor(private httpClient: HttpClient) {}
+  private readonly httpClient = inject(HttpClient);
 
   public getTickers() {
     return this.httpClient.get<Tickers>(`${API_URL}/coinbase_getTickers`);

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -61,14 +61,13 @@ export class TradingComponent implements OnInit, OnDestroy {
     },
   ];
 
-  private unsubscribe$ = new Subject<void>();
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly facade = inject(AppStoreFacade);
+  private readonly userService = inject(UserService);
+  private readonly unsubscribe$ = new Subject<void>();
 
-  constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-    private readonly facade: AppStoreFacade,
-    private readonly userService: UserService
-  ) {
+  constructor() {
     this.user = this.route.snapshot.data.user;
 
     const exchangeParam = this.route.snapshot.paramMap.get('tab');

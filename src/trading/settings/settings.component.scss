@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  margin: 20px;
+}
+
 .container {
   display: flex;
   justify-content: center;
@@ -6,10 +11,10 @@
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  width: 170px;
 }

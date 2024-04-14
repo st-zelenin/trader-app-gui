@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { EXCHANGE } from '../constants';
 import { Balance, Ticker } from '../models';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class CalculationsService {
   public calcEstimatedTotal(ticker?: Ticker, balance?: Balance) {
     return ticker && balance

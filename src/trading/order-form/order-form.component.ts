@@ -38,6 +38,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 
 interface OrderForm {
   side: FormControl<OrderSide>;
@@ -59,11 +60,11 @@ interface OrderForm {
     MatButtonToggleModule,
     MatTooltipModule,
     MatButtonModule,
-    MatButtonModule,
     MatRadioModule,
     MatInputModule,
     MatCheckboxModule,
     MatIconModule,
+    MatSelectModule,
   ],
   templateUrl: './order-form.component.html',
   styleUrls: ['./order-form.component.scss'],
@@ -109,7 +110,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
 
   @Input() sellForBtc?: { amount: number; price: number };
 
-  @Output() create = new EventEmitter<OrderFormValues>();
+  @Output() public readonly create = new EventEmitter<OrderFormValues>();
 
   public totalAmount = 0;
   public readonly orderForm: FormGroup<OrderForm>;
@@ -119,10 +120,12 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   public selectedInfo?: SelectedOrdersInfo;
   public priceSourceTypes = PRICE_SOURCE;
 
-  public pricePercentage = Array.from({ length: 20 }, (_, i) => i * 10 - 50);
+  public readonly pricePercentage = Array.from(
+    { length: 100 },
+    (_, i) => (i + 1) * 5
+  );
 
-  private unsubscribe$ = new Subject<void>();
-  private readonly LOCALE = 'en';
+  private readonly unsubscribe$ = new Subject<void>();
   private productDetails: Product | null = null;
 
   constructor() {
@@ -178,19 +181,18 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     this.orderForm.controls.price.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((val) => {
-        if (!val) {
+        if (!val || !this.orderForm.controls.amount.value) {
           return;
         }
 
-        if (this.orderForm.controls.amount.value) {
-          this.orderForm.controls.total.patchValue(
-            val * this.orderForm.controls.amount.value,
-            {
-              emitEvent: false,
-            }
-          );
-        }
+        this.orderForm.controls.total.patchValue(
+          val * this.orderForm.controls.amount.value,
+          {
+            emitEvent: false,
+          }
+        );
       });
+
     this.orderForm.controls.amount.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((val) => {
@@ -212,6 +214,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
           );
         }
       });
+
     this.orderForm.controls.total.valueChanges
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((val) => {
@@ -233,6 +236,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
           );
         }
       });
+
     this.orderForm.controls.priceSource.valueChanges
       .pipe(
         takeUntil(this.unsubscribe$),
@@ -305,6 +309,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
 
   public decreasePrice(event: Event) {
     event.stopPropagation();
+
     if (this.buyMultiplicator && this.orderForm.controls.price.value) {
       this.orderForm.controls.price.setValue(
         this.orderForm.controls.price.value / (1 + this.buyMultiplicator.value)
@@ -312,10 +317,16 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  public plusPercents(percents: number) {
-    if (this.orderForm.controls.price.value) {
+  public plusPercents(event: Event) {
+    event.stopPropagation();
+
+    if (
+      this.orderForm.controls.pricePercentage.value &&
+      this.orderForm.controls.price.value
+    ) {
       this.orderForm.controls.price.setValue(
-        this.orderForm.controls.price.value * (1 + percents / 100)
+        this.orderForm.controls.price.value *
+          (1 + this.orderForm.controls.pricePercentage.value / 100)
       );
     }
   }
@@ -408,10 +419,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
 
     // without 'buy by market' - standard required
-    if (
-      !this.orderForm.controls.market ||
-      !this.orderForm.controls.market.value
-    ) {
+    if (!this.orderForm.controls.market.value) {
       return Validators.required(control);
     }
 

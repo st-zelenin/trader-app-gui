@@ -4,6 +4,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  inject,
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -109,21 +110,16 @@ export class PairCardContentComponent
   private closeTimeout?: any;
   private openTimeout?: any;
 
-  private unsubscribe$ = new Subject<void>();
-
-  constructor(
-    private readonly orderingService: OrderingService,
-    private readonly historyService: HistoryService,
-    private readonly calculationsService: CalculationsService,
-    private readonly snackBar: MatSnackBar,
-    private readonly facade: AppStoreFacade,
-    private dialog: MatDialog
-  ) {}
+  private readonly orderingService = inject(OrderingService);
+  private readonly historyService = inject(HistoryService);
+  private readonly calculationsService = inject(CalculationsService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly facade = inject(AppStoreFacade);
+  private readonly dialog = inject(MatDialog);
+  private readonly unsubscribe$ = new Subject<void>();
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.disableAnimation = false;
-    });
+    setTimeout(() => (this.disableAnimation = false));
   }
 
   ngOnInit(): void {

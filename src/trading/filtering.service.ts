@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Filterable, FILTERING_TYPE } from '../models';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class FilteringService {
   private cards: Filterable[] = [];
 

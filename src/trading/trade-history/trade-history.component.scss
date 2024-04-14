@@ -8,11 +8,11 @@ table {
   display: flex;
   gap: 10px;
   justify-content: center;
+  align-items: center;
 }
 
 .filter {
   display: flex;
-  align-items: baseline;
   justify-content: space-between;
   gap: 5px;
 }

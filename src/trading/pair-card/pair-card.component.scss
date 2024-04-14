@@ -11,7 +11,7 @@
 }
 
 .mat-mdc-card-content {
-  padding: 0;
+  padding: 10px;
 }
 
 .card-title {
@@ -37,6 +37,11 @@
   ::ng-deep {
     .mat-content {
       justify-content: space-between;
+      gap: 10px;
+
+      .mat-expansion-panel-header-title {
+        margin: 0;
+      }
     }
   }
 }
@@ -44,7 +49,7 @@
 .right-group {
   display: flex;
   gap: 10px;
-  margin: 0 5px;
+  margin-right: 10px;
 }
 
 .mat-expanded {
