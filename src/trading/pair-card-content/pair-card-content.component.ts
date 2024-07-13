@@ -7,7 +7,7 @@ import {
   inject,
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
 import {
   Average,
@@ -45,12 +45,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { DecimalWithAutoDigitsInfoPipe } from '../decimal-with-auto-digits-info.pipe';
 
 @Component({
   selector: 'app-pair-card-content',
   standalone: true,
   imports: [
     CommonModule,
+    DecimalWithAutoDigitsInfoPipe,
     ClipboardModule,
     MatTableModule,
     MatCardModule,

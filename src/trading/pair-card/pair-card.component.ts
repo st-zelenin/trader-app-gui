@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   HostBinding,
@@ -30,12 +31,14 @@ import { PairCardContentComponent } from '../pair-card-content/pair-card-content
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DecimalWithAutoDigitsInfoPipe } from '../decimal-with-auto-digits-info.pipe';
 
 @Component({
   selector: 'app-pair-card',
   standalone: true,
   imports: [
     CommonModule,
+    DecimalWithAutoDigitsInfoPipe,
     MatCardModule,
     MatIconModule,
     MatTooltipModule,
@@ -80,6 +83,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   private readonly filteringService = inject(FilteringService);
   private readonly calculationsService = inject(CalculationsService);
   private readonly facade = inject(AppStoreFacade);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly unsubscribe$ = new Subject<void>();
 
   @HostBinding('class.hidden') hidden: boolean = false;
@@ -104,6 +108,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
         this.headerColor = this.updateHeaderColor();
 
         this.calculateEstimatedTotal();
+        this.cdr.markForCheck();
       });
 
     this.facade
@@ -113,6 +118,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
         this.balance = balance;
 
         this.calculateEstimatedTotal();
+        this.cdr.markForCheck();
       });
 
     this.facade
@@ -122,6 +128,8 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
         this.averages = analytics;
         this.analyticsMessage = this.getAnalyticsMessage(analytics);
         this.headerColor = this.updateHeaderColor();
+
+        this.cdr.markForCheck();
       });
 
     this.facade
@@ -139,6 +147,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
         }
 
         this.checkNeedsAttention();
+        this.cdr.markForCheck();
       });
 
     this.facade
@@ -147,6 +156,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       .subscribe((recent) => {
         this.recent = recent;
         this.checkNeedsAttention();
+        this.cdr.markForCheck();
       });
   }
 

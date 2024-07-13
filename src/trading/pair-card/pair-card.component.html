@@ -7,7 +7,7 @@
           <div class="coin-info">
             <strong>{{ pair.symbol }}</strong> /
             <span matTooltip="current price">{{
-              ticker?.last | number: '1.0-10'
+              ticker?.last | decimalWithAutoDigitsInfo
             }}</span>
             <span
               class="change-percentage sup"
@@ -17,11 +17,11 @@
             >
             /
             <span matTooltip="average buy price">{{
-              averages?.buy?.price | number: '1.0-10'
+              averages?.buy?.price | decimalWithAutoDigitsInfo
             }}</span>
             /
             <span matTooltip="average sell price">{{
-              averages?.sell?.price | number: '1.0-10'
+              averages?.sell?.price | decimalWithAutoDigitsInfo
             }}</span>
           </div>
         </mat-panel-title>

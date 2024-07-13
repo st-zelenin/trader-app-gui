@@ -12,13 +12,7 @@ import {
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { EXCHANGE } from '../../constants';
-import {
-  CryptoPair,
-  Order,
-  OrderRow,
-  Product,
-  SelectedOrdersInfo,
-} from '../../models';
+import { CryptoPair, Order, OrderRow, SelectedOrdersInfo } from '../../models';
 import { HistoryService } from '../history.service';
 import { CommonModule } from '@angular/common';
 import { ClipboardModule } from '@angular/cdk/clipboard';
@@ -27,12 +21,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { DecimalWithAutoDigitsInfoPipe } from '../decimal-with-auto-digits-info.pipe';
 
 @Component({
   selector: 'app-trade-history',
   standalone: true,
   imports: [
     CommonModule,
+    DecimalWithAutoDigitsInfoPipe,
     ClipboardModule,
     MatIconModule,
     MatInputModule,
@@ -51,22 +47,7 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
   @Input() selectedOrdersInfo!: SelectedOrdersInfo;
   @Output() selectedOrdersInfoChange = new EventEmitter<SelectedOrdersInfo>();
 
-  @Input() set product(product: Product | null) {
-    if (product) {
-      this.priceDigitsInfo = this.getDigitsInfo(product.pricePrecision);
-
-      const decimalPlaces =
-        String(product.minQuantity).split('.')[1]?.length || 0;
-      this.amountDigitsInfo = this.getDigitsInfo(
-        1 / Math.pow(10, decimalPlaces)
-      );
-    }
-  }
-
   @Output() sellForBtc = new EventEmitter<{ amount: number; price: number }>();
-
-  public priceDigitsInfo = '1.0-10';
-  public amountDigitsInfo = '1.0-10';
 
   public orders: OrderRow[] = [];
   public displayedColumns: string[] = [
@@ -78,6 +59,7 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
     'amount',
     'total',
   ];
+
   public buyVolume = 0;
   public buyMoney = 0;
   public buyPrice = 0;

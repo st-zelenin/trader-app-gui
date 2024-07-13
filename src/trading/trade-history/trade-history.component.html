@@ -3,15 +3,15 @@
     <div class="filter">
       <div>buy:</div>
       <div class="small-text" matTooltip="price">
-        {{ buyPrice | number: '1.0-10' }}
+        {{ buyPrice | decimalWithAutoDigitsInfo }}
       </div>
       /
       <div class="small-text" matTooltip="volume">
-        {{ buyVolume | number: '1.0-5' }}
+        {{ buyVolume | decimalWithAutoDigitsInfo }}
       </div>
       /
       <div matTooltip="money">
-        {{ buyMoney | number: '1.0-2' }}
+        {{ buyMoney | decimalWithAutoDigitsInfo }}
       </div>
     </div>
   </button>
@@ -19,15 +19,15 @@
     <div class="filter">
       <div>sell:</div>
       <div class="small-text" matTooltip="price">
-        {{ sellPrice | number: '1.0-10' }}
+        {{ sellPrice | decimalWithAutoDigitsInfo }}
       </div>
       /
       <div class="small-text" matTooltip="volume">
-        {{ sellVolume | number: '1.0-5' }}
+        {{ sellVolume | decimalWithAutoDigitsInfo }}
       </div>
       /
       <div matTooltip="money">
-        {{ sellMoney | number: '1.0-2' }}
+        {{ sellMoney | decimalWithAutoDigitsInfo }}
       </div>
     </div>
   </button>
@@ -82,7 +82,7 @@
   <ng-container matColumnDef="amount">
     <th mat-header-cell *matHeaderCellDef>amount</th>
     <td mat-cell *matCellDef="let element">
-      {{ element.amount | number: amountDigitsInfo }}
+      {{ element.amount | decimalWithAutoDigitsInfo }}
     </td>
   </ng-container>
 
@@ -93,10 +93,10 @@
         mat-button
         matTooltip="copy"
         class="copy-button"
-        [cdkCopyToClipboard]="element.price"
+        cdkCopyToClipboard="{{ element.price | decimalWithAutoDigitsInfo }}"
         (click)="$event.stopPropagation()"
       >
-        {{ element.price | number: priceDigitsInfo }}
+        {{ element.price | decimalWithAutoDigitsInfo }}
       </button>
     </td>
   </ng-container>
@@ -104,7 +104,7 @@
   <ng-container matColumnDef="total">
     <th mat-header-cell *matHeaderCellDef>total</th>
     <td mat-cell *matCellDef="let element">
-      {{ element.amount * +element.price | number: priceDigitsInfo }}
+      {{ element.amount * +element.price | decimalWithAutoDigitsInfo }}
     </td>
   </ng-container>
 

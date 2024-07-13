@@ -42,11 +42,11 @@ import { AppComponent } from './app.component';
         },
       }),
       {
-        interactionType: InteractionType.Popup,
+        interactionType: InteractionType.Redirect,
         authRequest: { scopes: [environment.API_SCOPE] },
       },
       {
-        interactionType: InteractionType.Popup,
+        interactionType: InteractionType.Redirect,
         protectedResourceMap: new Map([['*', [environment.API_SCOPE]]]),
       }
     ),

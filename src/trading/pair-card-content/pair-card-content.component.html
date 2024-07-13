@@ -67,7 +67,8 @@
   <mat-expansion-panel-header>
     <mat-panel-title> Create order </mat-panel-title>
     <mat-panel-description>
-      {{ (balance | async)?.available }} / {{ (balance | async)?.locked }}
+      {{ (balance | async)?.available | decimalWithAutoDigitsInfo }} /
+      {{ (balance | async)?.locked | decimalWithAutoDigitsInfo }}
     </mat-panel-description>
   </mat-expansion-panel-header>
   <app-order-form
@@ -180,7 +181,6 @@
   <app-trade-history
     [pair]="pair"
     [exchange]="exchange"
-    [product]="product | async"
     [(selectedOrdersInfo)]="selectedOrdersInfo"
     (sellForBtc)="sellForBtc = $event"
     *ngIf="isOpened"
