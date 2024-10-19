@@ -1,6 +1,9 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   EventEmitter,
   HostBinding,
   Input,
@@ -9,29 +12,19 @@ import {
   Output,
   inject,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { EXCHANGE } from '../../constants';
-import {
-  Average,
-  Balance,
-  CryptoPair,
-  Filterable,
-  Order,
-  PairAverages,
-  Ticker,
-} from '../../models';
-import { AppStoreFacade } from '../../store/facade';
-import { CalculationsService } from '../calculations.service';
-import { FilteringService } from '../filtering.service';
-import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { PairCardContentComponent } from '../pair-card-content/pair-card-content.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DragDropModule } from '@angular/cdk/drag-drop';
+
+import { EXCHANGE } from '../../constants';
+import { Average, Balance, CryptoPair, Filterable, Order, PairAverages, Ticker } from '../../models';
+import { AppStoreFacade } from '../../store/facade';
+import { CalculationsService } from '../calculations.service';
 import { DecimalWithAutoDigitsInfoPipe } from '../decimal-with-auto-digits-info.pipe';
+import { FilteringService } from '../filtering.service';
+import { PairCardContentComponent } from '../pair-card-content/pair-card-content.component';
 
 @Component({
   selector: 'app-pair-card',
@@ -48,18 +41,14 @@ import { DecimalWithAutoDigitsInfoPipe } from '../decimal-with-auto-digits-info.
   ],
   templateUrl: './pair-card.component.html',
   styleUrls: ['./pair-card.component.scss'],
-  host: {
-    '[class.expanded]': 'isExpanded',
-  },
 })
 export class PairCardComponent implements OnInit, OnDestroy, Filterable {
-  @Input() pair!: CryptoPair;
-  @Input() exchange!: EXCHANGE;
+  @Input() public pair!: CryptoPair;
+  @Input() public exchange!: EXCHANGE;
 
-  @Output() remove = new EventEmitter<string>();
+  @Output() public readonly remove = new EventEmitter<string>();
 
   public isOpened = false;
-  public isExpanded = false;
 
   public ticker?: Ticker;
   public balance?: Balance;
@@ -77,6 +66,9 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   public attentionMessage = '';
   public analyticsMessage = '';
 
+  @HostBinding('class.hidden') public hidden: boolean = false;
+  @HostBinding('class.expanded') public isExpanded: boolean = false;
+
   private closeTimeout?: any;
   private openTimeout?: any;
 
@@ -84,27 +76,20 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   private readonly calculationsService = inject(CalculationsService);
   private readonly facade = inject(AppStoreFacade);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly unsubscribe$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
-  @HostBinding('class.hidden') hidden: boolean = false;
-
-  ngOnInit(): void {
-    const baseCurrency = this.calculationsService.getBaseCurrency(
-      this.pair.symbol,
-      this.exchange
-    );
+  public ngOnInit(): void {
+    const baseCurrency = this.calculationsService.getBaseCurrency(this.pair.symbol, this.exchange);
     this.logoSrc = `assets/coins/${baseCurrency}.png`;
 
     this.filteringService.register(this);
 
     this.facade
       .ticker(this.exchange, this.pair.symbol)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((ticker) => {
         this.ticker = ticker;
-        this.priceDown = this.ticker
-          ? this.ticker.change_percentage < 0
-          : false;
+        this.priceDown = this.ticker ? this.ticker.change_percentage < 0 : false;
         this.headerColor = this.updateHeaderColor();
 
         this.calculateEstimatedTotal();
@@ -113,7 +98,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
     this.facade
       .balance(this.exchange, baseCurrency)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((balance) => {
         this.balance = balance;
 
@@ -123,7 +108,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
     this.facade
       .analytics(this.exchange, this.pair.symbol)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((analytics) => {
         this.averages = analytics;
         this.analyticsMessage = this.getAnalyticsMessage(analytics);
@@ -134,7 +119,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
     this.facade
       .pairOpenOrders(this.exchange, this.pair.symbol)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((orders: Order[]) => {
         if (orders && orders.length) {
           this.buyOrders = orders.filter(({ side }) => side === 'buy').length;
@@ -152,7 +137,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
     this.facade
       .pairRecentBuyAverages(this.exchange, this.pair.symbol)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((recent) => {
         this.recent = recent;
         this.checkNeedsAttention();
@@ -160,51 +145,15 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       });
   }
 
-  public get isRed() {
-    return (
-      (this.ticker &&
-        this.averages &&
-        this.averages.buy.price > 0 &&
-        this.ticker.last < this.averages.buy.price) ||
-      false
-    );
+  public get isRed(): boolean {
+    return (this.ticker && this.averages && this.averages.buy.price > 0 && this.ticker.last < this.averages.buy.price) || false;
   }
 
-  public get isGreen() {
-    return (
-      this.ticker &&
-      this.averages &&
-      this.averages.buy.price > 0 &&
-      this.ticker.last > this.averages.buy.price
-    );
+  public get isGreen(): boolean {
+    return !!this.ticker && !!this.averages && this.averages.buy.price > 0 && this.ticker.last > this.averages.buy.price;
   }
 
-  private updateHeaderColor() {
-    if (this.isGreen) {
-      const redBlue =
-        250 -
-        Math.floor(
-          ((this.ticker!.last - this.averages!.buy.price) / this.ticker!.last) *
-            100
-        );
-      return `rgb(${redBlue}, 255, ${redBlue})`;
-    }
-
-    if (this.isRed) {
-      const greenBlue =
-        250 -
-        Math.floor(
-          ((this.averages!.buy.price - this.ticker!.last) /
-            this.averages!.buy.price) *
-            100
-        );
-      return `rgb(255, ${greenBlue}, ${greenBlue})`;
-    }
-
-    return 'rgb(255, 255, 255)';
-  }
-
-  public onPanelOpen() {
+  public onPanelOpen(): void {
     if (this.closeTimeout) {
       clearTimeout(this.closeTimeout);
       this.closeTimeout = undefined;
@@ -215,7 +164,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
     }, 0);
   }
 
-  public onPanelClose() {
+  public onPanelClose(): void {
     this.isExpanded = false;
 
     if (this.openTimeout) {
@@ -228,12 +177,12 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
     }, 2000);
   }
 
-  public removeCard(event: Event) {
+  public removeCard(event: Event): void {
     event.stopPropagation();
     this.remove.emit(this.pair.symbol);
   }
 
-  public toggleExpand(event: Event) {
+  public toggleExpand(event: Event): void {
     if (this.isOpened) {
       event.stopPropagation();
     }
@@ -241,7 +190,25 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
     this.isExpanded = !this.isExpanded;
   }
 
-  private checkNeedsAttention() {
+  public ngOnDestroy(): void {
+    this.filteringService.unregister(this);
+  }
+
+  private updateHeaderColor(): string {
+    if (this.isGreen) {
+      const redBlue = 250 - Math.floor(((this.ticker!.last - this.averages!.buy.price) / this.ticker!.last) * 100);
+      return `rgb(${redBlue}, 255, ${redBlue})`;
+    }
+
+    if (this.isRed) {
+      const greenBlue = 250 - Math.floor(((this.averages!.buy.price - this.ticker!.last) / this.averages!.buy.price) * 100);
+      return `rgb(255, ${greenBlue}, ${greenBlue})`;
+    }
+
+    return 'rgb(255, 255, 255)';
+  }
+
+  private checkNeedsAttention(): void {
     this.attentionMessage = '';
 
     if (this.recent && this.openOrders && this.openOrders.length) {
@@ -256,18 +223,15 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
     }
   }
 
-  private calculateEstimatedTotal() {
+  private calculateEstimatedTotal(): void {
     if (!this.ticker || !this.balance) {
       return;
     }
 
-    this.estimatedTotal = this.calculationsService.calcEstimatedTotal(
-      this.ticker,
-      this.balance
-    );
+    this.estimatedTotal = this.calculationsService.calcEstimatedTotal(this.ticker, this.balance);
   }
 
-  private getAnalyticsMessage(analytics: PairAverages) {
+  private getAnalyticsMessage(analytics: PairAverages): string {
     const precision = this.pair.symbol.endsWith('BTC') ? 100000000 : 100;
 
     const totalBuy = Math.round(analytics?.buy.money * precision) / precision;
@@ -279,12 +243,5 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
     sold: ${totalSell}
     diff: ${diff}
     `;
-  }
-
-  ngOnDestroy(): void {
-    this.filteringService.unregister(this);
-
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
 }

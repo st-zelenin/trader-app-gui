@@ -15,12 +15,5 @@
 ></app-exchange-actions>
 
 <div cdkDropList class="pairs-list" (cdkDropListDropped)="drop($event)">
-  <app-pair-card
-    *ngFor="let pair of pairs"
-    [pair]="pair"
-    [exchange]="exchange"
-    (remove)="removePair($event)"
-    class="pair"
-  >
-  </app-pair-card>
+  <app-pair-card *ngFor="let pair of pairs" [pair]="pair" [exchange]="exchange" (remove)="removePair($event)" class="pair"> </app-pair-card>
 </div>

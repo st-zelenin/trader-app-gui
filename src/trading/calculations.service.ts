@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
+
 import { EXCHANGE } from '../constants';
 import { Balance, Ticker } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class CalculationsService {
-  public calcEstimatedTotal(ticker?: Ticker, balance?: Balance) {
-    return ticker && balance
-      ? ticker.last * (balance.available + balance.locked)
-      : 0;
+  public calcEstimatedTotal(ticker?: Ticker, balance?: Balance): number {
+    return !!ticker && !!balance ? ticker.last * (balance.available + balance.locked) : 0;
   }
 
   // TODO: move to another service or rename this one
-  public getCurrencyPair(baseCurrency: string, exchange: EXCHANGE) {
+  public getCurrencyPair(baseCurrency: string, exchange: EXCHANGE): string {
     switch (exchange) {
       case EXCHANGE.GATE_IO:
       case EXCHANGE.CRYPTO_COM:
@@ -28,7 +27,7 @@ export class CalculationsService {
   }
 
   // TODO: move to another service or rename this one
-  public buildTradingViewSymbol(currencyPair: string, exchange: EXCHANGE) {
+  public buildTradingViewSymbol(currencyPair: string, exchange: EXCHANGE): string {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
         const [currency, base] = currencyPair.split('_');
@@ -43,6 +42,7 @@ export class CalculationsService {
         return `GATEIO:${currency}${base}`;
       }
       case EXCHANGE.CRYPTO_COM: {
+        // eslint-disable-next-line prefer-const
         let [currency, base] = currencyPair.split('_');
         if (base === 'USDC') {
           // as there is not enough history for USDC
@@ -67,10 +67,8 @@ export class CalculationsService {
     }
   }
 
-  public getBaseCurrency(currencyPair: string, exchange: EXCHANGE) {
+  public getBaseCurrency(currencyPair: string, exchange: EXCHANGE): string {
     // TODO: remove this dirty hack
-    return exchange === EXCHANGE.BYBIT || exchange === EXCHANGE.BINANCE
-      ? currencyPair.replace('USDT', '')
-      : currencyPair.split(/_|-/)[0];
+    return exchange === EXCHANGE.BYBIT || exchange === EXCHANGE.BINANCE ? currencyPair.replace('USDT', '') : currencyPair.split(/_|-/)[0];
   }
 }

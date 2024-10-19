@@ -1,27 +1,28 @@
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   EventEmitter,
   Input,
-  OnDestroy,
   OnInit,
   Output,
   inject,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
-import { EXCHANGE } from '../../constants';
-import { CryptoPair, Order, OrderRow, SelectedOrdersInfo } from '../../models';
-import { HistoryService } from '../history.service';
-import { CommonModule } from '@angular/common';
-import { ClipboardModule } from '@angular/cdk/clipboard';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
+import { map } from 'rxjs/operators';
+
+import { EXCHANGE } from '../../constants';
+import { CryptoPair, Order, OrderRow, SelectedOrdersInfo } from '../../models';
 import { DecimalWithAutoDigitsInfoPipe } from '../decimal-with-auto-digits-info.pipe';
+import { HistoryService } from '../history.service';
 
 @Component({
   selector: 'app-trade-history',
@@ -40,25 +41,16 @@ import { DecimalWithAutoDigitsInfoPipe } from '../decimal-with-auto-digits-info.
   styleUrls: ['./trade-history.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TradeHistoryComponent implements OnInit, OnDestroy {
-  @Input() pair!: CryptoPair;
-  @Input() exchange!: EXCHANGE;
+export class TradeHistoryComponent implements OnInit {
+  @Input() public pair!: CryptoPair;
+  @Input() public exchange!: EXCHANGE;
+  @Input() public selectedOrdersInfo!: SelectedOrdersInfo;
 
-  @Input() selectedOrdersInfo!: SelectedOrdersInfo;
-  @Output() selectedOrdersInfoChange = new EventEmitter<SelectedOrdersInfo>();
-
-  @Output() sellForBtc = new EventEmitter<{ amount: number; price: number }>();
+  @Output() public readonly selectedOrdersInfoChange = new EventEmitter<SelectedOrdersInfo>();
+  @Output() public readonly sellForBtc = new EventEmitter<{ amount: number; price: number }>();
 
   public orders: OrderRow[] = [];
-  public displayedColumns: string[] = [
-    'checkbox',
-    'ID',
-    'update_time_ms',
-    'side',
-    'price',
-    'amount',
-    'total',
-  ];
+  public displayedColumns: string[] = ['checkbox', 'ID', 'update_time_ms', 'side', 'price', 'amount', 'total'];
 
   public buyVolume = 0;
   public buyMoney = 0;
@@ -71,24 +63,20 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
 
   private readonly historyService = inject(HistoryService);
   private readonly cd = inject(ChangeDetectorRef);
-  private readonly unsubscribe$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.historyService
       .getHistory(this.exchange, this.pair.symbol)
       .pipe(
-        takeUntil(this.unsubscribe$),
-        map((orders) =>
-          orders.map<OrderRow>((order) => ({ ...order, selected: false }))
-        )
+        takeUntilDestroyed(this.destroyRef),
+        map((orders) => orders.map<OrderRow>((order) => ({ ...order, selected: false })))
       )
       .subscribe((orders) => {
         // looks like GATE bug:
         // completed market/buy orders still have 'cancelled' status
         // TODO: move this logic to BE?
-        this.allOrders = orders.filter(({ status, type }) =>
-          type === 'market' ? true : status !== 'cancelled'
-        );
+        this.allOrders = orders.filter(({ status, type }) => (type === 'market' ? true : status !== 'cancelled'));
         this.orders = this.allOrders;
 
         this.buyVolume = 0;
@@ -106,8 +94,7 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
             this.buyVolume += order.amount;
             this.buyMoney += order.amount * order.price;
 
-            minBuy =
-              order.price < minBuy || minBuy === 0 ? order.price : minBuy;
+            minBuy = order.price < minBuy || minBuy === 0 ? order.price : minBuy;
           } else {
             this.sellVolume += order.amount;
             this.sellMoney += order.amount * order.price;
@@ -115,8 +102,7 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
         }
 
         this.buyPrice = this.buyVolume > 0 ? this.buyMoney / this.buyVolume : 0;
-        this.sellPrice =
-          this.sellVolume > 0 ? this.sellMoney / this.sellVolume : 0;
+        this.sellPrice = this.sellVolume > 0 ? this.sellMoney / this.sellVolume : 0;
 
         this.calcBtc();
 
@@ -124,31 +110,19 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
       });
   }
 
-  public filterBuy() {
+  public filterBuy(): void {
     this.orders = this.allOrders.filter(({ side }) => side === 'buy');
   }
 
-  public filterSell() {
+  public filterSell(): void {
     this.orders = this.allOrders.filter(({ side }) => side === 'sell');
   }
 
-  public removeFilter() {
+  public removeFilter(): void {
     this.orders = this.allOrders;
   }
 
-  private applyDenomination(order: Order): void {
-    // 12/16/2021 - BTT denomination
-    if (
-      order.currencyPair === 'BTT_USDT' &&
-      this.exchange === EXCHANGE.GATE_IO &&
-      new Date(2021, 11, 16) > new Date(order.updateTimestamp)
-    ) {
-      order.price /= 1000;
-      order.amount *= 1000;
-    }
-  }
-
-  public toggleRowSelection(row: OrderRow) {
+  public toggleRowSelection(row: OrderRow): void {
     row.selected = !row.selected;
 
     const info: SelectedOrdersInfo = this.orders.reduce(
@@ -167,7 +141,19 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
     this.selectedOrdersInfoChange.emit(info);
   }
 
-  private calcBtc() {
+  private applyDenomination(order: Order): void {
+    // 12/16/2021 - BTT denomination
+    if (
+      order.currencyPair === 'BTT_USDT' &&
+      this.exchange === EXCHANGE.GATE_IO &&
+      new Date(2021, 11, 16) > new Date(order.updateTimestamp)
+    ) {
+      order.price /= 1000;
+      order.amount *= 1000;
+    }
+  }
+
+  private calcBtc(): void {
     if (!this.orders.length || !this.pair.symbol.endsWith('_BTC')) {
       return;
     }
@@ -199,10 +185,7 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
         curr = {
           ...curr,
           amount: curr.amount + order.amount,
-          price:
-            curr.side === 'buy'
-              ? Math.max(curr.price, order.price)
-              : Math.min(curr.price, order.price),
+          price: curr.side === 'buy' ? Math.max(curr.price, order.price) : Math.min(curr.price, order.price),
         };
       }
 
@@ -210,12 +193,16 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
         side: curr?.side,
         amount: curr?.amount,
         price: curr?.price,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         src_side: order.side,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         src_amt: order.amount,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         src_price: order.price,
       });
     }
 
+    // eslint-disable-next-line no-console
     console.table(calculations);
 
     if (curr && curr.side === 'buy') {
@@ -226,13 +213,7 @@ export class TradeHistoryComponent implements OnInit, OnDestroy {
   private getDigitsInfo(minFraction: number): string {
     // - additional 1 for decimals
     // - additional 2 for integers
-    const decimalPlaces =
-      minFraction > 0 ? Math.log10(1 / (minFraction * 0.1)) : 2;
+    const decimalPlaces = minFraction > 0 ? Math.log10(1 / (minFraction * 0.1)) : 2;
     return `1.0-${decimalPlaces}`;
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
 }

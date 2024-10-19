@@ -1,5 +1,3 @@
-import { PRICE_SOURCE } from '../trading/order-form/constants';
-
 export type OrderSide = 'buy' | 'sell';
 
 export interface Order {
@@ -33,6 +31,7 @@ export interface OrderFormValues {
   price: number | null;
   amount: number | null;
   total: number | null;
+  external: boolean;
   market: boolean;
 }
 

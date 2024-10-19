@@ -7,7 +7,7 @@ export interface Filterable {
   attentionMessage: string;
 }
 
-export enum FILTERING_TYPE {
+export enum FilteringType {
   NONE = 'NONE',
   MISSING_BUY = 'MISSING_BUY',
   ATTENTION_MESSAGE = 'ATTENTION_MESSAGE',

@@ -1,20 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import {
-  API_URL,
-  API_URL_BINANCE,
-  API_URL_BYBIT,
-  API_URL_CRYPTO,
-  API_URL_GATE,
-  EXCHANGE,
-} from '../constants';
+import { Observable } from 'rxjs';
+
+import { API_URL, API_URL_BINANCE, API_URL_BYBIT, API_URL_CRYPTO, API_URL_GATE, EXCHANGE } from '../constants';
 import { NewOrder, Order } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class OrderingService {
   private readonly httpClient = inject(HttpClient);
 
-  public cancel(exchange: EXCHANGE, order: Order) {
+  public cancel(exchange: EXCHANGE, order: Order): Observable<unknown> {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
         return this.httpClient.post(`${API_URL_GATE}/CancelOrder`, {
@@ -50,7 +45,7 @@ export class OrderingService {
     }
   }
 
-  public create(exchange: EXCHANGE, order: NewOrder) {
+  public create(exchange: EXCHANGE, order: NewOrder): Observable<unknown> {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
         return this.httpClient.post(`${API_URL_GATE}/CreateOrder`, order);
@@ -66,6 +61,28 @@ export class OrderingService {
       }
       case EXCHANGE.BINANCE: {
         return this.httpClient.post(`${API_URL_BINANCE}/CreateOrder`, order);
+      }
+      default:
+        throw new Error(`unhabdled exchange type: ${exchange}`);
+    }
+  }
+
+  public addExternalOrder(exchange: EXCHANGE, order: NewOrder): Observable<unknown> {
+    switch (exchange) {
+      case EXCHANGE.GATE_IO: {
+        return this.httpClient.post(`${API_URL_GATE}/AddDexOrder`, order);
+      }
+      case EXCHANGE.CRYPTO_COM: {
+        return this.httpClient.post(`${API_URL_CRYPTO}/AddDexOrder`, order);
+      }
+      case EXCHANGE.COINBASE: {
+        return this.httpClient.post(`${API_URL}/AddDexOrder`, order);
+      }
+      case EXCHANGE.BYBIT: {
+        return this.httpClient.post(`${API_URL_BYBIT}/AddDexOrder`, order);
+      }
+      case EXCHANGE.BINANCE: {
+        return this.httpClient.post(`${API_URL_BINANCE}/AddDexOrder`, order);
       }
       default:
         throw new Error(`unhabdled exchange type: ${exchange}`);

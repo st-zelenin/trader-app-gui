@@ -1,60 +1,24 @@
 <mat-card-actions>
-  <button
-    mat-raised-button
-    (click)="importAll()"
-    type="button"
-    matTooltip="import entire trade history"
-    class="first-action"
-  >
+  <button mat-raised-button (click)="importAll()" type="button" matTooltip="import entire trade history" class="first-action">
     <mat-icon>import_export</mat-icon>
   </button>
-  <button
-    mat-raised-button
-    (click)="updateRecent()"
-    type="button"
-    matTooltip="sync recent trade history"
-  >
+  <button mat-raised-button (click)="updateRecent()" type="button" matTooltip="sync recent trade history">
     <mat-icon>history</mat-icon>
   </button>
-  <button
-    mat-raised-button
-    (click)="calcAverages()"
-    type="button"
-    matTooltip="update averages"
-  >
+  <button mat-raised-button (click)="calcAverages()" type="button" matTooltip="update averages">
     <mat-icon>architecture</mat-icon>
   </button>
-  <button
-    mat-raised-button
-    (click)="updateTickerInfo()"
-    type="button"
-    matTooltip="update ticker"
-  >
+  <button mat-raised-button (click)="updateTickerInfo()" type="button" matTooltip="update ticker">
     <mat-icon>currency_exchange</mat-icon>
   </button>
-  <button mat-raised-button (click)="sellRecent()" class="sell-recent">
-    sell: recent
-  </button>
-  <button mat-raised-button (click)="buyByMultiplicator()" class="buy-recent">
-    buy: -mult.
-  </button>
-  <button
-    mat-raised-button
-    (click)="toggleFishnet()"
-    class="buy-recent"
-    matTooltip="{{ showFishnet ? 'close' : 'open' }}"
-  >
+  <button mat-raised-button (click)="sellRecent()" class="sell-recent">sell: recent</button>
+  <button mat-raised-button (click)="buyByMultiplicator()" class="buy-recent">buy: -mult.</button>
+  <button mat-raised-button (click)="toggleFishnet()" class="buy-recent" matTooltip="{{ showFishnet ? 'close' : 'open' }}">
     <mat-icon>phishing</mat-icon>
   </button>
 </mat-card-actions>
 
-<app-fishnet
-  *ngIf="showFishnet"
-  [product]="product | async"
-  [ticker]="ticker"
-  (create)="createOrder($event)"
->
-</app-fishnet>
+<app-fishnet *ngIf="showFishnet" [product]="product | async" [ticker]="ticker" (create)="createOrder($event)"> </app-fishnet>
 
 <mat-expansion-panel
   *ngIf="!showFishnet"
@@ -86,11 +50,7 @@
   </app-order-form>
 </mat-expansion-panel>
 
-<app-trading-view-widget
-  *ngIf="isExpanded"
-  [exchange]="exchange"
-  [pair]="pair"
-></app-trading-view-widget>
+<app-trading-view-widget *ngIf="isExpanded" [exchange]="exchange" [pair]="pair"></app-trading-view-widget>
 
 <table mat-table [dataSource]="openOrders" class="mat-elevation-z8">
   <ng-container matColumnDef="ID">
@@ -98,12 +58,7 @@
       <span class="order-id-header">ID</span>
     </th>
     <td mat-cell *matCellDef="let element">
-      <button
-        mat-icon-button
-        matTooltip="copy order ID"
-        [cdkCopyToClipboard]="element.id"
-        (click)="$event.stopPropagation()"
-      >
+      <button mat-icon-button matTooltip="copy order ID" [cdkCopyToClipboard]="element.id" (click)="$event.stopPropagation()">
         <mat-icon>content_copy</mat-icon>
       </button>
     </td>
@@ -112,19 +67,14 @@
   <ng-container matColumnDef="update_time_ms">
     <th mat-header-cell *matHeaderCellDef>date</th>
     <td mat-cell *matCellDef="let element">
-      {{
-        element.updateTimestamp || element.createTimestamp
-          | date: 'yyyy-MM-dd hh:mm a'
-      }}
+      {{ element.updateTimestamp || element.createTimestamp | date: 'yyyy-MM-dd hh:mm a' }}
     </td>
   </ng-container>
 
   <ng-container matColumnDef="side">
     <th mat-header-cell *matHeaderCellDef>side</th>
     <td mat-cell *matCellDef="let element">
-      <span class="side" [class.sell]="element.side == 'sell'">{{
-        element.side
-      }}</span>
+      <span class="side" [class.sell]="element.side === 'sell'">{{ element.side }}</span>
     </td>
   </ng-container>
 
@@ -160,20 +110,13 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
 
-<mat-expansion-panel
-  (opened)="onPanelOpen()"
-  (closed)="onPanelClose()"
-  hideToggle
-  [expanded]="false"
-  [@.disabled]="disableAnimation"
->
+<mat-expansion-panel (opened)="onPanelOpen()" (closed)="onPanelClose()" hideToggle [expanded]="false" [@.disabled]="disableAnimation">
   <mat-expansion-panel-header>
     <mat-panel-title>
       <div class="history-panel-header">
         <div>Trade History</div>
         <div *ngIf="selectedOrdersInfo.price" class="selected-trades">
-          selected: {{ selectedOrdersInfo.price }} /
-          {{ selectedOrdersInfo.amount }} / {{ selectedOrdersInfo.total }}
+          selected: {{ selectedOrdersInfo.price }} / {{ selectedOrdersInfo.amount }} / {{ selectedOrdersInfo.total }}
         </div>
       </div>
     </mat-panel-title>

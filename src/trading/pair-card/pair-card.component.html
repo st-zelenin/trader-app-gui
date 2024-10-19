@@ -6,61 +6,28 @@
           <img class="logo" [src]="logoSrc" loading="lazy" />
           <div class="coin-info">
             <strong>{{ pair.symbol }}</strong> /
-            <span matTooltip="current price">{{
-              ticker?.last | decimalWithAutoDigitsInfo
-            }}</span>
-            <span
-              class="change-percentage sup"
-              [class.down]="priceDown"
-              matTooltip="change percentage"
-              >{{ ticker?.change_percentage | number: '1.0-2' }}</span
-            >
-            /
-            <span matTooltip="average buy price">{{
-              averages?.buy?.price | decimalWithAutoDigitsInfo
+            <span matTooltip="current price">{{ ticker?.last | decimalWithAutoDigitsInfo }}</span>
+            <span class="change-percentage sup" [class.down]="priceDown" matTooltip="change percentage">{{
+              ticker?.change_percentage | number: '1.0-2'
             }}</span>
             /
-            <span matTooltip="average sell price">{{
-              averages?.sell?.price | decimalWithAutoDigitsInfo
-            }}</span>
+            <span matTooltip="average buy price">{{ averages?.buy?.price | decimalWithAutoDigitsInfo }}</span>
+            /
+            <span matTooltip="average sell price">{{ averages?.sell?.price | decimalWithAutoDigitsInfo }}</span>
           </div>
         </mat-panel-title>
 
         <div class="right-group">
-          <mat-icon
-            *ngIf="attentionMessage"
-            class="attention"
-            [matTooltip]="attentionMessage"
-            >gpp_maybe</mat-icon
-          >
-          <mat-icon
-            class="material-icons-outlined"
-            [matTooltip]="analyticsMessage"
-            >analytics</mat-icon
-          >
-          <span class="estimated-total sup" matTooltip="estimated total">{{
-            estimatedTotal | number: '1.0-2'
-          }}</span>
+          <mat-icon *ngIf="attentionMessage" class="attention" [matTooltip]="attentionMessage">gpp_maybe</mat-icon>
+          <mat-icon class="material-icons-outlined" [matTooltip]="analyticsMessage">analytics</mat-icon>
+          <span class="estimated-total sup" matTooltip="estimated total">{{ estimatedTotal | number: '1.0-2' }}</span>
           <span class="open-orders sup">
-            <span class="buy" matTooltip="total buy orders">{{
-              buyOrders
-            }}</span
-            >/<span class="sell" matTooltip="total sell orders">{{
-              sellOrders
-            }}</span>
+            <span class="buy" matTooltip="total buy orders">{{ buyOrders }}</span
+            >/<span class="sell" matTooltip="total sell orders">{{ sellOrders }}</span>
           </span>
-          <mat-icon (click)="removeCard($event)" matTooltip="remove pair"
-            >delete_outline</mat-icon
-          >
-          <mat-icon class="drag-handle" cdkDragHandle matTooltip="drag & drop"
-            >drag_indicator</mat-icon
-          >
-          <mat-icon
-            class="expand"
-            matTooltip="expand"
-            (click)="toggleExpand($event)"
-            >open_in_full</mat-icon
-          >
+          <mat-icon (click)="removeCard($event)" matTooltip="remove pair">delete_outline</mat-icon>
+          <mat-icon class="drag-handle" cdkDragHandle matTooltip="drag & drop">drag_indicator</mat-icon>
+          <mat-icon class="expand" matTooltip="expand" (click)="toggleExpand($event)">open_in_full</mat-icon>
         </div>
       </mat-expansion-panel-header>
       <app-pair-card-content

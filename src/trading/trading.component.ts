@@ -1,16 +1,16 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+
 import { ExchangeTab } from 'src/models/exchange-tab';
-import { EXCHANGE, EXCHANGE_URL_PARAMS } from '../constants';
+
+import { ExchangeComponent } from './exchange/exchange.component';
+import { EXCHANGE, ExchangeUrlParams } from '../constants';
 import { ExchangeSymbol, OrderedSymbols, User } from '../models';
 import { AppStoreFacade } from '../store/facade';
 import { UserService } from '../user.service';
-import { CommonModule } from '@angular/common';
-import { MatTabsModule } from '@angular/material/tabs';
-import { ExchangeComponent } from './exchange/exchange.component';
 
 @Component({
   selector: 'app-trading',
@@ -19,7 +19,7 @@ import { ExchangeComponent } from './exchange/exchange.component';
   templateUrl: './trading.component.html',
   styleUrls: ['./trading.component.scss'],
 })
-export class TradingComponent implements OnInit, OnDestroy {
+export class TradingComponent implements OnInit {
   public user: User;
   public selectedIndex: number = 0;
 
@@ -27,21 +27,21 @@ export class TradingComponent implements OnInit, OnDestroy {
     {
       id: EXCHANGE.GATE_IO,
       label: 'Gate.io',
-      urlParam: EXCHANGE_URL_PARAMS.GATE_IO,
+      urlParam: ExchangeUrlParams.GATE_IO,
       baseCurrencies: ['USDT', 'BTC'],
       activeBaseCurrency: 'USDT',
     },
     {
       id: EXCHANGE.BINANCE,
       label: 'Binance',
-      urlParam: EXCHANGE_URL_PARAMS.BINANCE,
+      urlParam: ExchangeUrlParams.BINANCE,
       baseCurrencies: ['USDT'],
       activeBaseCurrency: 'USDT',
     },
     {
       id: EXCHANGE.CRYPTO_COM,
       label: 'Crypto.com',
-      urlParam: EXCHANGE_URL_PARAMS.CRYPTO_COM,
+      urlParam: ExchangeUrlParams.CRYPTO_COM,
       baseCurrencies: ['USDT', 'USD'],
       activeBaseCurrency: 'USD',
     },
@@ -55,7 +55,7 @@ export class TradingComponent implements OnInit, OnDestroy {
     {
       id: EXCHANGE.BYBIT,
       label: 'Bybit',
-      urlParam: EXCHANGE_URL_PARAMS.BYBIT,
+      urlParam: ExchangeUrlParams.BYBIT,
       baseCurrencies: ['USDT'],
       activeBaseCurrency: 'USDT',
     },
@@ -65,59 +65,52 @@ export class TradingComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly facade = inject(AppStoreFacade);
   private readonly userService = inject(UserService);
-  private readonly unsubscribe$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
     this.user = this.route.snapshot.data.user;
 
     const exchangeParam = this.route.snapshot.paramMap.get('tab');
     if (exchangeParam) {
-      this.selectedIndex = this.exchangeTabs.findIndex(
-        ({ urlParam }) => urlParam === exchangeParam
-      );
+      this.selectedIndex = this.exchangeTabs.findIndex(({ urlParam }) => urlParam === exchangeParam);
     }
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.facade.setPairs(this.user);
   }
 
-  public selectedTabChange(event: MatTabChangeEvent) {
+  public selectedTabChange(event: MatTabChangeEvent): void {
     this.router.navigate([`trades/${this.exchangeTabs[event.index].urlParam}`]);
   }
 
-  public addPair(newPair: ExchangeSymbol) {
+  public addPair(newPair: ExchangeSymbol): void {
     this.userService
       .addPair(newPair)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data) => {
         this.user = data;
         this.facade.setPairs(data);
       });
   }
 
-  public removePair(deletedPair: ExchangeSymbol) {
+  public removePair(deletedPair: ExchangeSymbol): void {
     this.userService
       .removePair(deletedPair)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data) => {
         this.user = data;
         this.facade.setPairs(data);
       });
   }
 
-  public orderPairs(orderedSymbols: OrderedSymbols) {
+  public orderPairs(orderedSymbols: OrderedSymbols): void {
     this.userService
       .orderPairs(orderedSymbols)
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data) => {
         this.user = data;
         this.facade.setPairs(data);
       });
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
 }

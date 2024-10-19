@@ -1,20 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import {
-  API_URL,
-  API_URL_BINANCE,
-  API_URL_BYBIT,
-  API_URL_CRYPTO,
-  API_URL_GATE,
-  EXCHANGE,
-} from '../constants';
+import { Observable } from 'rxjs';
+
+import { API_URL, API_URL_BINANCE, API_URL_BYBIT, API_URL_CRYPTO, API_URL_GATE, EXCHANGE } from '../constants';
 import { Order, OrderSide } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class HistoryService {
   private readonly httpClient = inject(HttpClient);
 
-  public importAll(exchange: EXCHANGE, pair: string) {
+  public importAll(exchange: EXCHANGE, pair: string): Observable<unknown> {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
         return this.httpClient.get(`${API_URL_GATE}/ImportHistory`, {
@@ -22,10 +17,7 @@ export class HistoryService {
         });
       }
       case EXCHANGE.CRYPTO_COM: {
-        return this.httpClient.post(
-          `${API_URL_CRYPTO}/ImportHistory_HttpStart`,
-          { periodMonths: 12 }
-        );
+        return this.httpClient.post(`${API_URL_CRYPTO}/ImportHistory_HttpStart`, { periodMonths: 12 });
       }
       case EXCHANGE.COINBASE: {
         return this.httpClient.get(`${API_URL}/coinbase_importHistory`, {
@@ -47,7 +39,7 @@ export class HistoryService {
     }
   }
 
-  public updateRecent(exchange: EXCHANGE, pair: string) {
+  public updateRecent(exchange: EXCHANGE, pair: string): Observable<unknown> {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
         return this.httpClient.get(`${API_URL_GATE}/UpdateRecentHistory`, {
@@ -77,7 +69,7 @@ export class HistoryService {
     }
   }
 
-  public getHistory(exchange: EXCHANGE, pair: string) {
+  public getHistory(exchange: EXCHANGE, pair: string): Observable<Order[]> {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
         return this.httpClient.get<Order[]>(`${API_URL_GATE}/GetHistory`, {
@@ -109,47 +101,32 @@ export class HistoryService {
     }
   }
 
-  public getRecentHistory(exchange: EXCHANGE, side: OrderSide, limit: number) {
+  public getRecentHistory(exchange: EXCHANGE, side: OrderSide, limit: number): Observable<Order[]> {
     switch (exchange) {
       case EXCHANGE.GATE_IO: {
-        return this.httpClient.get<Order[]>(
-          `${API_URL_GATE}/GetRecentTradeHistory`,
-          {
-            params: { side, limit },
-          }
-        );
+        return this.httpClient.get<Order[]>(`${API_URL_GATE}/GetRecentTradeHistory`, {
+          params: { side, limit },
+        });
       }
       case EXCHANGE.CRYPTO_COM: {
-        return this.httpClient.get<Order[]>(
-          `${API_URL_CRYPTO}/GetRecentTradeHistory`,
-          {
-            params: { side, limit },
-          }
-        );
+        return this.httpClient.get<Order[]>(`${API_URL_CRYPTO}/GetRecentTradeHistory`, {
+          params: { side, limit },
+        });
       }
       case EXCHANGE.COINBASE: {
-        return this.httpClient.get<Order[]>(
-          `${API_URL}/coinbase_getRecentTradeHistory`,
-          {
-            params: { side, limit },
-          }
-        );
+        return this.httpClient.get<Order[]>(`${API_URL}/coinbase_getRecentTradeHistory`, {
+          params: { side, limit },
+        });
       }
       case EXCHANGE.BYBIT: {
-        return this.httpClient.get<Order[]>(
-          `${API_URL_BYBIT}/GetRecentTradeHistory`,
-          {
-            params: { side, limit },
-          }
-        );
+        return this.httpClient.get<Order[]>(`${API_URL_BYBIT}/GetRecentTradeHistory`, {
+          params: { side, limit },
+        });
       }
       case EXCHANGE.BINANCE: {
-        return this.httpClient.get<Order[]>(
-          `${API_URL_BINANCE}/GetRecentTradeHistory`,
-          {
-            params: { side, limit },
-          }
-        );
+        return this.httpClient.get<Order[]>(`${API_URL_BINANCE}/GetRecentTradeHistory`, {
+          params: { side, limit },
+        });
       }
       default:
         throw new Error(`unhandled exchange type: ${exchange}`);

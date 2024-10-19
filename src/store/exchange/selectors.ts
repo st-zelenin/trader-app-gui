@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/member-ordering */
 import { createSelector } from '@ngrx/store';
+
 import { EXCHANGE } from '../../constants';
 import { AppState, ExchangeState } from '../models';
 
 export class ExchangeSelectors {
   constructor(private readonly exchange: EXCHANGE) {}
 
-  private selectState = (state: AppState) => {
+  private readonly selectState = (state: AppState): ExchangeState => {
     switch (this.exchange) {
       case EXCHANGE.GATE_IO:
         return state.gate_io;
@@ -22,67 +25,33 @@ export class ExchangeSelectors {
     }
   };
 
-  public tickers = createSelector(
-    this.selectState,
-    (state: ExchangeState) => state.tickers
-  );
+  public readonly tickers = createSelector(this.selectState, (state: ExchangeState) => state.tickers);
 
-  public ticker = (id: string) =>
-    createSelector(
-      this.selectState,
-      (state: ExchangeState) => state.tickers[id]
-    );
+  public readonly ticker = (id: string) => createSelector(this.selectState, (state: ExchangeState) => state.tickers[id]);
 
-  public averages = createSelector(
-    this.selectState,
-    (state: ExchangeState) => state.analytics
-  );
+  public readonly averages = createSelector(this.selectState, (state: ExchangeState) => state.analytics);
 
-  public analytics = (id: string) =>
-    createSelector(
-      this.selectState,
-      (state: ExchangeState) => state.analytics[id]
-    );
+  public readonly analytics = (id: string) => createSelector(this.selectState, (state: ExchangeState) => state.analytics[id]);
 
-  public openOrders = createSelector(
-    this.selectState,
-    (state) => state.openOrders
-  );
+  public readonly openOrders = createSelector(this.selectState, (state) => state.openOrders);
 
-  public pairOpenOrders = (currencyPair: string) =>
-    createSelector(
-      this.selectState,
-      (state: ExchangeState) => state.openOrders[currencyPair]
-    );
+  public readonly pairOpenOrders = (currencyPair: string) =>
+    createSelector(this.selectState, (state: ExchangeState) => state.openOrders[currencyPair]);
 
-  public currencyPairs = createSelector(
-    this.selectState,
-    (state) => state.currencyPairs
-  );
+  public readonly currencyPairs = createSelector(this.selectState, (state) => state.currencyPairs);
 
-  public currencyBalance = (currency: string) =>
-    createSelector(
-      this.selectState,
-      (state: ExchangeState) => state.balances[currency]
-    );
+  public readonly currencyBalance = (currency: string) =>
+    createSelector(this.selectState, (state: ExchangeState) => state.balances[currency]);
 
-  public balances = createSelector(
-    this.selectState,
-    (state: ExchangeState) => state.balances
-  );
+  public readonly balances = createSelector(this.selectState, (state: ExchangeState) => state.balances);
 
-  public pairRecentBuyAverages = (currencyPair: string) =>
-    createSelector(
-      this.selectState,
-      (state: ExchangeState) => state.recentBuyAverages[currencyPair]
-    );
+  public readonly pairRecentBuyAverages = (currencyPair: string) =>
+    createSelector(this.selectState, (state: ExchangeState) => state.recentBuyAverages[currencyPair]);
 
-  public pairs = createSelector(this.selectState, (state) => state.pairs);
+  public readonly pairs = createSelector(this.selectState, (state) => state.pairs);
 
-  public products = createSelector(this.selectState, (state) => state.products);
+  public readonly products = createSelector(this.selectState, (state) => state.products);
 
-  public product = (currencyPair: string) =>
-    createSelector(this.selectState, (state: ExchangeState) =>
-      state.products ? state.products[currencyPair] : null
-    );
+  public readonly product = (currencyPair: string) =>
+    createSelector(this.selectState, (state: ExchangeState) => (state.products ? state.products[currencyPair] : null));
 }

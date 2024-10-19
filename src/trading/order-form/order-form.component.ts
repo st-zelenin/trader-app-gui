@@ -1,22 +1,19 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
-import { Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { Component, DestroyRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { filter, map, startWith } from 'rxjs/operators';
+
+import { PriceSource } from './constants';
 import { EXCHANGE } from '../../constants';
 import {
   Average,
@@ -29,24 +26,15 @@ import {
   SelectedOrdersInfo,
   Ticker,
 } from '../../models';
-import { PRICE_SOURCE } from './constants';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
 
 interface OrderForm {
   side: FormControl<OrderSide>;
   price: FormControl<number | null>;
   amount: FormControl<number | null>;
   total: FormControl<number | null>;
+  external: FormControl<boolean>;
   market: FormControl<boolean>;
-  priceSource: FormControl<PRICE_SOURCE | null>;
+  priceSource: FormControl<PriceSource | null>;
   pricePercentage: FormControl<number>;
 }
 
@@ -69,30 +57,28 @@ interface OrderForm {
   templateUrl: './order-form.component.html',
   styleUrls: ['./order-form.component.scss'],
 })
-export class OrderFormComponent implements OnInit, OnDestroy {
-  @Input() exchange!: EXCHANGE;
-  @Input() ticker?: Ticker;
-  @Input() averages?: PairAverages;
-  @Input() recent?: Average;
-  @Input() buyMultiplicator?: Multiplicator = undefined;
+export class OrderFormComponent implements OnInit {
+  @Input() public exchange!: EXCHANGE;
+  @Input() public ticker?: Ticker;
+  @Input() public averages?: PairAverages;
+  @Input() public recent?: Average;
+  @Input() public buyMultiplicator?: Multiplicator = undefined;
 
-  @Input() set selectedOrdersInfo(value: SelectedOrdersInfo) {
+  @Input() public set selectedOrdersInfo(value: SelectedOrdersInfo) {
     this.selectedInfo = value;
 
-    if (
-      this.orderForm.controls.priceSource.value === PRICE_SOURCE.SELECTED_ORDERS
-    ) {
+    if (this.orderForm.controls.priceSource.value === PriceSource.SELECTED_ORDERS) {
       this.setSelectedBuyPrice();
       this.orderForm.controls.amount.setValue(null);
       this.orderForm.controls.total.setValue(null);
     }
   }
 
-  @Input() set balance(balance: Balance | null) {
+  @Input() public set balance(balance: Balance | null) {
     this.totalAmount = balance ? balance.available + balance.locked : 0;
   }
 
-  @Input() set product(product: Product | null) {
+  @Input() public set product(product: Product | null) {
     this.productDetails = product;
 
     if (product && product.minQuantity) {
@@ -108,7 +94,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  @Input() sellForBtc?: { amount: number; price: number };
+  @Input() public sellForBtc?: { amount: number; price: number };
 
   @Output() public readonly create = new EventEmitter<OrderFormValues>();
 
@@ -118,14 +104,11 @@ export class OrderFormComponent implements OnInit, OnDestroy {
   public minQuantityText = 'min. quantity not limited';
   public minTotalText = 'min. total not limited';
   public selectedInfo?: SelectedOrdersInfo;
-  public priceSourceTypes = PRICE_SOURCE;
+  public priceSourceTypes = PriceSource;
 
-  public readonly pricePercentage = Array.from(
-    { length: 100 },
-    (_, i) => (i + 1) * 5
-  );
+  public pricePercentage: number[] = [];
 
-  private readonly unsubscribe$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
   private productDetails: Product | null = null;
 
   constructor() {
@@ -134,126 +117,102 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       price: new FormControl(null, [this.requiredByMarketType]),
       amount: new FormControl(null, [this.requiredByMarketType]),
       total: new FormControl(null, [this.requiredByMarketType]),
+      external: new FormControl(false, { nonNullable: true }),
       market: new FormControl(false, { nonNullable: true }),
       priceSource: new FormControl(null),
-      pricePercentage: new FormControl(50, { nonNullable: true }),
+      pricePercentage: new FormControl(0, { nonNullable: true }),
     });
   }
 
-  private enableDisableTotal(isMarket: boolean, isSell: boolean) {
-    if (isMarket && isSell) {
-      this.orderForm.controls.total.setValue(null);
-      this.orderForm.controls.total.disable();
-    } else if (this.orderForm.controls.total.disabled) {
-      this.orderForm.controls.total.enable();
-    }
-  }
-
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.orderForm.controls.side.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(startWith(this.orderForm.controls.side.value), takeUntilDestroyed(this.destroyRef))
       .subscribe((val) => {
-        this.enableDisableTotal(
-          this.orderForm.controls.market.value,
-          val === 'sell'
-        );
+        const isSell = val === 'sell';
+
+        this.pricePercentage = isSell ? Array.from({ length: 20 }, (_, i) => i * 5) : Array.from({ length: 100 }, (_, i) => i * 5);
+
+        this.enableDisableTotal(this.orderForm.controls.market.value, isSell);
+        this.orderForm.controls.pricePercentage.setValue(isSell ? 50 : 10);
         this.orderForm.controls.priceSource.setValue(null);
       });
-    this.orderForm.controls.market.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((val) => {
-        if (val) {
-          this.orderForm.controls.price.disable();
-          this.orderForm.controls.price.setValue(null);
-        } else {
-          this.orderForm.controls.price.enable();
-          this.orderForm.controls.total.enable();
-        }
 
-        this.enableDisableTotal(
-          val,
-          this.orderForm.controls.side.value === 'sell'
-        );
-        this.orderForm.controls.price.updateValueAndValidity();
-        this.orderForm.controls.amount.updateValueAndValidity();
-        this.orderForm.controls.total.updateValueAndValidity();
+    this.orderForm.controls.market.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
+      if (val) {
+        this.orderForm.controls.price.disable();
+        this.orderForm.controls.price.setValue(null);
+      } else {
+        this.orderForm.controls.price.enable();
+        this.orderForm.controls.total.enable();
+      }
+
+      this.enableDisableTotal(val, this.orderForm.controls.side.value === 'sell');
+      this.orderForm.controls.price.updateValueAndValidity();
+      this.orderForm.controls.amount.updateValueAndValidity();
+      this.orderForm.controls.total.updateValueAndValidity();
+    });
+
+    this.orderForm.controls.price.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
+      if (!val || !this.orderForm.controls.amount.value) {
+        return;
+      }
+
+      this.orderForm.controls.total.patchValue(val * this.orderForm.controls.amount.value, {
+        emitEvent: false,
       });
-    this.orderForm.controls.price.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((val) => {
-        if (!val || !this.orderForm.controls.amount.value) {
-          return;
-        }
+    });
 
-        this.orderForm.controls.total.patchValue(
-          val * this.orderForm.controls.amount.value,
-          {
-            emitEvent: false,
-          }
-        );
-      });
+    this.orderForm.controls.amount.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
+      if (!val) {
+        return;
+      }
 
-    this.orderForm.controls.amount.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((val) => {
-        if (!val) {
-          return;
-        }
+      if (this.orderForm.controls.market.value) {
+        this.orderForm.controls.total.setValue(null);
+        return;
+      }
 
-        if (this.orderForm.controls.market.value) {
-          this.orderForm.controls.total.setValue(null);
-          return;
-        }
+      if (this.orderForm.controls.price.value) {
+        this.orderForm.controls.total.patchValue(val * this.orderForm.controls.price.value, {
+          emitEvent: false,
+        });
+      }
+    });
 
-        if (this.orderForm.controls.price.value) {
-          this.orderForm.controls.total.patchValue(
-            val * this.orderForm.controls.price.value,
-            {
-              emitEvent: false,
-            }
-          );
-        }
-      });
+    this.orderForm.controls.total.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
+      if (!val) {
+        return;
+      }
 
-    this.orderForm.controls.total.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((val) => {
-        if (!val) {
-          return;
-        }
+      if (this.orderForm.controls.market.value) {
+        this.orderForm.controls.amount.setValue(null);
+        return;
+      }
 
-        if (this.orderForm.controls.market.value) {
-          this.orderForm.controls.amount.setValue(null);
-          return;
-        }
-
-        if (this.orderForm.controls.price.value) {
-          this.orderForm.controls.amount.patchValue(
-            val / this.orderForm.controls.price.value,
-            {
-              emitEvent: false,
-            }
-          );
-        }
-      });
+      if (this.orderForm.controls.price.value) {
+        this.orderForm.controls.amount.patchValue(val / this.orderForm.controls.price.value, {
+          emitEvent: false,
+        });
+      }
+    });
 
     this.orderForm.controls.priceSource.valueChanges
       .pipe(
-        takeUntil(this.unsubscribe$),
         filter((source) => !!source),
-        map((source) => source as PRICE_SOURCE)
+        map((source) => source as PriceSource),
+        takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((source: PRICE_SOURCE) => {
+      .subscribe((source: PriceSource) => {
         switch (source) {
-          case PRICE_SOURCE.CURRENT_PRICE:
+          case PriceSource.CURRENT_PRICE:
             return this.setCurrentPrice();
-          case PRICE_SOURCE.RECENT_SELL:
+          case PriceSource.RECENT_SELL:
             return this.setRecentBuyPrice();
-          case PRICE_SOURCE.SELECTED_ORDERS:
+          case PriceSource.SELECTED_ORDERS:
             return this.setSelectedBuyPrice();
-          case PRICE_SOURCE.AVERAGE_BUY:
+          case PriceSource.AVERAGE_BUY:
             return this.setAverageBuy();
-          case PRICE_SOURCE.AVERAGE_SELL:
+          case PriceSource.AVERAGE_SELL:
             return this.setAverageSell();
           default:
             this.orderForm.controls.price.setValue(null);
@@ -261,89 +220,44 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public onSubmit() {
+  public onSubmit(): void {
     this.create.emit(this.orderForm.getRawValue());
 
-    const { side } = this.orderForm.value;
-    this.orderForm.reset({ side });
+    const { side, pricePercentage } = this.orderForm.value;
+    this.orderForm.reset({ side, pricePercentage });
   }
 
-  private setAverageBuy() {
-    if (this.averages) {
-      this.orderForm.controls.price.setValue(this.averages.buy.price);
-    }
-  }
-
-  private setAverageSell() {
-    if (this.averages) {
-      this.orderForm.controls.price.setValue(this.averages.sell.price);
-    }
-  }
-
-  private setCurrentPrice() {
-    if (this.ticker) {
-      this.orderForm.controls.price.setValue(this.ticker.last);
-    }
-  }
-
-  private setRecentBuyPrice() {
-    if (this.recent) {
-      this.orderForm.controls.price.setValue(this.recent.price);
-    }
-  }
-
-  private setSelectedBuyPrice() {
-    if (this.selectedInfo) {
-      this.orderForm.controls.price.setValue(this.selectedInfo.price);
-    }
-  }
-
-  public increasePrice(event: Event) {
+  public increasePrice(event: Event): void {
     event.stopPropagation();
     if (this.buyMultiplicator && this.orderForm.controls.price.value) {
-      this.orderForm.controls.price.setValue(
-        this.orderForm.controls.price.value * (1 + this.buyMultiplicator.value)
-      );
+      this.orderForm.controls.price.setValue(this.orderForm.controls.price.value * (1 + this.buyMultiplicator.value));
     }
   }
 
-  public decreasePrice(event: Event) {
+  public decreasePrice(event: Event): void {
     event.stopPropagation();
 
     if (this.buyMultiplicator && this.orderForm.controls.price.value) {
-      this.orderForm.controls.price.setValue(
-        this.orderForm.controls.price.value / (1 + this.buyMultiplicator.value)
-      );
+      this.orderForm.controls.price.setValue(this.orderForm.controls.price.value / (1 + this.buyMultiplicator.value));
     }
   }
 
-  public plusPercents(event: Event) {
+  public changePrice(event: Event, decrease: boolean): void {
     event.stopPropagation();
 
-    if (
-      this.orderForm.controls.pricePercentage.value &&
-      this.orderForm.controls.price.value
-    ) {
+    if (this.orderForm.controls.pricePercentage.value && this.orderForm.controls.price.value) {
       this.orderForm.controls.price.setValue(
         this.orderForm.controls.price.value *
-          (1 + this.orderForm.controls.pricePercentage.value / 100)
+          (decrease ? 1 - this.orderForm.controls.pricePercentage.value / 100 : 1 + this.orderForm.controls.pricePercentage.value / 100)
       );
     }
   }
 
-  public setOneThird() {
+  public setOneThird(): void {
     if (this.totalAmount > 0) {
-      if (
-        this.orderForm.controls.priceSource.value ===
-          PRICE_SOURCE.RECENT_SELL &&
-        this.recent
-      ) {
+      if (this.orderForm.controls.priceSource.value === PriceSource.RECENT_SELL && this.recent) {
         this.orderForm.controls.amount.setValue(this.recent.volume / 3);
-      } else if (
-        this.orderForm.controls.priceSource.value ===
-          PRICE_SOURCE.SELECTED_ORDERS &&
-        this.selectedInfo
-      ) {
+      } else if (this.orderForm.controls.priceSource.value === PriceSource.SELECTED_ORDERS && this.selectedInfo) {
         this.orderForm.controls.amount.setValue(this.selectedInfo.amount / 3);
       } else {
         this.orderForm.controls.amount.setValue(this.totalAmount / 3);
@@ -351,7 +265,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  public getRecommendedPriceAndAmount() {
+  public getRecommendedPriceAndAmount(): void {
     if (this.sellForBtc) {
       this.orderForm.patchValue({
         price: this.sellForBtc.price,
@@ -378,10 +292,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
       do {
         const rest = nextSellAmount - remainingOversoldAmount;
 
-        if (
-          nextSellAmount > remainingOversoldAmount &&
-          rest * nextSellPrice > MIN_ORDER_AMOUNT
-        ) {
+        if (nextSellAmount > remainingOversoldAmount && rest * nextSellPrice > MIN_ORDER_AMOUNT) {
           done = true;
           console.log('sell:', {
             price: nextSellPrice,
@@ -410,9 +321,28 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  private requiredByMarketType = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
+  public setMinQuantity(): void {
+    if (this.productDetails?.minQuantity) {
+      this.orderForm.controls.amount.setValue(this.productDetails.minQuantity);
+    }
+  }
+
+  public setMinTotal(): void {
+    if (this.productDetails?.minTotal) {
+      this.orderForm.controls.total.setValue(this.productDetails.minTotal);
+    }
+  }
+
+  private enableDisableTotal(isMarket: boolean, isSell: boolean): void {
+    if (isMarket && isSell) {
+      this.orderForm.controls.total.setValue(null);
+      this.orderForm.controls.total.disable();
+    } else if (this.orderForm.controls.total.disabled) {
+      this.orderForm.controls.total.enable();
+    }
+  }
+
+  private requiredByMarketType = (control: AbstractControl): ValidationErrors | null => {
     // not initialized yet
     if (!this.orderForm) {
       return null;
@@ -424,10 +354,7 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     }
 
     // with 'buy by market' - valid if there is 'amount' or 'total'
-    if (
-      this.orderForm.controls.amount.value ||
-      this.orderForm.controls.total.value
-    ) {
+    if (this.orderForm.controls.amount.value || this.orderForm.controls.total.value) {
       return null;
     }
 
@@ -435,20 +362,33 @@ export class OrderFormComponent implements OnInit, OnDestroy {
     return Validators.required(control);
   };
 
-  public setMinQuantity() {
-    if (this.productDetails?.minQuantity) {
-      this.orderForm.controls.amount.setValue(this.productDetails.minQuantity);
+  private setAverageBuy(): void {
+    if (this.averages) {
+      this.orderForm.controls.price.setValue(this.averages.buy.price);
     }
   }
 
-  public setMinTotal() {
-    if (this.productDetails?.minTotal) {
-      this.orderForm.controls.total.setValue(this.productDetails.minTotal);
+  private setAverageSell(): void {
+    if (this.averages) {
+      this.orderForm.controls.price.setValue(this.averages.sell.price);
     }
   }
 
-  ngOnDestroy(): void {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
+  private setCurrentPrice(): void {
+    if (this.ticker) {
+      this.orderForm.controls.price.setValue(this.ticker.last);
+    }
+  }
+
+  private setRecentBuyPrice(): void {
+    if (this.recent) {
+      this.orderForm.controls.price.setValue(this.recent.price);
+    }
+  }
+
+  private setSelectedBuyPrice(): void {
+    if (this.selectedInfo) {
+      this.orderForm.controls.price.setValue(this.selectedInfo.price);
+    }
   }
 }

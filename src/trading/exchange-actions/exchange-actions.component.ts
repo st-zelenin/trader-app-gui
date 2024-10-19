@@ -1,30 +1,32 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   EventEmitter,
   Input,
-  OnDestroy,
   OnInit,
   Output,
   inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
-import { debounceTime, map, startWith, takeUntil } from 'rxjs/operators';
-import { SORTING_TYPES } from '../../constants';
-import { FILTERING_TYPE, Multiplicator, OrderSide } from '../../models';
-import { AppStoreFacade } from '../../store/facade';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Observable } from 'rxjs';
+import { debounceTime, map, startWith } from 'rxjs/operators';
+
+import { SortingTypes } from '../../constants';
+import { FilteringType, Multiplicator, OrderSide } from '../../models';
+import { AppStoreFacade } from '../../store/facade';
 
 @Component({
   selector: 'app-exchange-actions',
@@ -46,25 +48,25 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrls: ['./exchange-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExchangeActionsComponent implements OnInit, OnDestroy {
-  @Input() baseCurrencies!: string[];
-  @Input() currencyPairs: string[] = [];
-  @Input() balance?: number = 0;
-  @Input() estimated!: number;
+export class ExchangeActionsComponent implements OnInit {
+  @Input() public baseCurrencies!: string[];
+  @Input() public currencyPairs: string[] = [];
+  @Input() public balance?: number = 0;
+  @Input() public estimated!: number;
 
-  @Input() baseCurrency!: string;
-  @Output() baseCurrencyChange = new EventEmitter<string>();
+  @Input() public baseCurrency!: string;
+  @Output() public readonly baseCurrencyChange = new EventEmitter<string>();
 
-  @Output() addCurrencyPair = new EventEmitter<string>();
-  @Output() refresh = new EventEmitter<void>();
-  @Output() filter = new EventEmitter<FILTERING_TYPE>();
-  @Output() sort = new EventEmitter<SORTING_TYPES>();
-  @Output() search = new EventEmitter<string>();
-  @Output() showRecent = new EventEmitter<OrderSide>();
-  @Output() showSetting = new EventEmitter<void>();
+  @Output() public readonly addCurrencyPair = new EventEmitter<string>();
+  @Output() public readonly refresh = new EventEmitter<void>();
+  @Output() public readonly filter = new EventEmitter<FilteringType>();
+  @Output() public readonly sort = new EventEmitter<SortingTypes>();
+  @Output() public readonly search = new EventEmitter<string>();
+  @Output() public readonly showRecent = new EventEmitter<OrderSide>();
+  @Output() public readonly showSetting = new EventEmitter<void>();
 
-  public filteringTypes = FILTERING_TYPE;
-  public sortingTypes = SORTING_TYPES;
+  public filteringTypes = FilteringType;
+  public sortingTypes = SortingTypes;
   public buyMultiplicator?: Multiplicator;
   public filteredOptions?: Observable<string[]>;
 
@@ -72,27 +74,23 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
   public currencyPairControl = new FormControl<string | null>(null);
   public baseCurrencyControl = new FormControl<string | null>(null);
 
-  public currentSorting: SORTING_TYPES = SORTING_TYPES.NONE;
-  public currentFiltering: FILTERING_TYPE = FILTERING_TYPE.NONE;
+  public currentSorting: SortingTypes = SortingTypes.NONE;
+  public currentFiltering: FilteringType = FilteringType.NONE;
 
   private readonly facade = inject(AppStoreFacade);
   private readonly cd = inject(ChangeDetectorRef);
-  private readonly unsubscribe$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.baseCurrencyControl.setValue(this.baseCurrency);
 
     this.baseCurrencyControl.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        (currency) => currency && this.baseCurrencyChange.emit(currency)
-      );
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((currency) => currency && this.baseCurrencyChange.emit(currency));
 
-    this.pairSearchControl.valueChanges
-      .pipe(takeUntil(this.unsubscribe$), startWith(''), debounceTime(500))
-      .subscribe((value) => {
-        this.search.emit((value || '').toUpperCase());
-      });
+    this.pairSearchControl.valueChanges.pipe(startWith(''), debounceTime(500), takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      this.search.emit((value || '').toUpperCase());
+    });
 
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(
       startWith(''),
@@ -101,15 +99,13 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
       map((value) => this.filterPairs(value))
     );
 
-    this.facade.buyMultiplicator
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((buyMultiplicator) => {
-        this.buyMultiplicator = buyMultiplicator;
-        this.cd.markForCheck();
-      });
+    this.facade.buyMultiplicator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((buyMultiplicator) => {
+      this.buyMultiplicator = buyMultiplicator;
+      this.cd.markForCheck();
+    });
   }
 
-  public addPair() {
+  public addPair(): void {
     if (!this.currencyPairControl.value) {
       return;
     }
@@ -118,31 +114,18 @@ export class ExchangeActionsComponent implements OnInit, OnDestroy {
     this.currencyPairControl.setValue('');
   }
 
-  public updateSorting(sortingType: SORTING_TYPES) {
-    this.currentSorting =
-      this.currentSorting === sortingType ? SORTING_TYPES.NONE : sortingType;
+  public updateSorting(sortingType: SortingTypes): void {
+    this.currentSorting = this.currentSorting === sortingType ? SortingTypes.NONE : sortingType;
     this.sort.emit(this.currentSorting);
   }
 
-  public updateFiltering(filteringType: FILTERING_TYPE) {
-    this.currentFiltering =
-      this.currentFiltering === filteringType
-        ? FILTERING_TYPE.NONE
-        : filteringType;
+  public updateFiltering(filteringType: FilteringType): void {
+    this.currentFiltering = this.currentFiltering === filteringType ? FilteringType.NONE : filteringType;
     this.filter.emit(this.currentFiltering);
   }
 
   private filterPairs(value: string): string[] {
     const filterValue = value.toLowerCase();
-    console.log(value, this.currencyPairControl.value);
-
-    return this.currencyPairs.filter((pair) =>
-      pair.toLowerCase().includes(filterValue)
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
+    return this.currencyPairs.filter((pair) => pair.toLowerCase().includes(filterValue));
   }
 }

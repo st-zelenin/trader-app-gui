@@ -7,8 +7,7 @@ export class PricePrecisionService {
       return '1.0-10';
     }
 
-    const exponentialNumberPipePrecision =
-      this.getExponentialNumberPipePrecision(num);
+    const exponentialNumberPipePrecision = this.getExponentialNumberPipePrecision(num);
     if (exponentialNumberPipePrecision !== null) {
       return exponentialNumberPipePrecision;
     }

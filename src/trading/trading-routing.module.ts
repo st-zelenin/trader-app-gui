@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { EXCHANGE_URL_PARAMS } from '../constants';
+
 import { TradingComponent } from './trading.component';
 import { UserResolver } from './user.resolver';
+import { ExchangeUrlParams } from '../constants';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: EXCHANGE_URL_PARAMS.GATE_IO,
+    redirectTo: ExchangeUrlParams.GATE_IO,
     pathMatch: 'full',
   },
 

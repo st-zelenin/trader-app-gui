@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { ExchangeComponent } from './exchange.component';
 
 describe('ExchangeComponent', () => {

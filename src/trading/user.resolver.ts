@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-
 import { Observable } from 'rxjs';
+
 import { User } from '../models';
 import { UserService } from '../user.service';
 
@@ -8,7 +8,7 @@ import { UserService } from '../user.service';
 export class UserResolver {
   private readonly userService = inject(UserService);
 
-  resolve(): Observable<User> {
+  public resolve(): Observable<User> {
     return this.userService.getUser();
   }
 }

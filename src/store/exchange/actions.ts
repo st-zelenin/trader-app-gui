@@ -1,14 +1,8 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import { createAction, props } from '@ngrx/store';
+
 import { EXCHANGE } from '../../constants';
-import {
-  AllAverages,
-  Averages,
-  Balances,
-  CryptoPair,
-  OpenOrdersByPairs,
-  Products,
-  Tickers,
-} from '../../models';
+import { AllAverages, Averages, Balances, CryptoPair, OpenOrdersByPairs, Products, Tickers } from '../../models';
 
 export class ExchangeActions {
   private readonly ACTIONS = {
@@ -45,81 +39,47 @@ export class ExchangeActions {
 
   constructor(private readonly exchange: EXCHANGE) {}
 
-  public getTickers = createAction(this.ACTIONS.GET_ALL_TICKERS);
+  public readonly getTickers = createAction(this.ACTIONS.GET_ALL_TICKERS);
 
-  public getTickersError = createAction(this.ACTIONS.GET_ALL_TICKERS_ERROR);
+  public readonly getTickersError = createAction(this.ACTIONS.GET_ALL_TICKERS_ERROR);
 
-  public setTickers = createAction(
-    this.ACTIONS.SET_ALL_TICKERS,
-    props<{ tickers: Tickers }>()
-  );
+  public readonly setTickers = createAction(this.ACTIONS.SET_ALL_TICKERS, props<{ tickers: Tickers }>());
 
-  public getAllAnalytics = createAction(this.ACTIONS.GET_ALL_ANALYTICS);
+  public readonly getAllAnalytics = createAction(this.ACTIONS.GET_ALL_ANALYTICS);
 
-  public getAllAnalyticsError = createAction(
-    this.ACTIONS.GET_ALL_ANALYTICS_ERROR
-  );
+  public readonly getAllAnalyticsError = createAction(this.ACTIONS.GET_ALL_ANALYTICS_ERROR);
 
-  public setAllAnalytics = createAction(
-    this.ACTIONS.SET_ALL_ANALYTICS,
-    props<{ analytics: AllAverages }>()
-  );
+  public readonly setAllAnalytics = createAction(this.ACTIONS.SET_ALL_ANALYTICS, props<{ analytics: AllAverages }>());
 
-  public getAllOpenOrders = createAction(this.ACTIONS.GET_ALL_OPEN_ORDERS);
+  public readonly getAllOpenOrders = createAction(this.ACTIONS.GET_ALL_OPEN_ORDERS);
 
-  public getAllOpenOrdersError = createAction(
-    this.ACTIONS.GET_ALL_OPEN_ORDERS_ERROR
-  );
+  public readonly getAllOpenOrdersError = createAction(this.ACTIONS.GET_ALL_OPEN_ORDERS_ERROR);
 
-  public setAllOpenOrders = createAction(
-    this.ACTIONS.SET_ALL_OPEN_ORDERS,
-    props<{ openOrders: OpenOrdersByPairs }>()
-  );
+  public readonly setAllOpenOrders = createAction(this.ACTIONS.SET_ALL_OPEN_ORDERS, props<{ openOrders: OpenOrdersByPairs }>());
 
-  public getBalances = createAction(this.ACTIONS.GET_BALANCES);
+  public readonly getBalances = createAction(this.ACTIONS.GET_BALANCES);
 
-  public getBalancesError = createAction(this.ACTIONS.GET_BALANCES_ERROR);
+  public readonly getBalancesError = createAction(this.ACTIONS.GET_BALANCES_ERROR);
 
-  public setBalances = createAction(
-    this.ACTIONS.SET_BALANCES,
-    props<{ balances: Balances }>()
-  );
+  public readonly setBalances = createAction(this.ACTIONS.SET_BALANCES, props<{ balances: Balances }>());
 
-  public getCurrencyPairs = createAction(this.ACTIONS.GET_CURRENCY_PAIRS);
+  public readonly getCurrencyPairs = createAction(this.ACTIONS.GET_CURRENCY_PAIRS);
 
-  public getCurrencyPairsError = createAction(
-    this.ACTIONS.GET_CURRENCY_PAIRS_ERROR
-  );
+  public readonly getCurrencyPairsError = createAction(this.ACTIONS.GET_CURRENCY_PAIRS_ERROR);
 
-  public setCurrencyPairs = createAction(
-    this.ACTIONS.SET_CURRENCY_PAIRS,
-    props<{ currencyPairs: string[] }>()
-  );
+  public readonly setCurrencyPairs = createAction(this.ACTIONS.SET_CURRENCY_PAIRS, props<{ currencyPairs: string[] }>());
 
-  public setPairs = createAction(
-    this.ACTIONS.SET_PAIRS,
-    props<{ pairs: CryptoPair[] }>()
-  );
+  public readonly setPairs = createAction(this.ACTIONS.SET_PAIRS, props<{ pairs: CryptoPair[] }>());
 
-  public getRecentBuyAverages = createAction(
-    this.ACTIONS.GET_RECENT_BUY_AVERAGES
-  );
+  public readonly getRecentBuyAverages = createAction(this.ACTIONS.GET_RECENT_BUY_AVERAGES);
 
-  public getRecentBuyAveragesError = createAction(
-    this.ACTIONS.GET_RECENT_BUY_AVERAGES_ERROR
-  );
+  public readonly getRecentBuyAveragesError = createAction(this.ACTIONS.GET_RECENT_BUY_AVERAGES_ERROR);
 
-  public setRecentBuyAverages = createAction(
-    this.ACTIONS.SET_RECENT_BUY_AVERAGES,
-    props<{ recentBuyAverages: Averages }>()
-  );
+  public readonly setRecentBuyAverages = createAction(this.ACTIONS.SET_RECENT_BUY_AVERAGES, props<{ recentBuyAverages: Averages }>());
 
-  public getProducts = createAction(this.ACTIONS.GET_PRODUCTS);
+  public readonly getProducts = createAction(this.ACTIONS.GET_PRODUCTS);
 
-  public getProductsError = createAction(this.ACTIONS.GET_PRODUCTS_ERROR);
+  public readonly getProductsError = createAction(this.ACTIONS.GET_PRODUCTS_ERROR);
 
-  public setProducts = createAction(
-    this.ACTIONS.SET_PRODUCTS,
-    props<{ products: Products }>()
-  );
+  public readonly setProducts = createAction(this.ACTIONS.SET_PRODUCTS, props<{ products: Products }>());
 }

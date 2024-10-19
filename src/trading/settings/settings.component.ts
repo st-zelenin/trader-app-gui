@@ -1,25 +1,19 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnDestroy,
-  OnInit,
-  inject,
-} from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MsalService } from '@azure/msal-angular';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { BUY_MULTIPLICATORS } from '../../constants';
-import { AppStoreFacade } from '../../store/facade';
-import { SettingService } from './settings.service';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { Multiplicator } from '../../models';
 import { MatInputModule } from '@angular/material/input';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MsalService } from '@azure/msal-angular';
+
+import { SettingService } from './settings.service';
+import { BUY_MULTIPLICATORS } from '../../constants';
+import { Multiplicator } from '../../models';
+import { AppStoreFacade } from '../../store/facade';
 
 interface SettingsForm {
   buyMultiplicator: FormControl<Multiplicator | null>;
@@ -45,7 +39,7 @@ interface SettingsForm {
   styleUrls: ['./settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SettingsComponent implements OnInit, OnDestroy {
+export class SettingsComponent implements OnInit {
   public multiplicators = BUY_MULTIPLICATORS;
 
   public readonly form = new FormGroup<SettingsForm>({
@@ -58,97 +52,73 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private readonly facade = inject(AppStoreFacade);
   private readonly authService = inject(MsalService);
   private readonly settingService = inject(SettingService);
-  private readonly unsubscribe$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
-  ngOnInit(): void {
-    this.facade.buyMultiplicator
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        if (value) {
-          this.form.controls.buyMultiplicator.setValue(value, {
-            emitEvent: false,
-          });
-        }
-      });
+  public ngOnInit(): void {
+    this.facade.buyMultiplicator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      if (value) {
+        this.form.controls.buyMultiplicator.setValue(value, {
+          emitEvent: false,
+        });
+      }
+    });
 
-    this.form.controls.buyMultiplicator.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        if (value) {
-          this.facade.setBuyMultiplicator(value);
-        }
-      });
+    this.form.controls.buyMultiplicator.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      if (value) {
+        this.facade.setBuyMultiplicator(value);
+      }
+    });
 
-    this.facade.orderDefaultTotalAmount
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        if (value) {
-          this.form.controls.defaultTotalAmount.patchValue(value, {
-            emitEvent: false,
-          });
-        }
-      });
+    this.facade.orderDefaultTotalAmount.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      if (value) {
+        this.form.controls.defaultTotalAmount.patchValue(value, {
+          emitEvent: false,
+        });
+      }
+    });
 
-    this.form.controls.defaultTotalAmount.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        if (value) {
-          this.facade.setOrderDefaultTotalAmount(value);
-        }
-      });
+    this.form.controls.defaultTotalAmount.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      if (value) {
+        this.facade.setOrderDefaultTotalAmount(value);
+      }
+    });
 
-    this.facade.defaultSellVolumeDivider
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        if (value) {
-          this.form.controls.defaultSellVolumeDivider.patchValue(value, {
-            emitEvent: false,
-          });
-        }
-      });
+    this.facade.defaultSellVolumeDivider.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      if (value) {
+        this.form.controls.defaultSellVolumeDivider.patchValue(value, {
+          emitEvent: false,
+        });
+      }
+    });
 
-    this.form.controls.defaultSellVolumeDivider.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        if (value) {
-          this.facade.setDefaultSellVolumeDivider(value);
-        }
-      });
+    this.form.controls.defaultSellVolumeDivider.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      if (value) {
+        this.facade.setDefaultSellVolumeDivider(value);
+      }
+    });
 
-    this.facade.defaultSellPriceMultiplicator
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        if (value) {
-          this.form.controls.defaultSellPriceMultiplicator.patchValue(value, {
-            emitEvent: false,
-          });
-        }
-      });
+    this.facade.defaultSellPriceMultiplicator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      if (value) {
+        this.form.controls.defaultSellPriceMultiplicator.patchValue(value, {
+          emitEvent: false,
+        });
+      }
+    });
 
-    this.form.controls.defaultSellPriceMultiplicator.valueChanges
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((value) => {
-        if (value) {
-          this.facade.setDefaultSellPriceMultiplicator(value);
-        }
-      });
+    this.form.controls.defaultSellPriceMultiplicator.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      if (value) {
+        this.facade.setDefaultSellPriceMultiplicator(value);
+      }
+    });
   }
 
-  public signOut() {
+  public signOut(): void {
     this.authService.logoutPopup({
       mainWindowRedirectUri: '/',
     });
   }
 
   public doSomeTechService(): void {
-    this.settingService
-      .doSomeTechService()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
+    this.settingService.doSomeTechService().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 }

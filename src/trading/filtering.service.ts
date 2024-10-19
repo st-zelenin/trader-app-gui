@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Filterable, FILTERING_TYPE } from '../models';
+
+import { Filterable, FilteringType } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class FilteringService {
   private cards: Filterable[] = [];
 
-  public register(card: Filterable) {
+  public register(card: Filterable): void {
     this.cards.push(card);
   }
 
-  public unregister(card: Filterable) {
+  public unregister(card: Filterable): void {
     const index = this.cards.indexOf(card);
     console.log('index', index);
     if (index > -1) {
@@ -17,8 +18,8 @@ export class FilteringService {
     }
   }
 
-  public toggleFilter(filteringType: FILTERING_TYPE) {
-    if (filteringType === FILTERING_TYPE.NONE) {
+  public toggleFilter(filteringType: FilteringType): void {
+    if (filteringType === FilteringType.NONE) {
       for (const card of this.cards) {
         card.hidden = false;
       }
@@ -29,18 +30,15 @@ export class FilteringService {
     }
   }
 
-  private getHidden(filteringType: FILTERING_TYPE, card: Filterable) {
+  private getHidden(filteringType: FilteringType, card: Filterable): boolean {
     switch (filteringType) {
-      case FILTERING_TYPE.MISSING_BUY:
-        return (
-          card.openOrders &&
-          !!card.openOrders.find(({ side }) => side === 'buy')
-        );
+      case FilteringType.MISSING_BUY:
+        return card.openOrders && !!card.openOrders.find(({ side }) => side === 'buy');
       // return card.isRed
       //   ? card.openOrders &&
       //       !!card.openOrders.find(({ side }) => side === 'buy')
       //   : true;
-      case FILTERING_TYPE.ATTENTION_MESSAGE:
+      case FilteringType.ATTENTION_MESSAGE:
         return !card.attentionMessage;
       default:
         throw new Error(`unhandled ${filteringType} filtering type`);

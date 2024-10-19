@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { inject, Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 
 @Pipe({
   name: 'decimalWithAutoDigitsInfo',
@@ -9,10 +9,7 @@ export class DecimalWithAutoDigitsInfoPipe implements PipeTransform {
   private readonly decimalPipe = inject(DecimalPipe);
 
   public transform(value: number | undefined): string | null {
-    return this.decimalPipe.transform(
-      value,
-      this.getCurrenctPipePrecision(value)
-    );
+    return this.decimalPipe.transform(value, this.getCurrenctPipePrecision(value));
   }
 
   private getCurrenctPipePrecision(num: number | undefined): string {

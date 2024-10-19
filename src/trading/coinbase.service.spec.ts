@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+
 import { CoinbaseService } from './coinbase.service';
 
 describe('CoinbaseService', () => {

@@ -1,12 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
-import { BUY_MULTIPLICATORS } from '../../constants';
-import {
-  setBuyMultiplicator,
-  setDefaultSellPriceMultiplicator,
-  setDefaultSellVolumeDivider,
-  setOrderDefaultTotalAmount,
-} from './actions';
+
+import { setBuyMultiplicator, setDefaultSellPriceMultiplicator, setDefaultSellVolumeDivider, setOrderDefaultTotalAmount } from './actions';
 import { SharedState } from './state';
+import { BUY_MULTIPLICATORS } from '../../constants';
 
 export const initialState: SharedState = {
   buyMultiplicator: BUY_MULTIPLICATORS[0],
@@ -15,7 +11,8 @@ export const initialState: SharedState = {
   defaultSellPriceMultiplicator: 1.5,
 };
 
-const log = (action: string, payload: unknown) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const log = (action: string, payload: unknown): void => {
   // console.log(action, payload);
 };
 

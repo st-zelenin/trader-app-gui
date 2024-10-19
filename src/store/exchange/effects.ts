@@ -1,22 +1,18 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import { Inject, Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { BinanceService } from '../../trading/binance.service';
+
+import { ExchangeActions } from './actions';
 import { ExchangeService } from '../../models';
+import { BinanceService } from '../../trading/binance.service';
 import { BybitService } from '../../trading/bybit.service';
 import { CoinbaseService } from '../../trading/coinbase.service';
 import { CryptoComService } from '../../trading/crypto-com.service';
 import { GateIoService } from '../../trading/gate-io.service';
-import {
-  BINANCE_ACTIONS,
-  BYBIT_ACTIONS,
-  COINBASE_ACTIONS,
-  CRYPTO_COM_ACTIONS,
-  GATE_IO_ACTIONS,
-} from '../models';
-import { ExchangeActions } from './actions';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { BINANCE_ACTIONS, BYBIT_ACTIONS, COINBASE_ACTIONS, CRYPTO_COM_ACTIONS, GATE_IO_ACTIONS } from '../models';
 
 export class ExchangeEffects {
   constructor(
@@ -26,7 +22,7 @@ export class ExchangeEffects {
     private readonly snackBar: MatSnackBar
   ) {}
 
-  getTickers = createEffect(() =>
+  public readonly getTickers = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getTickers),
       mergeMap(() =>
@@ -42,14 +38,12 @@ export class ExchangeEffects {
     )
   );
 
-  getAnalytics = createEffect(() =>
+  public readonly getAnalytics = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getAllAnalytics),
       mergeMap(() =>
         this.exchangeService.getAverages().pipe(
-          map((analytics) =>
-            this.exchangeActions.setAllAnalytics({ analytics })
-          ),
+          map((analytics) => this.exchangeActions.setAllAnalytics({ analytics })),
           catchError((err) => {
             this.showError('failed to get analytics');
             console.log(err);
@@ -60,14 +54,12 @@ export class ExchangeEffects {
     )
   );
 
-  getAllOpenOrders = createEffect(() =>
+  public readonly getAllOpenOrders = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getAllOpenOrders),
       mergeMap(() =>
         this.exchangeService.getAllOpenOrders().pipe(
-          map((openOrders) =>
-            this.exchangeActions.setAllOpenOrders({ openOrders })
-          ),
+          map((openOrders) => this.exchangeActions.setAllOpenOrders({ openOrders })),
           catchError((err) => {
             this.showError('failed to get open orders');
             console.log(err);
@@ -78,7 +70,7 @@ export class ExchangeEffects {
     )
   );
 
-  getBalances = createEffect(() =>
+  public readonly getBalances = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getBalances),
       mergeMap(() =>
@@ -94,14 +86,12 @@ export class ExchangeEffects {
     )
   );
 
-  getCurrencyPairs = createEffect(() =>
+  public readonly getCurrencyPairs = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getCurrencyPairs),
       mergeMap(() =>
         this.exchangeService.getCurrencyPairs().pipe(
-          map((currencyPairs) =>
-            this.exchangeActions.setCurrencyPairs({ currencyPairs })
-          ),
+          map((currencyPairs) => this.exchangeActions.setCurrencyPairs({ currencyPairs })),
           catchError((err) => {
             this.showError('failed to get currency pairs');
             console.log(err);
@@ -112,14 +102,12 @@ export class ExchangeEffects {
     )
   );
 
-  getRecentBuyAverages = createEffect(() =>
+  public readonly getRecentBuyAverages = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getRecentBuyAverages),
       mergeMap(() =>
         this.exchangeService.getRecentBuyAverages().pipe(
-          map((recentBuyAverages) =>
-            this.exchangeActions.setRecentBuyAverages({ recentBuyAverages })
-          ),
+          map((recentBuyAverages) => this.exchangeActions.setRecentBuyAverages({ recentBuyAverages })),
           catchError((err) => {
             this.showError('failed to get recent buy averages');
             console.log(err);
@@ -130,7 +118,7 @@ export class ExchangeEffects {
     )
   );
 
-  getProducts = createEffect(() =>
+  public readonly getProducts = createEffect(() =>
     this.actions.pipe(
       ofType(this.exchangeActions.getProducts),
       mergeMap(() =>
@@ -146,7 +134,7 @@ export class ExchangeEffects {
     )
   );
 
-  private showError(text: string) {
+  private showError(text: string): void {
     this.snackBar.open(text, 'x', {
       duration: 60 * 1000,
       horizontalPosition: 'right',

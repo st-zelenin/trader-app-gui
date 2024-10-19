@@ -1,15 +1,11 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  inject,
-} from '@angular/core';
+/* eslint-disable @typescript-eslint/naming-convention */
+import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, Input, OnDestroy, inject } from '@angular/core';
+
 import { EXCHANGE } from 'src/constants';
 import { CryptoPair } from 'src/models';
+
 import { CalculationsService } from '../calculations.service';
-import { CommonModule } from '@angular/common';
 
 declare const TradingView: any;
 
@@ -21,8 +17,8 @@ declare const TradingView: any;
   styleUrls: ['./trading-view-widget.component.scss'],
 })
 export class TradingViewWidgetComponent implements AfterViewInit, OnDestroy {
-  @Input() pair!: CryptoPair;
-  @Input() exchange!: EXCHANGE;
+  @Input() public pair!: CryptoPair;
+  @Input() public exchange!: EXCHANGE;
 
   public id = `tradingview-${Date.now()}`;
 
@@ -30,13 +26,10 @@ export class TradingViewWidgetComponent implements AfterViewInit, OnDestroy {
 
   private readonly calculationsService = inject(CalculationsService);
 
-  ngAfterViewInit(): void {
+  public ngAfterViewInit(): void {
     this.widget = new TradingView.widget({
       autosize: true,
-      symbol: this.calculationsService.buildTradingViewSymbol(
-        this.pair.symbol,
-        this.exchange
-      ),
+      symbol: this.calculationsService.buildTradingViewSymbol(this.pair.symbol, this.exchange),
       interval: 'D',
       timezone: 'Etc/UTC',
       theme: 'light', // "dark"
@@ -51,13 +44,10 @@ export class TradingViewWidgetComponent implements AfterViewInit, OnDestroy {
 
   // not used
   public changeSymbol(symbol: string): void {
-    this.widget.iframe.contentWindow?.postMessage(
-      { name: 'set-symbol', type: 'post', data: { symbol } },
-      '*'
-    );
+    this.widget.iframe.contentWindow?.postMessage({ name: 'set-symbol', type: 'post', data: { symbol } }, '*');
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     this.widget.remove();
   }
 }

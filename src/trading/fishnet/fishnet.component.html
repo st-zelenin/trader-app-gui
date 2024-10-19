@@ -12,9 +12,7 @@
       <mat-icon class="price-icon">remove</mat-icon>
     </button>
     <input matInput placeholder="" [formControl]="form.controls.price" />
-    <mat-hint (click)="setCurrentPrice()" class="clickable">{{
-      ticker?.last
-    }}</mat-hint>
+    <mat-hint (click)="setCurrentPrice()" class="clickable">{{ ticker?.last }}</mat-hint>
   </mat-form-field>
 
   <mat-form-field>
@@ -25,17 +23,13 @@
   <mat-form-field>
     <mat-label>Quantity</mat-label>
     <input matInput placeholder="" [formControl]="form.controls.amount" />
-    <mat-hint (click)="setMinQuantity()" class="clickable">{{
-      minQuantityText
-    }}</mat-hint>
+    <mat-hint (click)="setMinQuantity()" class="clickable">{{ minQuantityText }}</mat-hint>
   </mat-form-field>
 
   <mat-form-field>
     <mat-label>Total</mat-label>
     <input matInput placeholder="" [formControl]="form.controls.total" />
-    <mat-hint (click)="setMinTotal()" class="clickable">{{
-      minTotalText
-    }}</mat-hint>
+    <mat-hint (click)="setMinTotal()" class="clickable">{{ minTotalText }}</mat-hint>
   </mat-form-field>
 
   <div class="create-button">

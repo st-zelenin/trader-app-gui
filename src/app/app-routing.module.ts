@@ -5,8 +5,7 @@ import { MsalGuard } from '@azure/msal-angular';
 const routes: Routes = [
   {
     path: 'trades',
-    loadChildren: () =>
-      import('../trading/trading.module').then((m) => m.TradingModule),
+    loadChildren: () => import('../trading/trading.module').then((m) => m.TradingModule),
     canActivate: [MsalGuard],
   },
   { path: '**', redirectTo: 'trades' },

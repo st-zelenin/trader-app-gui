@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+
 import { SortingService } from './sorting.service';
 
 describe('SortingService', () => {

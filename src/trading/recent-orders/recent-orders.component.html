@@ -1,11 +1,6 @@
 <h1 mat-dialog-title>
   Recent {{ LIMIT }} filled
-  <span
-    class="side"
-    [class.sell]="data.side === 'sell'"
-    [class.buy]="data.side === 'buy'"
-    >{{ data.side }}</span
-  >
+  <span class="side" [class.sell]="data.side === 'sell'" [class.buy]="data.side === 'buy'">{{ data.side }}</span>
   orders:
 </h1>
 <div mat-dialog-content>

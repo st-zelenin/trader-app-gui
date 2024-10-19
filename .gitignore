@@ -47,3 +47,5 @@ Thumbs.db
 /src/environments/config.ts
 .prettierignore
 .angular/
+.nx/cache
+.nx/workspace-data

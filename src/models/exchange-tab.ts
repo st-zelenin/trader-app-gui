@@ -1,9 +1,9 @@
-import { EXCHANGE, EXCHANGE_URL_PARAMS } from '../constants';
+import { EXCHANGE, ExchangeUrlParams } from '../constants';
 
 export interface ExchangeTab {
   id: EXCHANGE;
   label: string;
-  urlParam: EXCHANGE_URL_PARAMS;
+  urlParam: ExchangeUrlParams;
   baseCurrencies: string[];
   activeBaseCurrency: string;
 }

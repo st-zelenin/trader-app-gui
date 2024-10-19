@@ -1,16 +1,15 @@
-import { createReducer, on } from '@ngrx/store';
+import { Action, ActionReducer, createReducer, on } from '@ngrx/store';
+
+import { ExchangeActions } from './actions';
 import { EXCHANGE } from '../../constants';
 import { ExchangeState } from '../models';
-import { ExchangeActions } from './actions';
 
-const log = (exchange: EXCHANGE, action: string, payload: unknown) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const log = (exchange: EXCHANGE, action: string, payload: unknown): void => {
   // console.log(exchange, action, payload);
 };
 
-export const createExchangeReducer = (
-  exchange: EXCHANGE,
-  actions: ExchangeActions
-) => {
+export const createExchangeReducer = (exchange: EXCHANGE, actions: ExchangeActions): ActionReducer<ExchangeState, Action> => {
   const initialState: ExchangeState = {
     tickers: {},
     analytics: {},

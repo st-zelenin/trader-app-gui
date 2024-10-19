@@ -10,37 +10,22 @@
     <mat-form-field>
       <mat-label>buy multiplicator</mat-label>
       <mat-select [formControl]="form.controls.buyMultiplicator">
-        <mat-option
-          *ngFor="let multiplicator of multiplicators"
-          [value]="multiplicator"
-        >
+        <mat-option *ngFor="let multiplicator of multiplicators" [value]="multiplicator">
           {{ multiplicator.text }}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
       <mat-label>order default total amount</mat-label>
-      <input
-        matInput
-        type="number"
-        [formControl]="form.controls.defaultTotalAmount"
-      />
+      <input matInput type="number" [formControl]="form.controls.defaultTotalAmount" />
     </mat-form-field>
     <mat-form-field>
       <mat-label>default sell volume divider</mat-label>
-      <input
-        matInput
-        type="number"
-        [formControl]="form.controls.defaultSellVolumeDivider"
-      />
+      <input matInput type="number" [formControl]="form.controls.defaultSellVolumeDivider" />
     </mat-form-field>
     <mat-form-field>
       <mat-label>default sell price multiplicator</mat-label>
-      <input
-        matInput
-        type="number"
-        [formControl]="form.controls.defaultSellPriceMultiplicator"
-      />
+      <input matInput type="number" [formControl]="form.controls.defaultSellPriceMultiplicator" />
     </mat-form-field>
   </form>
 </div>

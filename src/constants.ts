@@ -27,7 +27,7 @@ export enum EXCHANGE {
   BINANCE = 'BINANCE',
 }
 
-export enum EXCHANGE_URL_PARAMS {
+export enum ExchangeUrlParams {
   GATE_IO = 'gate-io',
   CRYPTO_COM = 'crypto-com',
   COINBASE = 'coinbase',
@@ -35,7 +35,7 @@ export enum EXCHANGE_URL_PARAMS {
   BINANCE = 'binance',
 }
 
-export enum SORTING_TYPES {
+export enum SortingTypes {
   NONE = 'NONE',
   UPCOMING_SELL = 'UPCOMING_SELL',
   UPCOMING_BUY = 'UPCOMING_BUY',

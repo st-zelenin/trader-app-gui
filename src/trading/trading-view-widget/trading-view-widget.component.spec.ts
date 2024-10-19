@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { TradingViewWidgetComponent } from './trading-view-widget.component';
 
 describe('TradingViewWidgetComponent', () => {

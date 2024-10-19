@@ -1,4 +1,4 @@
-export enum PRICE_SOURCE {
+export enum PriceSource {
   CURRENT_PRICE = 'current',
   RECENT_SELL = 'recent',
   SELECTED_ORDERS = 'selected',
