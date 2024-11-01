@@ -12,7 +12,6 @@ export class FilteringService {
 
   public unregister(card: Filterable): void {
     const index = this.cards.indexOf(card);
-    console.log('index', index);
     if (index > -1) {
       this.cards.splice(index, 1);
     }

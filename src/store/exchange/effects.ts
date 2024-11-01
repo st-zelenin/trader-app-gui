@@ -29,8 +29,7 @@ export class ExchangeEffects {
         this.exchangeService.getTickers().pipe(
           map((tickers) => this.exchangeActions.setTickers({ tickers })),
           catchError((err) => {
-            this.showError('failed to get tickers');
-            console.log(err);
+            this.showError(err, 'failed to get tickers');
             return of(this.exchangeActions.getTickersError());
           })
         )
@@ -45,8 +44,7 @@ export class ExchangeEffects {
         this.exchangeService.getAverages().pipe(
           map((analytics) => this.exchangeActions.setAllAnalytics({ analytics })),
           catchError((err) => {
-            this.showError('failed to get analytics');
-            console.log(err);
+            this.showError(err, 'failed to get analytics');
             return of(this.exchangeActions.getAllAnalyticsError());
           })
         )
@@ -61,8 +59,7 @@ export class ExchangeEffects {
         this.exchangeService.getAllOpenOrders().pipe(
           map((openOrders) => this.exchangeActions.setAllOpenOrders({ openOrders })),
           catchError((err) => {
-            this.showError('failed to get open orders');
-            console.log(err);
+            this.showError(err, 'failed to get open orders');
             return of(this.exchangeActions.getAllOpenOrdersError());
           })
         )
@@ -77,8 +74,7 @@ export class ExchangeEffects {
         this.exchangeService.getBalances().pipe(
           map((balances) => this.exchangeActions.setBalances({ balances })),
           catchError((err) => {
-            this.showError('failed to get balances');
-            console.log(err);
+            this.showError(err, 'failed to get balances');
             return of(this.exchangeActions.getBalancesError());
           })
         )
@@ -93,8 +89,7 @@ export class ExchangeEffects {
         this.exchangeService.getCurrencyPairs().pipe(
           map((currencyPairs) => this.exchangeActions.setCurrencyPairs({ currencyPairs })),
           catchError((err) => {
-            this.showError('failed to get currency pairs');
-            console.log(err);
+            this.showError(err, 'failed to get currency pairs');
             return of(this.exchangeActions.getCurrencyPairsError());
           })
         )
@@ -109,8 +104,7 @@ export class ExchangeEffects {
         this.exchangeService.getRecentBuyAverages().pipe(
           map((recentBuyAverages) => this.exchangeActions.setRecentBuyAverages({ recentBuyAverages })),
           catchError((err) => {
-            this.showError('failed to get recent buy averages');
-            console.log(err);
+            this.showError(err, 'failed to get recent buy averages');
             return of(this.exchangeActions.getRecentBuyAveragesError());
           })
         )
@@ -125,8 +119,7 @@ export class ExchangeEffects {
         this.exchangeService.getProducts().pipe(
           map((products) => this.exchangeActions.setProducts({ products })),
           catchError((err) => {
-            this.showError('failed to get products');
-            console.log(err);
+            this.showError(err, 'failed to get products');
             return of(this.exchangeActions.getProductsError());
           })
         )
@@ -134,7 +127,11 @@ export class ExchangeEffects {
     )
   );
 
-  private showError(text: string): void {
+  private showError(err: any, alternativeText: string): void {
+    console.log(err);
+
+    const text = typeof err.error === 'string' ? err.error : alternativeText;
+
     this.snackBar.open(text, 'x', {
       duration: 60 * 1000,
       horizontalPosition: 'right',
