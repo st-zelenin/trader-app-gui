@@ -40,7 +40,6 @@ import { TradingViewWidgetComponent } from '../trading-view-widget/trading-view-
 
 @Component({
   selector: 'app-pair-card-content',
-  standalone: true,
   imports: [
     CommonModule,
     DecimalWithAutoDigitsInfoPipe,

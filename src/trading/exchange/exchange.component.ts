@@ -30,7 +30,6 @@ import { SortingService } from '../sorting.service';
 
 @Component({
   selector: 'app-exchange',
-  standalone: true,
   imports: [CommonModule, MatDialogModule, DragDropModule, ExchangeActionsComponent, PairCardComponent],
   templateUrl: './exchange.component.html',
   styleUrls: ['./exchange.component.scss'],

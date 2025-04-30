@@ -24,7 +24,6 @@ interface SettingsForm {
 
 @Component({
   selector: 'app-settings',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

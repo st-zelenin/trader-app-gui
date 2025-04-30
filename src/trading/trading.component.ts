@@ -14,7 +14,6 @@ import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-trading',
-  standalone: true,
   imports: [CommonModule, MatTabsModule, ExchangeComponent],
   templateUrl: './trading.component.html',
   styleUrls: ['./trading.component.scss'],
@@ -35,8 +34,8 @@ export class TradingComponent implements OnInit {
       id: EXCHANGE.BINANCE,
       label: 'Binance',
       urlParam: ExchangeUrlParams.BINANCE,
-      baseCurrencies: ['USDT'],
-      activeBaseCurrency: 'USDT',
+      baseCurrencies: ['USDT', 'USDC'],
+      activeBaseCurrency: 'USDC',
     },
     {
       id: EXCHANGE.CRYPTO_COM,

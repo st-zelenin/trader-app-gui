@@ -28,7 +28,6 @@ import { PairCardContentComponent } from '../pair-card-content/pair-card-content
 
 @Component({
   selector: 'app-pair-card',
-  standalone: true,
   imports: [
     CommonModule,
     DecimalWithAutoDigitsInfoPipe,

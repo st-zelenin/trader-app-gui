@@ -20,7 +20,6 @@ export interface RecentOrdersData {
 
 @Component({
   selector: 'app-recent-orders',
-  standalone: true,
   imports: [CommonModule, MatTableModule, MatButtonModule, MatDialogModule],
   templateUrl: './recent-orders.component.html',
   styleUrls: ['./recent-orders.component.scss'],

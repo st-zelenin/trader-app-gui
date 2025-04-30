@@ -26,7 +26,6 @@ import { HistoryService } from '../history.service';
 
 @Component({
   selector: 'app-trade-history',
-  standalone: true,
   imports: [
     CommonModule,
     DecimalWithAutoDigitsInfoPipe,

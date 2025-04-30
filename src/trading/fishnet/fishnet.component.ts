@@ -19,7 +19,6 @@ interface FishnetForm {
 
 @Component({
   selector: 'app-fishnet',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatTooltipModule, MatIconModule, MatButtonModule, MatInputModule],
   templateUrl: './fishnet.component.html',
   styleUrls: ['./fishnet.component.scss'],

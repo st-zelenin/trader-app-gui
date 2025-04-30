@@ -30,7 +30,6 @@ import { AppStoreFacade } from '../../store/facade';
 
 @Component({
   selector: 'app-exchange-actions',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -61,7 +60,7 @@ export class ExchangeActionsComponent implements OnInit {
   @Output() public readonly refresh = new EventEmitter<void>();
   @Output() public readonly filter = new EventEmitter<FilteringType>();
   @Output() public readonly sort = new EventEmitter<SortingTypes>();
-  @Output() public readonly search = new EventEmitter<string>();
+  @Output() public readonly searchPairs = new EventEmitter<string>();
   @Output() public readonly showRecent = new EventEmitter<OrderSide>();
   @Output() public readonly showSetting = new EventEmitter<void>();
 
@@ -89,7 +88,7 @@ export class ExchangeActionsComponent implements OnInit {
       .subscribe((currency) => currency && this.baseCurrencyChange.emit(currency));
 
     this.pairSearchControl.valueChanges.pipe(startWith(''), debounceTime(500), takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
-      this.search.emit((value || '').toUpperCase());
+      this.searchPairs.emit((value || '').toUpperCase());
     });
 
     this.filteredOptions = this.currencyPairControl.valueChanges.pipe(

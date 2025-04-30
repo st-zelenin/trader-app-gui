@@ -69,6 +69,8 @@ export class CalculationsService {
 
   public getBaseCurrency(currencyPair: string, exchange: EXCHANGE): string {
     // TODO: remove this dirty hack
-    return exchange === EXCHANGE.BYBIT || exchange === EXCHANGE.BINANCE ? currencyPair.replace('USDT', '') : currencyPair.split(/_|-/)[0];
+    return exchange === EXCHANGE.BYBIT || exchange === EXCHANGE.BINANCE
+      ? currencyPair.replace('USDT', '').replace('USDC', '')
+      : currencyPair.split(/_|-/)[0];
   }
 }

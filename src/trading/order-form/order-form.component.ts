@@ -40,7 +40,6 @@ interface OrderForm {
 
 @Component({
   selector: 'app-order-form',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
