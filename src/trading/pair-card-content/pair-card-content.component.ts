@@ -1,5 +1,5 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -40,7 +40,9 @@ import { TradingViewWidgetComponent } from '../trading-view-widget/trading-view-
 @Component({
   selector: 'app-pair-card-content',
   imports: [
-    CommonModule,
+    AsyncPipe,
+    DatePipe,
+    DecimalPipe,
     DecimalWithAutoDigitsInfoPipe,
     ClipboardModule,
     MatTableModule,

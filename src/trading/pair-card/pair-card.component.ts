@@ -1,5 +1,4 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, DestroyRef, HostBinding, OnDestroy, OnInit, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -18,7 +17,6 @@ import { PairCardContentComponent } from '../pair-card-content/pair-card-content
 @Component({
   selector: 'app-pair-card',
   imports: [
-    CommonModule,
     DecimalWithAutoDigitsInfoPipe,
     MatCardModule,
     MatIconModule,

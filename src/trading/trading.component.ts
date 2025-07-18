@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
@@ -14,7 +13,7 @@ import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-trading',
-  imports: [CommonModule, MatTabsModule, ExchangeComponent],
+  imports: [MatTabsModule, ExchangeComponent],
   templateUrl: './trading.component.html',
   styleUrls: ['./trading.component.scss'],
 })

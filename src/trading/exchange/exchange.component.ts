@@ -1,5 +1,5 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, DestroyRef, OnInit, effect, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -30,7 +30,7 @@ import { SortingService } from '../sorting.service';
 
 @Component({
   selector: 'app-exchange',
-  imports: [CommonModule, MatDialogModule, DragDropModule, ExchangeActionsComponent, PairCardComponent],
+  imports: [AsyncPipe, MatDialogModule, DragDropModule, ExchangeActionsComponent, PairCardComponent],
   templateUrl: './exchange.component.html',
   styleUrls: ['./exchange.component.scss'],
 })

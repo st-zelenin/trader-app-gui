@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -21,7 +21,8 @@ import { AppStoreFacade } from '../../store/facade';
 @Component({
   selector: 'app-exchange-actions',
   imports: [
-    CommonModule,
+    AsyncPipe,
+    DecimalPipe,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,

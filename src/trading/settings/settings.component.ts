@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -24,16 +23,7 @@ interface SettingsForm {
 
 @Component({
   selector: 'app-settings',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatInputModule,
-    MatDialogModule,
-  ],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatIconModule, MatSelectModule, MatButtonModule, MatInputModule, MatDialogModule],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
