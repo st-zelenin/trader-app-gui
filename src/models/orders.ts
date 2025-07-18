@@ -1,3 +1,5 @@
+import { Average } from './trade-averages';
+
 export type OrderSide = 'buy' | 'sell';
 
 export interface Order {
@@ -17,9 +19,8 @@ export interface OrderRow extends Order {
 }
 
 export interface SelectedOrdersInfo {
-  amount: number;
-  total: number;
-  price: number;
+  buy: Average;
+  sell: Average;
 }
 
 export interface NewOrder extends OrderFormValues {

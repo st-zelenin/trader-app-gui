@@ -73,9 +73,7 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
-  @Input() public set balance(balance: Balance | null) {
-    this.totalAmount = balance ? balance.available + balance.locked : 0;
-  }
+  @Input() public balance: Balance | null = null;
 
   @Input() public set product(product: Product | null) {
     this.productDetails = product;
@@ -97,7 +95,6 @@ export class OrderFormComponent implements OnInit {
 
   @Output() public readonly create = new EventEmitter<OrderFormValues>();
 
-  public totalAmount = 0;
   public readonly orderForm: FormGroup<OrderForm>;
   public pricePrecision = 'precision not specified';
   public minQuantityText = 'min. quantity not limited';
@@ -253,13 +250,18 @@ export class OrderFormComponent implements OnInit {
   }
 
   public setOneThird(): void {
-    if (this.totalAmount > 0) {
+    const totalAmount = (this.averages?.buy.volume || 0) - (this.averages?.sell.volume || 0);
+
+    if (totalAmount > 0) {
       if (this.orderForm.controls.priceSource.value === PriceSource.RECENT_SELL && this.recent) {
         this.orderForm.controls.amount.setValue(this.recent.volume / 3);
       } else if (this.orderForm.controls.priceSource.value === PriceSource.SELECTED_ORDERS && this.selectedInfo) {
-        this.orderForm.controls.amount.setValue(this.selectedInfo.amount / 3);
+        const amount = this.selectedInfo.buy.volume - this.selectedInfo.sell.volume;
+        if (amount > 0) {
+          this.orderForm.controls.amount.setValue(amount / 3);
+        }
       } else {
-        this.orderForm.controls.amount.setValue(this.totalAmount / 3);
+        this.orderForm.controls.amount.setValue(totalAmount / 3);
       }
     }
   }
@@ -274,49 +276,16 @@ export class OrderFormComponent implements OnInit {
       return;
     }
 
-    console.log(this.averages);
-    if (!this.averages) {
-      return;
+    if (this.selectedInfo?.buy.price) {
+      if (this.orderForm.controls.side.value === 'sell') {
+        return this.calculateRecommendedSell(this.selectedInfo.buy, this.selectedInfo.sell);
+      }
     }
 
-    if (this.orderForm.controls.side.value === 'sell') {
-      let done = false;
-
-      let nextSellPrice = this.averages.buy.price * 1.5;
-      let nextSellAmount = this.averages.buy.volume / 3;
-      let toBeSold = nextSellAmount;
-      let remainingOversoldAmount = this.averages.sell.volume || 0;
-      const MIN_ORDER_AMOUNT = 4;
-
-      do {
-        const rest = nextSellAmount - remainingOversoldAmount;
-
-        if (nextSellAmount > remainingOversoldAmount && rest * nextSellPrice > MIN_ORDER_AMOUNT) {
-          done = true;
-          console.log('sell:', {
-            price: nextSellPrice,
-            amount: nextSellAmount,
-            remainingOversoldAmount,
-            rest,
-          });
-        } else {
-          console.log('skipped:', {
-            price: nextSellPrice,
-            amount: nextSellAmount,
-            remainingOversoldAmount,
-          });
-
-          remainingOversoldAmount -= nextSellAmount;
-          nextSellPrice *= 1.5;
-          nextSellAmount = (this.averages.buy.volume - toBeSold) / 3;
-          toBeSold += nextSellAmount;
-        }
-      } while (!done);
-
-      this.orderForm.patchValue({
-        price: nextSellPrice,
-        amount: nextSellAmount - remainingOversoldAmount,
-      });
+    if (this.averages) {
+      if (this.orderForm.controls.side.value === 'sell') {
+        return this.calculateRecommendedSell(this.averages.buy, this.averages.sell);
+      }
     }
   }
 
@@ -387,7 +356,47 @@ export class OrderFormComponent implements OnInit {
 
   private setSelectedBuyPrice(): void {
     if (this.selectedInfo) {
-      this.orderForm.controls.price.setValue(this.selectedInfo.price);
+      this.orderForm.controls.price.setValue(this.selectedInfo.buy.price);
     }
+  }
+
+  private calculateRecommendedSell(buy: Average, sell: Average): void {
+    let done = false;
+
+    let nextSellPrice = buy.price * 1.5;
+    let nextSellAmount = buy.volume / 3;
+    let toBeSold = nextSellAmount;
+    let remainingOversoldAmount = sell.volume || 0;
+    const MIN_ORDER_AMOUNT = 10;
+
+    do {
+      const rest = nextSellAmount - remainingOversoldAmount;
+
+      if (nextSellAmount > remainingOversoldAmount && rest * nextSellPrice > MIN_ORDER_AMOUNT) {
+        done = true;
+        console.log('sell:', {
+          price: nextSellPrice,
+          amount: nextSellAmount,
+          remainingOversoldAmount,
+          rest,
+        });
+      } else {
+        console.log('skipped:', {
+          price: nextSellPrice,
+          amount: nextSellAmount,
+          remainingOversoldAmount,
+        });
+
+        remainingOversoldAmount -= nextSellAmount;
+        nextSellPrice *= 1.5;
+        nextSellAmount = (buy.volume - toBeSold) / 3;
+        toBeSold += nextSellAmount;
+      }
+    } while (!done);
+
+    this.orderForm.patchValue({
+      price: nextSellPrice,
+      amount: nextSellAmount - remainingOversoldAmount,
+    });
   }
 }

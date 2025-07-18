@@ -115,9 +115,17 @@
     <mat-panel-title>
       <div class="history-panel-header">
         <div>Trade History</div>
-        <div *ngIf="selectedOrdersInfo.price" class="selected-trades">
-          selected: {{ selectedOrdersInfo.price }} / {{ selectedOrdersInfo.amount }} / {{ selectedOrdersInfo.total }}
-        </div>
+        @if (selectedOrdersInfo.buy.price || selectedOrdersInfo.sell.price) {
+          <div class="selected">
+            <div>selected:</div>
+            <div>
+              <div>buy: {{ selectedOrdersInfo.buy.price }} / {{ selectedOrdersInfo.buy.volume }} / {{ selectedOrdersInfo.buy.money }}</div>
+              <div>
+                sell: {{ selectedOrdersInfo.sell.price }} / {{ selectedOrdersInfo.sell.volume }} / {{ selectedOrdersInfo.sell.money }}
+              </div>
+            </div>
+          </div>
+        }
       </div>
     </mat-panel-title>
   </mat-expansion-panel-header>

@@ -121,21 +121,54 @@ export class TradeHistoryComponent implements OnInit {
     this.orders = this.allOrders;
   }
 
-  public toggleRowSelection(row: OrderRow): void {
+  public toggleRowSelection(row: OrderRow, event?: MouseEvent): void {
     row.selected = !row.selected;
 
-    const info: SelectedOrdersInfo = this.orders.reduce(
-      (res, order) => {
-        if (order.selected) {
-          res.amount += order.amount;
-          res.total += order.amount * order.price;
-          res.price = res.total / res.amount;
+    const isShift = event?.shiftKey || false;
+
+    if (isShift) {
+      let selectionStart = -1;
+      let selectionEnd = -1;
+      const isSelecting = row.selected;
+      this.orders.forEach((orderRow, i) => {
+        if (orderRow.selected === true && orderRow !== row && selectionStart === -1) {
+          selectionStart = i;
         }
 
-        return res;
-      },
-      { amount: 0, total: 0, price: 0 }
-    );
+        if (orderRow === row) {
+          selectionEnd = i;
+        }
+      });
+
+      let min = Math.min(selectionStart, selectionEnd);
+      if (min === -1) {
+        min = 0;
+      }
+      const max = Math.max(selectionStart, selectionEnd);
+
+      console.log('min', min, 'max', max, isSelecting);
+
+      if (max !== -1) {
+        this.orders.forEach((orderRow, i) => {
+          if (i >= min && i <= max) {
+            orderRow.selected = isSelecting;
+          }
+        });
+      }
+    }
+
+    const info: SelectedOrdersInfo = { buy: { money: 0, volume: 0, price: 0 }, sell: { money: 0, volume: 0, price: 0 } };
+    this.orders.reduce((res, order) => {
+      if (order.selected) {
+        const target = order.side === 'buy' ? res.buy : res.sell;
+
+        target.volume += order.amount;
+        target.money += order.amount * order.price;
+        target.price = target.money / target.volume;
+      }
+
+      return res;
+    }, info);
 
     this.selectedOrdersInfoChange.emit(info);
   }
@@ -203,6 +236,7 @@ export class TradeHistoryComponent implements OnInit {
 
     // eslint-disable-next-line no-console
     console.table(calculations);
+    console.log(curr);
 
     if (curr && curr.side === 'buy') {
       this.sellForBtc.next({ amount: curr.amount, price: curr.price });

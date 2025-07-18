@@ -102,5 +102,5 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row class="row" *matRowDef="let row; columns: displayedColumns" (click)="toggleRowSelection(row)"></tr>
+  <tr mat-row class="row" *matRowDef="let row; columns: displayedColumns" (click)="toggleRowSelection(row, $event)"></tr>
 </table>

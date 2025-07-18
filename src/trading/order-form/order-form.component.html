@@ -69,9 +69,7 @@
       <mat-button-toggle-group [formControl]="orderForm.controls.priceSource">
         <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE">current price</mat-button-toggle>
         <mat-button-toggle [value]="priceSourceTypes.RECENT_SELL" *ngIf="recent && recent.price > 0">recent</mat-button-toggle>
-        <mat-button-toggle [value]="priceSourceTypes.SELECTED_ORDERS" *ngIf="selectedInfo && selectedInfo.price > 0"
-          >selected</mat-button-toggle
-        >
+        <mat-button-toggle [value]="priceSourceTypes.SELECTED_ORDERS" *ngIf="selectedInfo?.buy?.price">selected</mat-button-toggle>
         <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY">avg. buy</mat-button-toggle>
         <mat-button-toggle [value]="priceSourceTypes.AVERAGE_SELL">avg. sell</mat-button-toggle>
       </mat-button-toggle-group>

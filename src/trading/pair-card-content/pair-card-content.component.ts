@@ -82,11 +82,7 @@ export class PairCardContentComponent implements OnInit, AfterViewInit {
 
   public sellForBtc?: { amount: number; price: number };
 
-  public selectedOrdersInfo: SelectedOrdersInfo = {
-    price: 0,
-    amount: 0,
-    total: 0,
-  };
+  public selectedOrdersInfo: SelectedOrdersInfo = { buy: { money: 0, volume: 0, price: 0 }, sell: { money: 0, volume: 0, price: 0 } };
 
   public isOpened = false;
   private closeTimeout?: any;

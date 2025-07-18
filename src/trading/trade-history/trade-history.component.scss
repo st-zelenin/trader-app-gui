@@ -35,6 +35,8 @@ table {
 }
 
 .row {
+  user-select: none;
+
   &:hover {
     background: whitesmoke;
   }

@@ -130,7 +130,7 @@ export class ExchangeEffects {
   private showError(err: any, alternativeText: string): void {
     console.log(err);
 
-    const text = typeof err.error === 'string' ? err.error : alternativeText;
+    const text = err.error ? JSON.stringify(err.error).substring(0, 300) : alternativeText;
 
     this.snackBar.open(text, 'x', {
       duration: 60 * 1000,
