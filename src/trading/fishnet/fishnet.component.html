@@ -12,7 +12,7 @@
       <mat-icon class="price-icon">remove</mat-icon>
     </button>
     <input matInput placeholder="" [formControl]="form.controls.price" />
-    <mat-hint (click)="setCurrentPrice()" class="clickable">{{ ticker?.last }}</mat-hint>
+    <mat-hint (click)="setCurrentPrice()" class="clickable">{{ ticker()?.last }}</mat-hint>
   </mat-form-field>
 
   <mat-form-field>

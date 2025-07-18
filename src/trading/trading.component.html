@@ -5,17 +5,20 @@
   mat-stretch-tabs="false"
   class="exchange-tabs"
 >
-  <mat-tab *ngFor="let tab of exchangeTabs" [label]="tab.label">
-    <ng-template matTabContent>
-      <app-exchange
-        [exchange]="tab.id"
-        [baseCurrencies]="tab.baseCurrencies"
-        [(baseCurrency)]="tab.activeBaseCurrency"
-        (pairAdded)="addPair($event)"
-        (pairRemoved)="removePair($event)"
-        (pairsOrdered)="orderPairs($event)"
-      >
-      </app-exchange>
-    </ng-template>
-  </mat-tab>
+  @for (tab of exchangeTabs; track tab) {
+    <mat-tab [label]="tab.label">
+      <ng-template matTabContent>
+        <app-exchange
+          [exchange]="tab.id"
+          [baseCurrencies]="tab.baseCurrencies"
+          [baseCurrency]="tab.activeBaseCurrency"
+          (baseCurrencyChange)="tab.activeBaseCurrency = $event"
+          (pairAdded)="addPair($event)"
+          (pairRemoved)="removePair($event)"
+          (pairsOrdered)="orderPairs($event)"
+        >
+        </app-exchange>
+      </ng-template>
+    </mat-tab>
+  }
 </mat-tab-group>

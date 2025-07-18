@@ -1,16 +1,6 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  DestroyRef,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject,
-} from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -27,7 +17,7 @@ import { HistoryService } from '../history.service';
 @Component({
   selector: 'app-trade-history',
   imports: [
-    CommonModule,
+    DatePipe,
     DecimalWithAutoDigitsInfoPipe,
     ClipboardModule,
     MatIconModule,
@@ -40,13 +30,13 @@ import { HistoryService } from '../history.service';
   styleUrls: ['./trade-history.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TradeHistoryComponent implements OnInit {
-  @Input() public pair!: CryptoPair;
-  @Input() public exchange!: EXCHANGE;
-  @Input() public selectedOrdersInfo!: SelectedOrdersInfo;
+export class TradeHistoryComponent {
+  public readonly pair = input.required<CryptoPair>();
+  public readonly exchange = input.required<EXCHANGE>();
+  public readonly selectedOrdersInfo = input.required<SelectedOrdersInfo>();
 
-  @Output() public readonly selectedOrdersInfoChange = new EventEmitter<SelectedOrdersInfo>();
-  @Output() public readonly sellForBtc = new EventEmitter<{ amount: number; price: number }>();
+  public readonly selectedOrdersInfoChange = output<SelectedOrdersInfo>();
+  public readonly sellForBtc = output<{ amount: number; price: number }>();
 
   public orders: OrderRow[] = [];
   public displayedColumns: string[] = ['checkbox', 'ID', 'update_time_ms', 'side', 'price', 'amount', 'total'];
@@ -64,49 +54,15 @@ export class TradeHistoryComponent implements OnInit {
   private readonly cd = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
 
-  public ngOnInit(): void {
-    this.historyService
-      .getHistory(this.exchange, this.pair.symbol)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        map((orders) => orders.map<OrderRow>((order) => ({ ...order, selected: false })))
-      )
-      .subscribe((orders) => {
-        // looks like GATE bug:
-        // completed market/buy orders still have 'cancelled' status
-        // TODO: move this logic to BE?
-        this.allOrders = orders.filter(({ status, type }) => (type === 'market' ? true : status !== 'cancelled'));
-        this.orders = this.allOrders;
+  constructor() {
+    effect(() => {
+      const exchange = this.exchange();
+      const pair = this.pair();
 
-        this.buyVolume = 0;
-        this.sellVolume = 0;
-
-        this.buyMoney = 0;
-        this.sellMoney = 0;
-
-        let minBuy = 0;
-
-        for (const order of this.orders) {
-          this.applyDenomination(order);
-
-          if (order.side === 'buy') {
-            this.buyVolume += order.amount;
-            this.buyMoney += order.amount * order.price;
-
-            minBuy = order.price < minBuy || minBuy === 0 ? order.price : minBuy;
-          } else {
-            this.sellVolume += order.amount;
-            this.sellMoney += order.amount * order.price;
-          }
-        }
-
-        this.buyPrice = this.buyVolume > 0 ? this.buyMoney / this.buyVolume : 0;
-        this.sellPrice = this.sellVolume > 0 ? this.sellMoney / this.sellVolume : 0;
-
-        this.calcBtc();
-
-        this.cd.markForCheck();
-      });
+      if (exchange && pair) {
+        this.getHistory(exchange, pair);
+      }
+    });
   }
 
   public filterBuy(): void {
@@ -177,7 +133,7 @@ export class TradeHistoryComponent implements OnInit {
     // 12/16/2021 - BTT denomination
     if (
       order.currencyPair === 'BTT_USDT' &&
-      this.exchange === EXCHANGE.GATE_IO &&
+      this.exchange() === EXCHANGE.GATE_IO &&
       new Date(2021, 11, 16) > new Date(order.updateTimestamp)
     ) {
       order.price /= 1000;
@@ -185,8 +141,53 @@ export class TradeHistoryComponent implements OnInit {
     }
   }
 
-  private calcBtc(): void {
-    if (!this.orders.length || !this.pair.symbol.endsWith('_BTC')) {
+  private getHistory(exchange: EXCHANGE, pair: CryptoPair): void {
+    this.historyService
+      .getHistory(exchange, pair.symbol)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        map((orders) => orders.map<OrderRow>((order) => ({ ...order, selected: false })))
+      )
+      .subscribe((orders) => {
+        // looks like GATE bug:
+        // completed market/buy orders still have 'cancelled' status
+        // TODO: move this logic to BE?
+        this.allOrders = orders.filter(({ status, type }) => (type === 'market' ? true : status !== 'cancelled'));
+        this.orders = this.allOrders;
+
+        this.buyVolume = 0;
+        this.sellVolume = 0;
+
+        this.buyMoney = 0;
+        this.sellMoney = 0;
+
+        let minBuy = 0;
+
+        for (const order of this.orders) {
+          this.applyDenomination(order);
+
+          if (order.side === 'buy') {
+            this.buyVolume += order.amount;
+            this.buyMoney += order.amount * order.price;
+
+            minBuy = order.price < minBuy || minBuy === 0 ? order.price : minBuy;
+          } else {
+            this.sellVolume += order.amount;
+            this.sellMoney += order.amount * order.price;
+          }
+        }
+
+        this.buyPrice = this.buyVolume > 0 ? this.buyMoney / this.buyVolume : 0;
+        this.sellPrice = this.sellVolume > 0 ? this.sellMoney / this.sellVolume : 0;
+
+        this.calcBtc(pair);
+
+        this.cd.markForCheck();
+      });
+  }
+
+  private calcBtc(pair: CryptoPair): void {
+    if (!this.orders.length || !pair.symbol.endsWith('_BTC')) {
       return;
     }
 
@@ -239,7 +240,7 @@ export class TradeHistoryComponent implements OnInit {
     console.log(curr);
 
     if (curr && curr.side === 'buy') {
-      this.sellForBtc.next({ amount: curr.amount, price: curr.price });
+      this.sellForBtc.emit({ amount: curr.amount, price: curr.price });
     }
   }
 

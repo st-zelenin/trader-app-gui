@@ -5,7 +5,7 @@
         <mat-panel-title>
           <img class="logo" [src]="logoSrc" loading="lazy" />
           <div class="coin-info">
-            <strong>{{ pair.symbol }}</strong> /
+            <strong>{{ pair().symbol }}</strong> /
             <span matTooltip="current price">{{ ticker?.last | decimalWithAutoDigitsInfo }}</span>
             <span class="change-percentage sup" [class.down]="priceDown" matTooltip="change percentage">{{
               ticker?.change_percentage | number: '1.0-2'
@@ -18,7 +18,9 @@
         </mat-panel-title>
 
         <div class="right-group">
-          <mat-icon *ngIf="attentionMessage" class="attention" [matTooltip]="attentionMessage">gpp_maybe</mat-icon>
+          @if (attentionMessage) {
+            <mat-icon class="attention" [matTooltip]="attentionMessage">gpp_maybe</mat-icon>
+          }
           <mat-icon class="material-icons-outlined" [matTooltip]="analyticsMessage">analytics</mat-icon>
           <span class="estimated-total sup" matTooltip="estimated total">{{ estimatedTotal | number: '1.0-2' }}</span>
           <span class="open-orders sup">
@@ -30,17 +32,18 @@
           <mat-icon class="expand" matTooltip="expand" (click)="toggleExpand($event)">open_in_full</mat-icon>
         </div>
       </mat-expansion-panel-header>
-      <app-pair-card-content
-        *ngIf="isOpened"
-        [pair]="pair"
-        [ticker]="ticker"
-        [averages]="averages"
-        [recent]="recent"
-        [openOrders]="openOrders"
-        [exchange]="exchange"
-        [isExpanded]="isExpanded"
-      >
-      </app-pair-card-content>
+      @if (isOpened) {
+        <app-pair-card-content
+          [pair]="pair()"
+          [ticker]="ticker"
+          [averages]="averages"
+          [recent]="recent"
+          [openOrders]="openOrders"
+          [exchange]="exchange()"
+          [isExpanded]="isExpanded"
+        >
+        </app-pair-card-content>
+      }
     </mat-expansion-panel>
   </mat-card-content>
 </mat-card>

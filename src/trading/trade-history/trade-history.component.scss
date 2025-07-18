@@ -1,4 +1,4 @@
-@import '../../variables.scss';
+@use '../../variables.scss' as vrs;
 
 table {
   width: 100%;
@@ -22,10 +22,10 @@ table {
 }
 
 .side {
-  color: $buy-color;
+  color: vrs.$buy-color;
 
   &.sell {
-    color: $sell-color;
+    color: vrs.$sell-color;
     font-weight: 600;
   }
 }

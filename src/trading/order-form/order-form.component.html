@@ -8,29 +8,25 @@
       </mat-radio-group>
     </div>
     <div class="group">
-      <button
-        mat-icon-button
-        type="button"
-        (click)="getRecommendedPriceAndAmount()"
-        matTooltip="recommended price/amount"
-        *ngIf="orderForm.controls.side.value === 'sell'"
-      >
-        <mat-icon matSuffix>assistant</mat-icon>
-      </button>
+      @if (orderForm.controls.side.value === 'sell') {
+        <button mat-icon-button type="button" (click)="getRecommendedPriceAndAmount()" matTooltip="recommended price/amount">
+          <mat-icon matSuffix>assistant</mat-icon>
+        </button>
+      }
       <mat-checkbox color="warn" [formControl]="orderForm.controls.external"> external </mat-checkbox>
-      <mat-checkbox color="warn" [formControl]="orderForm.controls.market" *ngIf="!orderForm.controls.external.value">
-        by market
-      </mat-checkbox>
+      @if (!orderForm.controls.external.value) {
+        <mat-checkbox color="warn" [formControl]="orderForm.controls.market"> by market </mat-checkbox>
+      }
     </div>
   </div>
   <div class="form-row">
     <mat-form-field appearance="outline">
       <mat-label>Price</mat-label>
-      <button matPrefix mat-icon-button type="button" (click)="decreasePrice($event)" matTooltip="- {{ buyMultiplicator?.text || '0%' }}">
+      <button matPrefix mat-icon-button type="button" (click)="decreasePrice($event)" matTooltip="- {{ buyMultiplicator()?.text || '0%' }}">
         -
       </button>
       <input matInput placeholder="" [formControl]="orderForm.controls.price" />
-      <button matSuffix mat-icon-button type="button" (click)="increasePrice($event)" matTooltip="+ {{ buyMultiplicator?.text || '0%' }}">
+      <button matSuffix mat-icon-button type="button" (click)="increasePrice($event)" matTooltip="+ {{ buyMultiplicator()?.text || '0%' }}">
         +
       </button>
       <mat-hint>{{ pricePrecision }}</mat-hint>
@@ -49,7 +45,7 @@
     </mat-form-field>
   </div>
   <div class="form-row">
-    <ng-container *ngIf="orderForm.controls.side.value === 'buy'; else sell">
+    @if (orderForm.controls.side.value === 'buy') {
       <mat-button-toggle-group [formControl]="orderForm.controls.priceSource">
         <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE">current price</mat-button-toggle>
         <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY">avg. buy</mat-button-toggle>
@@ -57,26 +53,32 @@
 
       <mat-form-field class="price-change-percentage">
         <mat-select [formControl]="orderForm.controls.pricePercentage">
-          <mat-option *ngFor="let percentage of pricePercentage" [value]="percentage">{{ percentage }}%</mat-option>
+          @for (percentage of pricePercentage; track percentage) {
+            <mat-option [value]="percentage">{{ percentage }}%</mat-option>
+          }
         </mat-select>
         <button type="button" matSuffix mat-icon-button (click)="changePrice($event, true)">
           <mat-icon>do_not_disturb_on</mat-icon>
         </button>
       </mat-form-field>
-    </ng-container>
-
-    <ng-template #sell>
+    } @else {
       <mat-button-toggle-group [formControl]="orderForm.controls.priceSource">
         <mat-button-toggle [value]="priceSourceTypes.CURRENT_PRICE">current price</mat-button-toggle>
-        <mat-button-toggle [value]="priceSourceTypes.RECENT_SELL" *ngIf="recent && recent.price > 0">recent</mat-button-toggle>
-        <mat-button-toggle [value]="priceSourceTypes.SELECTED_ORDERS" *ngIf="selectedInfo?.buy?.price">selected</mat-button-toggle>
+        @if (recent() && recent()!.price > 0) {
+          <mat-button-toggle [value]="priceSourceTypes.RECENT_SELL">recent</mat-button-toggle>
+        }
+        @if (selectedOrdersInfo()?.buy?.price) {
+          <mat-button-toggle [value]="priceSourceTypes.SELECTED_ORDERS">selected</mat-button-toggle>
+        }
         <mat-button-toggle [value]="priceSourceTypes.AVERAGE_BUY">avg. buy</mat-button-toggle>
         <mat-button-toggle [value]="priceSourceTypes.AVERAGE_SELL">avg. sell</mat-button-toggle>
       </mat-button-toggle-group>
 
       <mat-form-field class="price-change-percentage">
         <mat-select [formControl]="orderForm.controls.pricePercentage">
-          <mat-option *ngFor="let percentage of pricePercentage" [value]="percentage">{{ percentage }}%</mat-option>
+          @for (percentage of pricePercentage; track percentage) {
+            <mat-option [value]="percentage">{{ percentage }}%</mat-option>
+          }
         </mat-select>
         <button type="button" matSuffix mat-icon-button (click)="changePrice($event, false)">
           <mat-icon>add_circle</mat-icon>
@@ -86,7 +88,7 @@
       <button mat-raised-button type="button" (click)="setOneThird()" [disabled]="orderForm.controls.market.value" class="align-hight">
         1/3 amount
       </button>
-    </ng-template>
+    }
 
     <button mat-raised-button type="submit" [disabled]="!orderForm.valid" color="warn" class="align-hight">Create</button>
   </div>

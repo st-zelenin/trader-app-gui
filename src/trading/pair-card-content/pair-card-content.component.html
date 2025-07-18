@@ -18,41 +18,46 @@
   </button>
 </mat-card-actions>
 
-<app-fishnet *ngIf="showFishnet" [product]="product | async" [ticker]="ticker" (create)="createOrder($event)"> </app-fishnet>
+@if (showFishnet) {
+  <app-fishnet [product]="product | async" [ticker]="ticker()" (create)="createOrder($event)"> </app-fishnet>
+}
 
-<mat-expansion-panel
-  *ngIf="!showFishnet"
-  hideToggle
-  [expanded]="isNewOrderExpanded"
-  (opened)="isNewOrderExpanded = true"
-  (closed)="isNewOrderExpanded = false"
-  [@.disabled]="disableAnimation"
->
-  <mat-expansion-panel-header>
-    <mat-panel-title> Create order </mat-panel-title>
-    <mat-panel-description>
-      {{ (balance | async)?.available | decimalWithAutoDigitsInfo }} /
-      {{ (balance | async)?.locked | decimalWithAutoDigitsInfo }}
-    </mat-panel-description>
-  </mat-expansion-panel-header>
-  <app-order-form
-    [exchange]="exchange"
-    [ticker]="ticker"
-    [averages]="averages"
-    [balance]="balance | async"
-    [product]="product | async"
-    [recent]="recent"
-    [buyMultiplicator]="buyMultiplicator"
-    [selectedOrdersInfo]="selectedOrdersInfo"
-    [sellForBtc]="sellForBtc"
-    (create)="createOrder($event)"
+@if (!showFishnet) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="isNewOrderExpanded"
+    (opened)="isNewOrderExpanded = true"
+    (closed)="isNewOrderExpanded = false"
+    [@.disabled]="disableAnimation"
   >
-  </app-order-form>
-</mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Create order </mat-panel-title>
+      <mat-panel-description>
+        {{ (balance | async)?.available | decimalWithAutoDigitsInfo }} /
+        {{ (balance | async)?.locked | decimalWithAutoDigitsInfo }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-order-form
+      [exchange]="exchange()"
+      [ticker]="ticker()"
+      [averages]="averages()"
+      [balance]="balance | async"
+      [product]="product | async"
+      [recent]="recent()"
+      [buyMultiplicator]="buyMultiplicator"
+      [selectedOrdersInfo]="selectedOrdersInfo"
+      [sellForBtc]="sellForBtc"
+      (create)="createOrder($event)"
+    >
+    </app-order-form>
+  </mat-expansion-panel>
+}
 
-<app-trading-view-widget *ngIf="isExpanded" [exchange]="exchange" [pair]="pair"></app-trading-view-widget>
+@if (isExpanded()) {
+  <app-trading-view-widget [exchange]="exchange()" [pair]="pair()"></app-trading-view-widget>
+}
 
-<table mat-table [dataSource]="openOrders" class="mat-elevation-z8">
+<table mat-table [dataSource]="openOrders()" class="mat-elevation-z8">
   <ng-container matColumnDef="ID">
     <th mat-header-cell *matHeaderCellDef>
       <span class="order-id-header">ID</span>
@@ -129,11 +134,12 @@
       </div>
     </mat-panel-title>
   </mat-expansion-panel-header>
-  <app-trade-history
-    [pair]="pair"
-    [exchange]="exchange"
-    [(selectedOrdersInfo)]="selectedOrdersInfo"
-    (sellForBtc)="sellForBtc = $event"
-    *ngIf="isOpened"
-  ></app-trade-history>
+  @if (isOpened) {
+    <app-trade-history
+      [pair]="pair()"
+      [exchange]="exchange()"
+      [(selectedOrdersInfo)]="selectedOrdersInfo"
+      (sellForBtc)="sellForBtc = $event"
+    ></app-trade-history>
+  }
 </mat-expansion-panel>

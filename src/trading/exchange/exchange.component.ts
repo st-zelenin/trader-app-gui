@@ -1,6 +1,6 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, effect, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Observable, interval } from 'rxjs';
@@ -35,24 +35,19 @@ import { SortingService } from '../sorting.service';
   styleUrls: ['./exchange.component.scss'],
 })
 export class ExchangeComponent implements OnInit {
-  @Input() public exchange!: EXCHANGE;
-  @Input() public baseCurrencies!: string[];
+  public readonly exchange = input.required<EXCHANGE>();
+  public readonly baseCurrencies = input.required<string[]>();
+  public readonly baseCurrency = input.required<string>();
 
-  @Input() public set baseCurrency(value: string) {
-    this.currentBaseCurrency = value;
-    this.updateBaseCurrencyRelatedData();
-  }
-  @Output() public readonly baseCurrencyChange = new EventEmitter<string>();
-
-  @Output() public readonly pairAdded = new EventEmitter<ExchangeSymbol>();
-  @Output() public readonly pairRemoved = new EventEmitter<ExchangeSymbol>();
-  @Output() public readonly pairsOrdered = new EventEmitter<OrderedSymbols>();
+  public readonly baseCurrencyChange = output<string>();
+  public readonly pairAdded = output<ExchangeSymbol>();
+  public readonly pairRemoved = output<ExchangeSymbol>();
+  public readonly pairsOrdered = output<OrderedSymbols>();
 
   public pairs: CryptoPair[] = [];
   public currencyPairs?: Observable<string[]>;
   public quoteCurrencyBalance?: Observable<Balance>;
   public estimated: number = 0;
-  public currentBaseCurrency = '';
 
   private openOrders: OpenOrdersByPairs = {};
   private tickers: Tickers = {};
@@ -70,6 +65,13 @@ export class ExchangeComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
+  constructor() {
+    effect(() => {
+      const baseCurrency = this.baseCurrency();
+      this.updateBaseCurrencyRelatedData(baseCurrency);
+    });
+  }
+
   public ngOnInit(): void {
     // 15 minutes
     interval(15 * 60 * 1000)
@@ -77,14 +79,14 @@ export class ExchangeComponent implements OnInit {
       .subscribe(() => this.refresh());
 
     this.facade
-      .openOrders(this.exchange)
+      .openOrders(this.exchange())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((openOrders) => {
         this.openOrders = openOrders;
       });
 
     this.facade
-      .tickers(this.exchange)
+      .tickers(this.exchange())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((tickers) => {
         this.tickers = tickers;
@@ -92,7 +94,7 @@ export class ExchangeComponent implements OnInit {
       });
 
     this.facade
-      .balances(this.exchange)
+      .balances(this.exchange())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((balances) => {
         this.balances = balances;
@@ -101,22 +103,22 @@ export class ExchangeComponent implements OnInit {
 
     // cache products and currency pairs
     this.facade
-      .products(this.exchange)
+      .products(this.exchange())
       .pipe(
         take(1),
         tap((products) => {
           if (!products) {
-            this.facade.getProducts(this.exchange);
+            this.facade.getProducts(this.exchange());
           }
         })
       )
       .subscribe();
 
-    this.currencyPairs = this.facade.currencyPairs(this.exchange).pipe(
+    this.currencyPairs = this.facade.currencyPairs(this.exchange()).pipe(
       tap((pairs) => {
         if (!this.currencyPairsLoaded && (!pairs || !pairs.length)) {
           this.currencyPairsLoaded = true;
-          this.facade.getCurrencyPairs(this.exchange);
+          this.facade.getCurrencyPairs(this.exchange());
         }
       })
     );
@@ -131,7 +133,7 @@ export class ExchangeComponent implements OnInit {
 
     this.allCurrencyPairs.push({ symbol: currencyPair, isArchived: false });
     this.pairAdded.emit({
-      exchange: this.exchange,
+      exchange: this.exchange(),
       symbol: currencyPair,
     });
   }
@@ -141,7 +143,7 @@ export class ExchangeComponent implements OnInit {
 
     if (this.sortingType === SortingTypes.NONE) {
       this.pairsOrdered.emit({
-        exchange: this.exchange,
+        exchange: this.exchange(),
         symbols: [...this.pairs.map(({ symbol }) => symbol), ...this.otherCurrencyPairs.map(({ symbol }) => symbol)],
       });
     }
@@ -162,7 +164,7 @@ export class ExchangeComponent implements OnInit {
         if (index > -1) {
           this.allCurrencyPairs.splice(index, 1);
           this.pairRemoved.emit({
-            exchange: this.exchange,
+            exchange: this.exchange(),
             symbol: pair,
           });
         }
@@ -171,11 +173,11 @@ export class ExchangeComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.facade.getAnalytics(this.exchange);
-    this.facade.getOpenOrders(this.exchange);
-    this.facade.getTickers(this.exchange);
-    this.facade.getBalances(this.exchange);
-    this.facade.getRecentBuyAverages(this.exchange);
+    this.facade.getAnalytics(this.exchange());
+    this.facade.getOpenOrders(this.exchange());
+    this.facade.getTickers(this.exchange());
+    this.facade.getBalances(this.exchange());
+    this.facade.getRecentBuyAverages(this.exchange());
   }
 
   public filter(filteringType: FilteringType): void {
@@ -196,7 +198,7 @@ export class ExchangeComponent implements OnInit {
     this.dialog.open<RecentOrdersComponent, RecentOrdersData>(RecentOrdersComponent, {
       width: '80vw',
       maxWidth: '1000px',
-      data: { exchange: this.exchange, side },
+      data: { exchange: this.exchange(), side },
     });
   }
 
@@ -213,25 +215,25 @@ export class ExchangeComponent implements OnInit {
   private calcEstimatedTotal(): void {
     const coins = Object.keys(this.balances);
     this.estimated = coins.reduce((total, baseCurrency) => {
-      const pair = this.calculationsService.getCurrencyPair(baseCurrency, this.exchange);
+      const pair = this.calculationsService.getCurrencyPair(baseCurrency, this.exchange());
 
       total += this.calculationsService.calcEstimatedTotal(this.tickers[pair], this.balances[baseCurrency]);
       return total;
     }, 0);
   }
 
-  private updateBaseCurrencyRelatedData(): void {
-    this.quoteCurrencyBalance = this.facade.balance(this.exchange, this.currentBaseCurrency);
+  private updateBaseCurrencyRelatedData(baseCurrency: string): void {
+    this.quoteCurrencyBalance = this.facade.balance(this.exchange(), baseCurrency);
 
     this.facade
-      .pairs(this.exchange)
+      .pairs(this.exchange())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((pairs = []) => {
         this.allCurrencyPairs = [...pairs];
 
         const { current, rest } = pairs.reduce(
           (res, pair) => {
-            if (pair.symbol.endsWith(this.currentBaseCurrency)) {
+            if (pair.symbol.endsWith(baseCurrency)) {
               res.current.push(pair);
             } else {
               res.rest.push(pair);
@@ -246,7 +248,7 @@ export class ExchangeComponent implements OnInit {
         this.otherCurrencyPairs = rest;
         this.pairs = this.getSortedCards();
 
-        this.facade.getTickers(this.exchange);
+        this.facade.getTickers(this.exchange());
       });
   }
 
@@ -259,7 +261,7 @@ export class ExchangeComponent implements OnInit {
       case SortingTypes.UPCOMING_BUY:
         return this.sortingService.sortByupcomingOrder([...this.currentBaseCurrencyPairs], this.openOrders, this.tickers, 'buy');
       case SortingTypes.ESTIMATED_TOTAL:
-        return this.sortingService.sortByEstimatedTotal([...this.currentBaseCurrencyPairs], this.balances, this.tickers, this.exchange);
+        return this.sortingService.sortByEstimatedTotal([...this.currentBaseCurrencyPairs], this.balances, this.tickers, this.exchange());
       case SortingTypes.MOST_CHANGE:
         return this.sortingService.sortByHighestChange([...this.currentBaseCurrencyPairs], this.tickers);
       default:

@@ -1,15 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  DestroyRef,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -48,21 +38,20 @@ import { AppStoreFacade } from '../../store/facade';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExchangeActionsComponent implements OnInit {
-  @Input() public baseCurrencies!: string[];
-  @Input() public currencyPairs: string[] = [];
-  @Input() public balance?: number = 0;
-  @Input() public estimated!: number;
+  public baseCurrencies = input.required<string[]>();
+  public currencyPairs = input<string[]>([]);
+  public balance = input<number | undefined>(0);
+  public estimated = input.required<number>();
+  public baseCurrency = input.required<string>();
 
-  @Input() public baseCurrency!: string;
-  @Output() public readonly baseCurrencyChange = new EventEmitter<string>();
-
-  @Output() public readonly addCurrencyPair = new EventEmitter<string>();
-  @Output() public readonly refresh = new EventEmitter<void>();
-  @Output() public readonly filter = new EventEmitter<FilteringType>();
-  @Output() public readonly sort = new EventEmitter<SortingTypes>();
-  @Output() public readonly searchPairs = new EventEmitter<string>();
-  @Output() public readonly showRecent = new EventEmitter<OrderSide>();
-  @Output() public readonly showSetting = new EventEmitter<void>();
+  public readonly baseCurrencyChange = output<string>();
+  public readonly addCurrencyPair = output<string>();
+  public readonly refresh = output<void>();
+  public readonly filter = output<FilteringType>();
+  public readonly sort = output<SortingTypes>();
+  public readonly searchPairs = output<string>();
+  public readonly showRecent = output<OrderSide>();
+  public readonly showSetting = output<void>();
 
   public filteringTypes = FilteringType;
   public sortingTypes = SortingTypes;
@@ -81,7 +70,7 @@ export class ExchangeActionsComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   public ngOnInit(): void {
-    this.baseCurrencyControl.setValue(this.baseCurrency);
+    this.baseCurrencyControl.setValue(this.baseCurrency());
 
     this.baseCurrencyControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -125,6 +114,6 @@ export class ExchangeActionsComponent implements OnInit {
 
   private filterPairs(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.currencyPairs.filter((pair) => pair.toLowerCase().includes(filterValue));
+    return this.currencyPairs().filter((pair) => pair.toLowerCase().includes(filterValue));
   }
 }

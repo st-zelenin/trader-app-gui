@@ -1,17 +1,6 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  DestroyRef,
-  EventEmitter,
-  HostBinding,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  inject,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, HostBinding, OnDestroy, OnInit, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -42,10 +31,10 @@ import { PairCardContentComponent } from '../pair-card-content/pair-card-content
   styleUrls: ['./pair-card.component.scss'],
 })
 export class PairCardComponent implements OnInit, OnDestroy, Filterable {
-  @Input() public pair!: CryptoPair;
-  @Input() public exchange!: EXCHANGE;
+  public readonly pair = input.required<CryptoPair>();
+  public readonly exchange = input.required<EXCHANGE>();
 
-  @Output() public readonly remove = new EventEmitter<string>();
+  public readonly remove = output<string>();
 
   public isOpened = false;
 
@@ -78,13 +67,13 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   private readonly destroyRef = inject(DestroyRef);
 
   public ngOnInit(): void {
-    const baseCurrency = this.calculationsService.getBaseCurrency(this.pair.symbol, this.exchange);
+    const baseCurrency = this.calculationsService.getBaseCurrency(this.pair().symbol, this.exchange());
     this.logoSrc = `assets/coins/${baseCurrency}.png`;
 
     this.filteringService.register(this);
 
     this.facade
-      .ticker(this.exchange, this.pair.symbol)
+      .ticker(this.exchange(), this.pair().symbol)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((ticker) => {
         this.ticker = ticker;
@@ -96,7 +85,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       });
 
     this.facade
-      .balance(this.exchange, baseCurrency)
+      .balance(this.exchange(), baseCurrency)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((balance) => {
         this.balance = balance;
@@ -106,7 +95,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       });
 
     this.facade
-      .analytics(this.exchange, this.pair.symbol)
+      .analytics(this.exchange(), this.pair().symbol)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((analytics) => {
         this.averages = analytics;
@@ -117,7 +106,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       });
 
     this.facade
-      .pairOpenOrders(this.exchange, this.pair.symbol)
+      .pairOpenOrders(this.exchange(), this.pair().symbol)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((orders: Order[]) => {
         if (orders && orders.length) {
@@ -135,7 +124,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
       });
 
     this.facade
-      .pairRecentBuyAverages(this.exchange, this.pair.symbol)
+      .pairRecentBuyAverages(this.exchange(), this.pair().symbol)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((recent) => {
         this.recent = recent;
@@ -178,7 +167,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
 
   public removeCard(event: Event): void {
     event.stopPropagation();
-    this.remove.emit(this.pair.symbol);
+    this.remove.emit(this.pair().symbol);
   }
 
   public toggleExpand(event: Event): void {
@@ -231,7 +220,7 @@ export class PairCardComponent implements OnInit, OnDestroy, Filterable {
   }
 
   private getAnalyticsMessage(analytics: PairAverages): string {
-    const precision = this.pair.symbol.endsWith('BTC') ? 100000000 : 100;
+    const precision = this.pair().symbol.endsWith('BTC') ? 100000000 : 100;
 
     const totalBuy = Math.round(analytics?.buy.money * precision) / precision;
     const totalSell = Math.round(analytics?.sell.money * precision) / precision;

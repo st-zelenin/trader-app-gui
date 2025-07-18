@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, effect, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,21 +24,11 @@ interface FishnetForm {
   styleUrls: ['./fishnet.component.scss'],
 })
 export class FishnetComponent implements OnInit {
-  @Input() public ticker?: Ticker;
+  public readonly ticker = input<Ticker | undefined>(undefined);
 
-  @Input() public set product(product: Product | null) {
-    this.productDetails = product;
+  public readonly product = input<Product | null>(null);
 
-    if (product && product.minQuantity) {
-      this.minQuantityText = `min. quantity = ${product.minQuantity}`;
-    }
-
-    if (product && product.minTotal) {
-      this.minTotalText = `min. total = ${product.minTotal}`;
-    }
-  }
-
-  @Output() public readonly create = new EventEmitter<OrderFormValues>();
+  public readonly create = output<OrderFormValues>();
 
   public readonly form = new FormGroup<FishnetForm>({
     price: new FormControl(null),
@@ -51,9 +41,14 @@ export class FishnetComponent implements OnInit {
   public minQuantityText = 'min. quantity not limited';
   public minTotalText = 'min. total not limited';
 
-  private readonly LOCALE = 'en';
-  private productDetails: Product | null = null;
   private readonly destroyRef = inject(DestroyRef);
+
+  constructor() {
+    effect(() => {
+      const product = this.product();
+      this.setMinQuantityAndTotal(product);
+    });
+  }
 
   public ngOnInit(): void {
     this.form.controls.price.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((val) => {
@@ -112,20 +107,33 @@ export class FishnetComponent implements OnInit {
   }
 
   public setMinQuantity(): void {
-    if (this.productDetails?.minQuantity) {
-      this.form.controls.amount.setValue(this.productDetails.minQuantity);
+    const minQuantity = this.product()?.minQuantity;
+    if (minQuantity) {
+      this.form.controls.amount.setValue(minQuantity);
     }
   }
 
   public setMinTotal(): void {
-    if (this.productDetails?.minTotal) {
-      this.form.controls.total.setValue(this.productDetails.minTotal);
+    const minTotal = this.product()?.minTotal;
+    if (minTotal) {
+      this.form.controls.total.setValue(minTotal);
     }
   }
 
   public setCurrentPrice(): void {
-    if (this.ticker) {
-      this.form.controls.price.setValue(this.ticker.last);
+    const currentTicker = this.ticker();
+    if (currentTicker) {
+      this.form.controls.price.setValue(currentTicker.last);
+    }
+  }
+
+  private setMinQuantityAndTotal(product: Product | null): void {
+    if (product && product.minQuantity) {
+      this.minQuantityText = `min. quantity = ${product.minQuantity}`;
+    }
+
+    if (product && product.minTotal) {
+      this.minTotalText = `min. total = ${product.minTotal}`;
     }
   }
 }

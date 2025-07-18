@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, Input, OnDestroy, inject } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, inject, input } from '@angular/core';
 
 import { EXCHANGE } from 'src/constants';
 import { CryptoPair } from 'src/models';
@@ -11,17 +10,17 @@ declare const TradingView: any;
 
 @Component({
   selector: 'app-trading-view-widget',
-  standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './trading-view-widget.component.html',
   styleUrls: ['./trading-view-widget.component.scss'],
 })
 export class TradingViewWidgetComponent implements AfterViewInit, OnDestroy {
-  @Input() public pair!: CryptoPair;
-  @Input() public exchange!: EXCHANGE;
+  public readonly pair = input.required<CryptoPair>();
+  public readonly exchange = input.required<EXCHANGE>();
 
-  public id = `tradingview-${Date.now()}`;
+  public readonly id = `tradingview-${Date.now()}-${TradingViewWidgetComponent.counter++}`;
 
+  private static counter = 0;
   private widget: any;
 
   private readonly calculationsService = inject(CalculationsService);
@@ -29,7 +28,7 @@ export class TradingViewWidgetComponent implements AfterViewInit, OnDestroy {
   public ngAfterViewInit(): void {
     this.widget = new TradingView.widget({
       autosize: true,
-      symbol: this.calculationsService.buildTradingViewSymbol(this.pair.symbol, this.exchange),
+      symbol: this.calculationsService.buildTradingViewSymbol(this.pair().symbol, this.exchange()),
       interval: 'D',
       timezone: 'Etc/UTC',
       theme: 'light', // "dark"

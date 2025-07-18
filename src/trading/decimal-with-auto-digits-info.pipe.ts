@@ -3,7 +3,6 @@ import { Pipe, PipeTransform, inject } from '@angular/core';
 
 @Pipe({
   name: 'decimalWithAutoDigitsInfo',
-  standalone: true,
 })
 export class DecimalWithAutoDigitsInfoPipe implements PipeTransform {
   private readonly decimalPipe = inject(DecimalPipe);
