@@ -17,6 +17,7 @@ import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 import { routes } from './app.routes';
+import { API_URL, API_URL_BINANCE, API_URL_BYBIT, API_URL_CRYPTO, API_URL_GATE, API_URL_USER } from '../constants';
 import { environment } from '../environments/environment';
 import { effects, exchangeActionsProviders, reducers } from '../store';
 
@@ -77,7 +78,12 @@ export const appConfig: ApplicationConfig = {
       provide: MSAL_INTERCEPTOR_CONFIG,
       useFactory: () => {
         const protectedResourceMap = new Map<string, Array<string>>();
-        protectedResourceMap.set('*', [environment.API_SCOPE]);
+        protectedResourceMap.set(API_URL_USER, [environment.API_SCOPE]);
+        protectedResourceMap.set(API_URL, [environment.API_SCOPE]);
+        protectedResourceMap.set(API_URL_CRYPTO, [environment.API_SCOPE]);
+        protectedResourceMap.set(API_URL_BYBIT, [environment.API_SCOPE]);
+        protectedResourceMap.set(API_URL_GATE, [environment.API_SCOPE]);
+        protectedResourceMap.set(API_URL_BINANCE, [environment.API_SCOPE]);
         return {
           interactionType: InteractionType.Redirect,
           protectedResourceMap,
