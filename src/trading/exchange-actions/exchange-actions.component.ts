@@ -1,5 +1,5 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
 
 import { SortingTypes } from '../../constants';
-import { FilteringType, Multiplicator, OrderSide } from '../../models';
+import { FilteringType, OrderSide } from '../../models';
 import { AppStoreFacade } from '../../store/facade';
 
 @Component({
@@ -39,11 +39,11 @@ import { AppStoreFacade } from '../../store/facade';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExchangeActionsComponent implements OnInit {
-  public baseCurrencies = input.required<string[]>();
-  public currencyPairs = input<string[]>([]);
-  public balance = input<number | undefined>(0);
-  public estimated = input.required<number>();
-  public baseCurrency = input.required<string>();
+  public readonly baseCurrencies = input.required<string[]>();
+  public readonly currencyPairs = input<string[]>([]);
+  public readonly balance = input<number | undefined>(0);
+  public readonly estimated = input.required<number>();
+  public readonly baseCurrency = input.required<string>();
 
   public readonly baseCurrencyChange = output<string>();
   public readonly addCurrencyPair = output<string>();
@@ -54,20 +54,20 @@ export class ExchangeActionsComponent implements OnInit {
   public readonly showRecent = output<OrderSide>();
   public readonly showSetting = output<void>();
 
-  public filteringTypes = FilteringType;
-  public sortingTypes = SortingTypes;
-  public buyMultiplicator?: Multiplicator;
+  public readonly buyMultiplicator = signal<string>('');
+
+  public readonly filteringTypes = FilteringType;
+  public readonly sortingTypes = SortingTypes;
   public filteredOptions?: Observable<string[]>;
 
-  public pairSearchControl = new FormControl<string | null>(null);
-  public currencyPairControl = new FormControl<string | null>(null);
-  public baseCurrencyControl = new FormControl<string | null>(null);
+  public readonly pairSearchControl = new FormControl<string | null>(null);
+  public readonly currencyPairControl = new FormControl<string | null>(null);
+  public readonly baseCurrencyControl = new FormControl<string | null>(null);
 
-  public currentSorting: SortingTypes = SortingTypes.NONE;
-  public currentFiltering: FilteringType = FilteringType.NONE;
+  public readonly currentSorting = signal<SortingTypes>(SortingTypes.NONE);
+  public readonly currentFiltering = signal<FilteringType>(FilteringType.NONE);
 
   private readonly facade = inject(AppStoreFacade);
-  private readonly cd = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
 
   public ngOnInit(): void {
@@ -89,8 +89,7 @@ export class ExchangeActionsComponent implements OnInit {
     );
 
     this.facade.buyMultiplicator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((buyMultiplicator) => {
-      this.buyMultiplicator = buyMultiplicator;
-      this.cd.markForCheck();
+      this.buyMultiplicator.set(buyMultiplicator.text);
     });
   }
 
@@ -104,13 +103,15 @@ export class ExchangeActionsComponent implements OnInit {
   }
 
   public updateSorting(sortingType: SortingTypes): void {
-    this.currentSorting = this.currentSorting === sortingType ? SortingTypes.NONE : sortingType;
-    this.sort.emit(this.currentSorting);
+    const newValue = this.currentSorting() === sortingType ? SortingTypes.NONE : sortingType;
+    this.currentSorting.set(newValue);
+    this.sort.emit(newValue);
   }
 
   public updateFiltering(filteringType: FilteringType): void {
-    this.currentFiltering = this.currentFiltering === filteringType ? FilteringType.NONE : filteringType;
-    this.filter.emit(this.currentFiltering);
+    const newValue = this.currentFiltering() === filteringType ? FilteringType.NONE : filteringType;
+    this.currentFiltering.set(newValue);
+    this.filter.emit(newValue);
   }
 
   private filterPairs(value: string): string[] {

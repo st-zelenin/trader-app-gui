@@ -48,7 +48,7 @@
     <mat-divider vertical></mat-divider>
     <div class="group">
       <span class="label">buy mult.:</span>
-      <span class="multiplicator">{{ buyMultiplicator?.text }}</span>
+      <span class="multiplicator">{{ buyMultiplicator() }}</span>
 
       <span class="label currency">{{ baseCurrencyControl.value }}:</span>
       <span matTooltip="available base currency">{{ balance() | number: '1.0-2' }}</span>
@@ -66,7 +66,7 @@
         (click)="updateFiltering(filteringTypes.MISSING_BUY)"
         type="button"
         matTooltip="filter by missing buy order"
-        [class.active]="currentFiltering === filteringTypes.MISSING_BUY"
+        [class.active]="currentFiltering() === filteringTypes.MISSING_BUY"
       >
         <mat-icon>shopping_cart</mat-icon>
       </button>
@@ -75,7 +75,7 @@
         (click)="updateFiltering(filteringTypes.ATTENTION_MESSAGE)"
         type="button"
         matTooltip="filter by attention message"
-        [class.active]="currentFiltering === filteringTypes.ATTENTION_MESSAGE"
+        [class.active]="currentFiltering() === filteringTypes.ATTENTION_MESSAGE"
       >
         <mat-icon class="attention">gpp_maybe</mat-icon>
       </button>
@@ -88,7 +88,7 @@
         (click)="updateSorting(sortingTypes.UPCOMING_SELL)"
         type="button"
         matTooltip="sort by upcoming sell order fulfillment"
-        [class.active]="currentSorting === sortingTypes.UPCOMING_SELL"
+        [class.active]="currentSorting() === sortingTypes.UPCOMING_SELL"
       >
         <mat-icon class="shopping-bag sell">shopping_bag</mat-icon>
       </button>
@@ -97,7 +97,7 @@
         (click)="updateSorting(sortingTypes.UPCOMING_BUY)"
         type="button"
         matTooltip="sort by upcoming buy order fulfillment"
-        [class.active]="currentSorting === sortingTypes.UPCOMING_BUY"
+        [class.active]="currentSorting() === sortingTypes.UPCOMING_BUY"
       >
         <mat-icon class="shopping-bag buy">shopping_bag</mat-icon>
       </button>
@@ -106,7 +106,7 @@
         (click)="updateSorting(sortingTypes.ESTIMATED_TOTAL)"
         type="button"
         matTooltip="sort by estimated total value of the coins"
-        [class.active]="currentSorting === sortingTypes.ESTIMATED_TOTAL"
+        [class.active]="currentSorting() === sortingTypes.ESTIMATED_TOTAL"
       >
         <mat-icon class="suitcase">work</mat-icon>
       </button>
@@ -115,7 +115,7 @@
         (click)="updateSorting(sortingTypes.MOST_CHANGE)"
         type="button"
         matTooltip="sort by highest 24h change"
-        [class.active]="currentSorting === sortingTypes.MOST_CHANGE"
+        [class.active]="currentSorting() === sortingTypes.MOST_CHANGE"
       >
         <mat-icon>percent</mat-icon>
       </button>
