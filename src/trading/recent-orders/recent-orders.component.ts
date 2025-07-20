@@ -1,3 +1,4 @@
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +20,7 @@ export interface RecentOrdersData {
 
 @Component({
   selector: 'app-recent-orders',
-  imports: [MatTableModule, MatButtonModule, MatDialogModule],
+  imports: [DatePipe, DecimalPipe, MatTableModule, MatButtonModule, MatDialogModule],
   templateUrl: './recent-orders.component.html',
   styleUrls: ['./recent-orders.component.scss'],
 })

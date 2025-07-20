@@ -41,11 +41,6 @@ export class TradingViewWidgetComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  // not used
-  public changeSymbol(symbol: string): void {
-    this.widget.iframe.contentWindow?.postMessage({ name: 'set-symbol', type: 'post', data: { symbol } }, '*');
-  }
-
   public ngOnDestroy(): void {
     this.widget.remove();
   }

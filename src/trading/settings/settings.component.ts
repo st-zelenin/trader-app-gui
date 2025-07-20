@@ -102,8 +102,8 @@ export class SettingsComponent implements OnInit {
   }
 
   public signOut(): void {
-    this.authService.logoutPopup({
-      mainWindowRedirectUri: '/',
+    this.authService.logoutRedirect({
+      postLogoutRedirectUri: '/',
     });
   }
 

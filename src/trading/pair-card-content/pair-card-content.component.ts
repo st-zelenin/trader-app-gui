@@ -56,6 +56,7 @@ import { TradingViewWidgetComponent } from '../trading-view-widget/trading-view-
     OrderFormComponent,
     FishnetComponent,
   ],
+  providers: [DecimalPipe, DatePipe],
   templateUrl: './pair-card-content.component.html',
   styleUrls: ['./pair-card-content.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
