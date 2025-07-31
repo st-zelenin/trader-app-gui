@@ -43,6 +43,19 @@
       <mat-icon matSuffix>attach_money</mat-icon>
       <mat-hint (click)="setMinTotal()" class="clickable">{{ minTotalText }}</mat-hint>
     </mat-form-field>
+
+    @if (orderForm.controls.side.value === 'buy') {
+      <div class="fix-buttons-container">
+        <div class="fix-buttons">
+          <button mat-icon-button type="button" (click)="fixTotal(false)" matTooltip="Fix by Quantity">
+            <mat-icon>build</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="fixTotal(true)" matTooltip="Fix by Price">
+            <mat-icon>build</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
   </div>
   <div class="form-row">
     @if (orderForm.controls.side.value === 'buy') {

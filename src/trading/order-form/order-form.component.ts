@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { filter, map, startWith } from 'rxjs/operators';
 
 import { PriceSource } from './constants';
+import { OrderFormService } from './order-form.service';
 import { EXCHANGE } from '../../constants';
 import {
   Average,
@@ -76,6 +77,7 @@ export class OrderFormComponent implements OnInit {
 
   public pricePercentage: number[] = [];
 
+  private readonly orderFormService = inject(OrderFormService);
   private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
@@ -293,6 +295,13 @@ export class OrderFormComponent implements OnInit {
     }
   }
 
+  public fixTotal(byPrice: boolean): void {
+    const fixedValues = this.orderFormService.fixTotal(this.product(), this.orderForm.getRawValue(), byPrice);
+    if (fixedValues) {
+      this.orderForm.patchValue(fixedValues, { emitEvent: false });
+    }
+  }
+
   private setProductData(product: Product | null): void {
     if (product && product.minQuantity) {
       this.minQuantityText = `min. quantity = ${product.minQuantity}`;
@@ -367,42 +376,7 @@ export class OrderFormComponent implements OnInit {
   }
 
   private calculateRecommendedSell(buy: Average, sell: Average): void {
-    let done = false;
-
-    let nextSellPrice = buy.price * 1.5;
-    let nextSellAmount = buy.volume / 3;
-    let toBeSold = nextSellAmount;
-    let remainingOversoldAmount = sell.volume || 0;
-    const MIN_ORDER_AMOUNT = 10;
-
-    do {
-      const rest = nextSellAmount - remainingOversoldAmount;
-
-      if (nextSellAmount > remainingOversoldAmount && rest * nextSellPrice > MIN_ORDER_AMOUNT) {
-        done = true;
-        console.log('sell:', {
-          price: nextSellPrice,
-          amount: nextSellAmount,
-          remainingOversoldAmount,
-          rest,
-        });
-      } else {
-        console.log('skipped:', {
-          price: nextSellPrice,
-          amount: nextSellAmount,
-          remainingOversoldAmount,
-        });
-
-        remainingOversoldAmount -= nextSellAmount;
-        nextSellPrice *= 1.5;
-        nextSellAmount = (buy.volume - toBeSold) / 3;
-        toBeSold += nextSellAmount;
-      }
-    } while (!done);
-
-    this.orderForm.patchValue({
-      price: nextSellPrice,
-      amount: nextSellAmount - remainingOversoldAmount,
-    });
+    const { price, amount } = this.orderFormService.calculateRecommendedSell(buy, sell);
+    this.orderForm.patchValue({ price, amount });
   }
 }

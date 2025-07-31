@@ -41,3 +41,17 @@
     }
   }
 }
+
+.fix-buttons-container {
+  position: relative;
+}
+
+.fix-buttons {
+  transform: scale(0.6);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  position: absolute;
+  top: -47px;
+  left: -10px;
+}
