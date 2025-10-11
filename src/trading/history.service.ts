@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { API_URL, API_URL_BINANCE, API_URL_BYBIT, API_URL_CRYPTO, API_URL_GATE, EXCHANGE } from '../constants';
+import { API_HUB_URL, API_URL, API_URL_BINANCE, API_URL_BYBIT, API_URL_CRYPTO, API_URL_GATE, EXCHANGE } from '../constants';
 import { Order, OrderSide } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -55,8 +55,12 @@ export class HistoryService {
         });
       }
       case EXCHANGE.BYBIT: {
-        return this.httpClient.get(`${API_URL_BYBIT}/UpdateRecentHistory`, {
-          params: { pair },
+        // return this.httpClient.get(`${API_URL_BYBIT}/UpdateRecentHistory`, {
+        //   params: { pair },
+        // });
+        return this.httpClient.post(`${API_HUB_URL}/history/recent`, {
+          exchange: 'BYBIT',
+          symbol: pair,
         });
       }
       case EXCHANGE.BINANCE: {

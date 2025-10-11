@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { API_URL, API_URL_BINANCE, API_URL_BYBIT, API_URL_CRYPTO, API_URL_GATE, EXCHANGE } from '../constants';
+import { API_HUB_URL, API_URL, API_URL_BINANCE, API_URL_BYBIT, API_URL_CRYPTO, API_URL_GATE, EXCHANGE } from '../constants';
 import { NewOrder, Order } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -60,6 +60,15 @@ export class OrderingService {
         return this.httpClient.post(`${API_URL_BYBIT}/CreateOrder`, order);
       }
       case EXCHANGE.BINANCE: {
+        if (!order.market && order.side === 'sell') {
+          return this.httpClient.post(`${API_HUB_URL}/order/trailing-sell`, {
+            exchange: 'BINANCE',
+            symbol: order.currencyPair,
+            quantity: order.amount,
+            limitPrice: order.price,
+          });
+        }
+
         return this.httpClient.post(`${API_URL_BINANCE}/CreateOrder`, order);
       }
       default:
