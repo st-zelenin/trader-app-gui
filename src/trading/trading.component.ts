@@ -1,24 +1,23 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, effect, inject } from '@angular/core';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ExchangeTab } from 'src/models/exchange-tab';
 
+import { BotsComponent } from './bots/bots.component';
 import { ExchangeComponent } from './exchange/exchange.component';
 import { EXCHANGE, ExchangeUrlParams } from '../constants';
-import { ExchangeSymbol, OrderedSymbols, User } from '../models';
+import { ExchangeSymbol, OrderedSymbols } from '../models';
 import { AppStoreFacade } from '../store/facade';
 import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-trading',
-  imports: [MatTabsModule, ExchangeComponent],
+  imports: [MatTabsModule, ExchangeComponent, BotsComponent],
   templateUrl: './trading.component.html',
   styleUrls: ['./trading.component.scss'],
 })
-export class TradingComponent implements OnInit {
-  public user: User;
+export class TradingComponent {
   public selectedIndex: number = 0;
 
   public exchangeTabs: ExchangeTab[] = [
@@ -63,52 +62,40 @@ export class TradingComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly facade = inject(AppStoreFacade);
   private readonly userService = inject(UserService);
-  private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
-    this.user = this.route.snapshot.data.user;
-
     const exchangeParam = this.route.snapshot.paramMap.get('tab');
     if (exchangeParam) {
-      this.selectedIndex = this.exchangeTabs.findIndex(({ urlParam }) => urlParam === exchangeParam);
+      this.selectedIndex =
+        exchangeParam === 'bots' ? this.exchangeTabs.length : this.exchangeTabs.findIndex(({ urlParam }) => urlParam === exchangeParam);
     }
-  }
 
-  public ngOnInit(): void {
-    this.facade.setPairs(this.user);
+    effect(() => {
+      const user = this.userService.user();
+      if (user) {
+        this.facade.setPairs(user);
+      }
+    });
   }
 
   public selectedTabChange(event: MatTabChangeEvent): void {
+    if (event.index === this.exchangeTabs.length) {
+      this.router.navigate(['trades/bots']);
+      return;
+    }
+
     this.router.navigate([`trades/${this.exchangeTabs[event.index].urlParam}`]);
   }
 
   public addPair(newPair: ExchangeSymbol): void {
-    this.userService
-      .addPair(newPair)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
-        this.user = data;
-        this.facade.setPairs(data);
-      });
+    this.userService.addPair(newPair);
   }
 
   public removePair(deletedPair: ExchangeSymbol): void {
-    this.userService
-      .removePair(deletedPair)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
-        this.user = data;
-        this.facade.setPairs(data);
-      });
+    this.userService.removePair(deletedPair);
   }
 
   public orderPairs(orderedSymbols: OrderedSymbols): void {
-    this.userService
-      .orderPairs(orderedSymbols)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
-        this.user = data;
-        this.facade.setPairs(data);
-      });
+    this.userService.orderPairs(orderedSymbols);
   }
 }

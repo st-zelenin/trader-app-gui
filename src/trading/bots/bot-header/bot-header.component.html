@@ -1,0 +1,32 @@
+<div class="bot-header">
+  <div class="bot-info">
+    <img class="logo" [src]="data().logoSrc" loading="lazy" />
+
+    <strong>{{ data().symbol }}</strong>
+    @if (price()) {
+      / <span class="price" matTooltip="current price">{{ price() }}</span>
+      @if (lowestBuyDiff(); as diff) {
+        <span
+          class="change-percentage sup"
+          [class.up]="diff.isPositive"
+          [class.down]="!diff.isPositive"
+          matTooltip="change from first pair buy price"
+        >
+          {{ diff.formatted }}
+        </span>
+      }
+    }
+  </div>
+
+  <div class="right-group">
+    <span class="pairs-count sup" matTooltip="number of pairs">
+      @if (data().botType === BotType.Progressive) {
+        {{ data().numPairs }} / {{ data().actualNumPairs }}
+      } @else {
+        {{ data().numPairs }}
+      }
+    </span>
+    <span class="type" matTooltip="{{ data().botTypeTooltip }}">{{ data().botTypeLabel }}</span>
+    <span class="bot-id sup" matTooltip="{{ data().id }}">{{ data().truncatedId }}</span>
+  </div>
+</div>

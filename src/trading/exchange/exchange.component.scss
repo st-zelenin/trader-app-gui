@@ -1,35 +1,5 @@
+@import '../cards-layout.scss';
+
 .pairs-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-  gap: 5px;
-  margin: 5px;
-
-  .pair {
-    width: 100%;
-  }
-}
-
-@media only screen and (min-width: 1200px) {
-  .pairs-list {
-    .pair {
-      width: 49%;
-    }
-  }
-}
-
-@media only screen and (min-width: 2100px) {
-  .pairs-list {
-    .pair {
-      width: 33%;
-    }
-  }
-}
-
-@media only screen and (min-width: 3000px) {
-  .pairs-list {
-    .pair {
-      width: 24%;
-    }
-  }
+  @include cards-layout;
 }

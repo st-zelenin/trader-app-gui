@@ -1,0 +1,12 @@
+export enum BotFilteringType {
+  NONE = 'NONE',
+  PROGRESSIVE = 'PROGRESSIVE',
+  TRAILING = 'TRAILING',
+  BOTTOM_WEIGHTED = 'BOTTOM_WEIGHTED',
+}
+
+export enum BotSortingType {
+  NONE = 'NONE',
+  LAST_PRICE_DIFF = 'LAST_PRICE_DIFF',
+  PAIRS_COUNT = 'PAIRS_COUNT',
+}

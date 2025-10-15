@@ -1,0 +1,73 @@
+@import '../cards-layout.scss';
+
+.bots {
+  // padding: 12px;
+}
+
+.state {
+  margin: 8px 0;
+  color: #555;
+}
+
+.state.error {
+  color: #b00020;
+}
+
+.bot-list {
+  @include cards-layout;
+}
+
+.bot-card {
+  height: fit-content;
+
+  .mat-mdc-card-content {
+    padding: 10px;
+  }
+
+  ::ng-deep {
+    mat-expansion-panel-header {
+      padding-left: 0;
+    }
+  }
+}
+
+.bot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.symbol {
+  font-weight: 600;
+}
+
+.meta {
+  display: flex;
+  gap: 8px;
+  color: #666;
+}
+
+.bot-config {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.pairs {
+  margin-top: 8px;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 6px 0;
+}
+
+.pair.header {
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}

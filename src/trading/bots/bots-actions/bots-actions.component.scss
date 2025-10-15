@@ -1,0 +1,47 @@
+@use '@angular/material' as mat;
+@import '../../../variables.scss';
+
+.actions {
+  border-radius: 0;
+  padding: 0;
+}
+
+.form {
+  display: flex;
+  gap: 10px;
+  height: 88px;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+
+  &.first {
+    margin-left: 10px;
+  }
+}
+
+.label {
+  padding: 0 5px;
+  font-size: 12px;
+
+  &.currency {
+    font-weight: 600;
+  }
+}
+
+.buy {
+  color: $buy-color;
+}
+
+.sell {
+  color: $sell-color;
+}
+
+.active {
+  background-color: $active-action;
+}
+
+.dense-3 {
+  @include mat.all-component-densities(-3);
+}

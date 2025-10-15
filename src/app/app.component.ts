@@ -1,8 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
 import { AuthenticationResult, EventMessage, EventType, InteractionStatus } from '@azure/msal-browser';
 import { filter } from 'rxjs/operators';
+
+import { WebSocketService } from '../trading/websocket.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +14,12 @@ import { filter } from 'rxjs/operators';
   imports: [RouterOutlet],
 })
 export class AppComponent {
+  public readonly isUserLoaded = signal(false);
+
   private readonly msalService = inject(MsalService);
   private readonly msalBroadcastService = inject(MsalBroadcastService);
+  private readonly webSocketService = inject(WebSocketService);
+  private readonly userService = inject(UserService);
 
   constructor() {
     this.msalBroadcastService.msalSubject$
@@ -33,6 +40,10 @@ export class AppComponent {
         const accounts = this.msalService.instance.getAllAccounts();
         this.msalService.instance.setActiveAccount(accounts[0]);
       }
+
+      this.userService.getUser().subscribe(() => this.isUserLoaded.set(true));
     });
+
+    this.webSocketService.connect();
   }
 }

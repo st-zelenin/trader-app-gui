@@ -1,0 +1,13 @@
+.bot-config {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  div {
+    padding: 0.5rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    font-size: 0.875rem;
+  }
+}

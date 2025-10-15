@@ -1,0 +1,56 @@
+<app-bots-actions
+  [availableBaseCurrency]="availableBaseCurrency"
+  (refreshBots)="onRefreshBots()"
+  (refreshPrices)="onRefreshPrices()"
+  (filter)="onFilter($event)"
+  (sort)="onSort($event)"
+  (showFilled)="onShowFilled($event)"
+></app-bots-actions>
+
+@if (loading()) {
+  <div class="state">Loading bots...</div>
+}
+
+@if (error()) {
+  <div class="state error">{{ error() }}</div>
+}
+
+@if (!loading() && !error() && bots().length === 0) {
+  <div class="state">No bots found.</div>
+}
+
+@if (!loading() && !error()) {
+  <div class="bot-list">
+    @for (bot of bots(); track bot.id) {
+      <mat-card class="bot-card">
+        <mat-card-content>
+          <mat-expansion-panel [expanded]="bot.expanded" (opened)="onExpansionToggle(bot, true)" (closed)="onExpansionToggle(bot, false)">
+            <mat-expansion-panel-header>
+              <app-bot-header [bot]="bot" [price]="prices()[bot.config.symbol]"></app-bot-header>
+            </mat-expansion-panel-header>
+
+            @switch (bot.config.botType) {
+              @case ('progressive') {
+                <app-progressive-bot
+                  [rawBot]="bot"
+                  [isSaving]="isBotSaving(bot.id)"
+                  (configSaveRequested)="onConfigSaveRequested(bot.id, $event)"
+                >
+                </app-progressive-bot>
+              }
+              @case ('trailing') {
+                <app-trailing-bot [rawBot]="bot"></app-trailing-bot>
+              }
+              @case ('bottom-weighted') {
+                <app-bottom-weighted-bot [rawBot]="bot"></app-bottom-weighted-bot>
+              }
+              @default {
+                <div class="unhandled-bot">Unhandled bot type</div>
+              }
+            }
+          </mat-expansion-panel>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+}

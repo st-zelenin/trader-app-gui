@@ -8,6 +8,7 @@ export const API_URL_GATE = environment.API_URL_GATE;
 export const API_URL_USER = environment.API_URL_USER;
 export const API_URL_BINANCE = environment.API_URL_BINANCE;
 export const API_HUB_URL = environment.API_HUB_URL;
+export const WS_HUB_URL = environment.WS_HUB_URL;
 
 export const BUY_MULTIPLICATORS: Multiplicator[] = [
   { text: '0.5 %', value: 0.005 },

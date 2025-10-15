@@ -1,0 +1,54 @@
+@import '../../cards-layout.scss';
+@import '../../../variables.scss';
+
+:host {
+  width: 100%;
+}
+
+.bot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+
+  .bot-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .right-group {
+    display: flex;
+    gap: 10px;
+    margin-right: 10px;
+  }
+
+  .bot-id {
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .change-percentage {
+    padding: 0 5px;
+    font-weight: 500;
+    align-self: baseline;
+
+    &.down {
+      color: $sell-color;
+    }
+
+    &.up {
+      color: $buy-color;
+    }
+  }
+
+  .sup {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+  }
+}

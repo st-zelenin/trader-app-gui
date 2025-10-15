@@ -1,0 +1,74 @@
+<mat-card appearance="outlined" class="actions">
+  <form class="form dense-3">
+    <div class="group first">
+      <span class="label currency">USDC:</span>
+      <span matTooltip="available base currency">{{ availableBaseCurrency() }}</span>
+      <button mat-icon-button (click)="refresh()" type="button" matTooltip="reload bots and latest prices">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+
+    <mat-divider vertical></mat-divider>
+    <div class="group">
+      <button
+        mat-icon-button
+        (click)="updateFiltering(filteringTypes.PROGRESSIVE)"
+        type="button"
+        matTooltip="filter by progressive bots"
+        [class.active]="currentFiltering() === filteringTypes.PROGRESSIVE"
+      >
+        <mat-icon>trending_up</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="updateFiltering(filteringTypes.TRAILING)"
+        type="button"
+        matTooltip="filter by trailing bots"
+        [class.active]="currentFiltering() === filteringTypes.TRAILING"
+      >
+        <mat-icon>show_chart</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="updateFiltering(filteringTypes.BOTTOM_WEIGHTED)"
+        type="button"
+        matTooltip="filter by bottom-weighted bots"
+        [class.active]="currentFiltering() === filteringTypes.BOTTOM_WEIGHTED"
+      >
+        <mat-icon>vertical_align_bottom</mat-icon>
+      </button>
+    </div>
+
+    <mat-divider vertical></mat-divider>
+    <div class="group">
+      <button
+        mat-icon-button
+        (click)="updateSorting(sortingTypes.LAST_PRICE_DIFF)"
+        type="button"
+        matTooltip="sort by last price difference"
+        [class.active]="currentSorting() === sortingTypes.LAST_PRICE_DIFF"
+      >
+        <mat-icon>compare_arrows</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="updateSorting(sortingTypes.PAIRS_COUNT)"
+        type="button"
+        matTooltip="sort by pairs count"
+        [class.active]="currentSorting() === sortingTypes.PAIRS_COUNT"
+      >
+        <mat-icon>format_list_numbered</mat-icon>
+      </button>
+    </div>
+
+    <mat-divider vertical></mat-divider>
+    <div class="group">
+      <button mat-icon-button (click)="showFilled.emit('buy')" type="button" matTooltip="show filled buy orders">
+        <mat-icon class="buy">gpp_good</mat-icon>
+      </button>
+      <button mat-icon-button (click)="showFilled.emit('sell')" type="button" matTooltip="show filled sell orders">
+        <mat-icon class="sell">gpp_good</mat-icon>
+      </button>
+    </div>
+  </form>
+</mat-card>

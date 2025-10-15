@@ -1,0 +1,22 @@
+@mixin cards-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: 5px;
+
+  @media only screen and (min-width: 1200px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media only screen and (min-width: 2100px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media only screen and (min-width: 3000px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .expanded {
+    grid-column: 1 / -1;
+  }
+}
