@@ -57,6 +57,23 @@ export class OrderingService {
         return this.httpClient.post(`${API_URL}/coinbase_createOrder`, order);
       }
       case EXCHANGE.BYBIT: {
+        if (!order.market && !order.external) {
+          return this.httpClient.post(`${API_HUB_URL}/order/BYBIT/limit`, {
+            symbol: order.currencyPair,
+            side: order.side,
+            price: order.price,
+            quantity: order.amount,
+          });
+        }
+
+        if (order.market) {
+          return this.httpClient.post(`${API_HUB_URL}/order/BYBIT/market`, {
+            symbol: order.currencyPair,
+            side: order.side,
+            total: order.total,
+          });
+        }
+
         return this.httpClient.post(`${API_URL_BYBIT}/CreateOrder`, order);
       }
       case EXCHANGE.BINANCE: {

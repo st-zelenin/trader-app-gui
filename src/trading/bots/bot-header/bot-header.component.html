@@ -6,13 +6,11 @@
     @if (price()) {
       / <span class="price" matTooltip="current price">{{ price() }}</span>
       @if (lowestBuyDiff(); as diff) {
-        <span
-          class="change-percentage sup"
-          [class.up]="diff.isPositive"
-          [class.down]="!diff.isPositive"
-          matTooltip="change from first pair buy price"
-        >
-          {{ diff.formatted }}
+        <span class="change-percentage sup">
+          <span [class.up]="diff.isPositive" [class.down]="!diff.isPositive" matTooltip="change from first pair buy price">
+            {{ diff.formatted }}
+          </span>
+          <span matTooltip="nearest sell price">/ {{ diff.sellPrice }}</span>
         </span>
       }
     }

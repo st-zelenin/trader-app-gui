@@ -36,7 +36,7 @@ export class BotHeaderComponent {
       return null;
     }
 
-    const [{ buyPrice }] = pairs;
+    const [{ buyPrice, sellPrice }] = pairs;
     if (!buyPrice) {
       return null;
     }
@@ -47,6 +47,7 @@ export class BotHeaderComponent {
       value: percentage,
       isPositive: percentage >= 0,
       formatted: percentage.toFixed(2),
+      sellPrice,
     };
   });
 

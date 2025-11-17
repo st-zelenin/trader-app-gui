@@ -32,11 +32,11 @@
     font-weight: 500;
     align-self: baseline;
 
-    &.down {
+    .down {
       color: $sell-color;
     }
 
-    &.up {
+    .up {
       color: $buy-color;
     }
   }
