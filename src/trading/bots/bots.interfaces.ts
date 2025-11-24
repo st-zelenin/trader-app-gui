@@ -1,4 +1,4 @@
-interface BotPair {
+export interface BotPair {
   buyPrice: number;
   sellPrice: number;
   quantity: number;

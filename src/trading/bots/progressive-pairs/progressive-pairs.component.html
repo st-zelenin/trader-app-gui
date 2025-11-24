@@ -1,0 +1,66 @@
+<h2 mat-dialog-title>Trading Pairs</h2>
+
+<div mat-dialog-content>
+  <table mat-table [dataSource]="pairs()" class="progressive-pairs-table">
+    <ng-container matColumnDef="buyPrice">
+      <th mat-header-cell *matHeaderCellDef>Buy Price</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.buyPrice | decimalWithAutoDigitsInfo }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="quantity">
+      <th mat-header-cell *matHeaderCellDef>Quantity</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.quantity | decimalWithAutoDigitsInfo }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="sellPrice">
+      <th mat-header-cell *matHeaderCellDef>Sell Price</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.sellPrice | decimalWithAutoDigitsInfo }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="difference">
+      <th mat-header-cell *matHeaderCellDef>Difference</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.difference | decimalWithAutoDigitsInfo }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="buyOrderId">
+      <th mat-header-cell *matHeaderCellDef>Buy Order ID</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-icon-button
+          matTooltip="copy buy order ID"
+          [cdkCopyToClipboard]="element.buyOrderId.toString()"
+          (click)="$event.stopPropagation()"
+          tabindex="-1"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="sellOrderId">
+      <th mat-header-cell *matHeaderCellDef>Sell Order ID</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-icon-button
+          matTooltip="copy sell order ID"
+          [cdkCopyToClipboard]="element.sellOrderId.toString()"
+          (click)="$event.stopPropagation()"
+          tabindex="-1"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

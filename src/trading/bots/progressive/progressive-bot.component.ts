@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 
 import { type BotDto, type ProgressiveBot, type ProgressiveBotConfig } from '../bots.interfaces';
+import { ProgressivePairsComponent } from '../progressive-pairs/progressive-pairs.component';
 
 @Component({
   selector: 'app-progressive-bot',
@@ -24,6 +26,7 @@ export class ProgressiveBotComponent {
   public readonly isFormValid = signal(false);
 
   private readonly fb = inject(FormBuilder);
+  private readonly dialog = inject(MatDialog);
 
   public startEdit(): void {
     this.isEditing.set(true);
@@ -61,5 +64,14 @@ export class ProgressiveBotComponent {
     };
 
     this.configSaveRequested.emit(updated);
+  }
+
+  public onShowPairs(): void {
+    this.dialog.open(ProgressivePairsComponent, {
+      data: { pairs: this.bot().pairs },
+      width: '90vw',
+      maxWidth: '1200px',
+      autoFocus: false,
+    });
   }
 }

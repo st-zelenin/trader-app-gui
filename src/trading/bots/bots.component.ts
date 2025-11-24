@@ -153,6 +153,7 @@ export class BotsComponent implements OnInit, OnDestroy {
       width: '90vw',
       maxWidth: '1200px',
       // height: '80vh',
+      autoFocus: false,
     });
   }
 

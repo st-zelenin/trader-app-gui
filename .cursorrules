@@ -1,0 +1,89 @@
+# Angular Cursor Rules
+
+## Angular Core Guidelines
+
+1. **Use Standalone Components**
+
+   - Always use standalone components
+   - Import dependencies directly in the component
+   - Do not add `standalone: true` in `@Component` decorator
+
+2. **Signal-Based Reactivity**
+
+   - Use `input()` instead of `@Input()` decorators
+   - Use `output()` instead of `@Output()` decorators
+   - Use `model()` for two-way binding
+   - Use `computed()` for derived state
+   - Use `effect()` for side effects of input signals
+   - Prefer signals over RxJS for simple state management
+   - **DO NOT use the `signal()` function** - use other signal-based APIs only
+
+   **Effect Best Practices:**
+
+   - Use `effect()` as a replacement for `@Input()` setters when side effects are needed in response to input changes
+   - Create effects that depend on specific input signals
+   - Do not use effects for derived values (use `computed()` instead)
+   - Use `untracked()` when reading values without creating dependencies
+   - Avoid updating signals that the effect depends on within the effect itself
+   - Group related effects together in your component code
+   - **DO NOT use effects to set up RxJS subscriptions** - manage subscriptions directly in the component
+
+3. **Modern Control Flow**
+
+   - Use `@if` instead of `*ngIf`
+   - Use `@for` instead of `*ngFor`
+   - Use `@switch` instead of `*ngSwitch`
+   - Use `@empty`, `@first`, `@last` in control flow blocks
+
+4. **Access Modifiers and Type Safety**
+   - Always add explicit access modifiers (`public`, `private`)
+   - Mark immutable properties as `readonly`
+   - Always mark signal-based properties as `readonly` to ensure immutability
+   - Use `private` for implementation details
+   - Use `public` only for API exposed to templates or other components
+   - Always specify return types for all methods/functions
+
+## Material UI 19 Best Practices
+
+1. **Component Usage**
+
+   - Use the latest Material component syntax
+   - Prefer Material CDK for custom components
+   - Use Material theming system for consistent styling
+
+2. **Accessibility**
+   - Ensure proper ARIA attributes
+   - Maintain keyboard navigation
+   - Follow Material design contrast guidelines
+
+## Code Style Guidelines
+
+1. **Signal Naming Conventions**
+
+   - Name signal variables with descriptive nouns
+   - Use camelCase for signal names
+   - DO NOT add `$` suffix for signal variables (e.g., `count`)
+   - This applies to all signal-based APIs except `signal()` which should not be used
+
+2. **Method Organization**
+
+   - Group lifecycle methods at the top
+   - Group signal declarations together
+   - Group effect declarations together
+   - Organize public methods before private ones
+
+3. **Performance Considerations**
+   - Use `untracked()` when appropriate
+   - Avoid expensive computations in templates
+   - Leverage `OnPush` change detection
+   - Use `takeUntilDestroyed()` for subscription management
+
+## File Modification Guidelines
+
+1. **Always Check Current File State**
+   - **ALWAYS read the current state of files before making any changes**
+   - Users may manually modify files between interactions
+   - Never assume file contents based on previous reads or assumptions
+   - Use `read_file` tool to verify current state before editing
+   - Only make changes that are explicitly requested by the user
+   - Do not add features or modifications that were not requested
