@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -15,7 +16,8 @@ import { BottomWeightedBotComponent } from './bottom-weighted/bottom-weighted-bo
 import { FilledOrdersComponent } from './filled-orders/filled-orders.component';
 import { ProgressiveBotComponent } from './progressive/progressive-bot.component';
 import { TrailingBotComponent } from './trailing/trailing-bot.component';
-import { API_HUB_URL } from '../../constants';
+import { API_HUB_URL, EXCHANGE } from '../../constants';
+import { AppStoreFacade } from '../../store/facade';
 import { WebSocketService } from '../websocket.service';
 
 interface TraderTickerData {
@@ -53,13 +55,23 @@ export class BotsComponent implements OnInit, OnDestroy {
   // public readonly sortType = signal<BotSortingType>(BotSortingType.NONE);
   // public readonly showFilledType = signal<ShowFilledType | undefined>(undefined);
 
+  public readonly availableBaseCurrency = computed(() => {
+    const available = this.usdcBalance()?.available ?? 0;
+    return Math.round(available * 100) / 100;
+  });
+
   private readonly savingBotIds = new Set<string>();
   private readonly httpClient = inject(HttpClient);
   private readonly dialog = inject(MatDialog);
   private readonly webSocketService = inject(WebSocketService);
+  private readonly facade = inject(AppStoreFacade);
   private readonly destroy$ = new Subject<void>();
 
+  private readonly usdcBalance = toSignal(this.facade.balance(EXCHANGE.BINANCE, 'USDC'), { initialValue: undefined });
+
   public ngOnInit(): void {
+    this.facade.getBalances(EXCHANGE.BINANCE);
+
     this.httpClient.get<BotsResponse>(`${API_HUB_URL}/binance-bot`).subscribe({
       next: (res) => {
         this.bots.set(res?.data ?? []);
@@ -155,12 +167,6 @@ export class BotsComponent implements OnInit, OnDestroy {
       // height: '80vh',
       autoFocus: false,
     });
-  }
-
-  public get availableBaseCurrency(): number {
-    // This would typically come from a balance service or store
-    // For now, returning a placeholder value
-    return 1000;
   }
 
   private fetchLatestPrices(): void {

@@ -60,8 +60,11 @@ export class CalculationsService {
         return `COINBASE:${currencyPair.replace('-', '')}`;
       case EXCHANGE.BYBIT:
         return `BYBIT:${currencyPair}`;
-      case EXCHANGE.BINANCE:
-        return `BINANCE:${currencyPair}`;
+      case EXCHANGE.BINANCE: {
+        // Replace USDC with USDT for Binance pairs since USDC trading history is relatively small
+        const normalizedPair = currencyPair.endsWith('USDC') ? currencyPair.replace('USDC', 'USDT') : currencyPair;
+        return `BINANCE:${normalizedPair}`;
+      }
       default:
         throw new Error(`unhandled exchange: ${exchange}`);
     }
