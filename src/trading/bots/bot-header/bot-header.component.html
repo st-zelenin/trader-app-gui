@@ -26,5 +26,19 @@
     </span>
     <span class="type" matTooltip="{{ data().botTypeTooltip }}">{{ data().botTypeLabel }}</span>
     <span class="bot-id sup" matTooltip="{{ data().id }}">{{ data().truncatedId }}</span>
+    <button mat-icon-button (click)="openTradingView($event)" matTooltip="Open Trading View chart" class="trading-view-btn">
+      <mat-icon>show_chart</mat-icon>
+    </button>
   </div>
 </div>
+
+<ng-template #tradingViewTemplate>
+  <div class="trading-view-dialog">
+    <h2 mat-dialog-title>Trading View</h2>
+    <mat-dialog-content>
+      <div class="widget-container">
+        <app-trading-view-widget [exchange]="tradingViewExchange()" [pair]="tradingViewPair()"></app-trading-view-widget>
+      </div>
+    </mat-dialog-content>
+  </div>
+</ng-template>

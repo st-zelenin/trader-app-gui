@@ -1,12 +1,19 @@
-import { ChangeDetectionStrategy, Component, Signal, computed, input } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
+import { ChangeDetectionStrategy, Component, Signal, TemplateRef, ViewChild, computed, inject, input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { EXCHANGE } from 'src/constants';
+import { CryptoPair } from 'src/models';
 
 import { BotHeaderData } from './bot-header.interfaces';
+import { TradingViewWidgetComponent } from '../../trading-view-widget/trading-view-widget.component';
 import { BotDto, BotType } from '../bots.interfaces';
 
 @Component({
   selector: 'app-bot-header',
-  imports: [MatTooltip],
+  imports: [MatTooltipModule, MatButtonModule, MatIconModule, MatDialogModule, TradingViewWidgetComponent],
   templateUrl: './bot-header.component.html',
   styleUrl: './bot-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,6 +57,37 @@ export class BotHeaderComponent {
       sellPrice,
     };
   });
+
+  public readonly tradingViewPair = computed<CryptoPair>(() => {
+    const symbol = this.bot().config.symbol;
+    // Extract base symbol (remove quote currency, e.g., "USDC" or "USDT")
+    const baseSymbol = symbol.substring(0, symbol.length - 4);
+    return {
+      symbol: `${baseSymbol}USDT`,
+      isArchived: false,
+    };
+  });
+
+  public readonly tradingViewExchange = computed(() => EXCHANGE.BINANCE);
+
+  private readonly dialog = inject(MatDialog);
+
+  @ViewChild('tradingViewTemplate', { static: false }) private tradingViewTemplate?: TemplateRef<unknown>;
+
+  public openTradingView(event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (!this.tradingViewTemplate) {
+      return;
+    }
+
+    this.dialog.open(this.tradingViewTemplate, {
+      width: '90vw',
+      maxWidth: '1400px',
+      height: '90vh',
+      autoFocus: false,
+    });
+  }
 
   private getBotTypeAbbreviation(botType: BotType): string {
     switch (botType) {

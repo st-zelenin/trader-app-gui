@@ -1,6 +1,17 @@
 @if (!isEditing()) {
   <div class="bot-content">
     <div class="bot-config">
+      <div class="num-pairs-control">
+        <span>Number of Pairs: {{ bot().config.numPairs }}</span>
+        <div class="num-pairs-buttons">
+          <button mat-mini-fab color="primary" (click)="decrementNumPairs()" [disabled]="isSaving() || bot().config.numPairs <= 1" matTooltip="Decrease number of pairs">
+            -
+          </button>
+          <button mat-mini-fab color="primary" (click)="incrementNumPairs()" [disabled]="isSaving()" matTooltip="Increase number of pairs">
+            +
+          </button>
+        </div>
+      </div>
       <div>Initial Δ: {{ bot().config.initialPercentDelta }}%</div>
       <div>Δ increment: {{ bot().config.deltaIncrement }}%</div>
       <div>Amount to buy: {{ bot().config.amountToBuy }}</div>

@@ -2,13 +2,15 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output, si
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { type BotDto, type ProgressiveBot, type ProgressiveBotConfig } from '../bots.interfaces';
 import { ProgressivePairsComponent } from '../progressive-pairs/progressive-pairs.component';
 
 @Component({
   selector: 'app-progressive-bot',
-  imports: [ReactiveFormsModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './progressive-bot.component.html',
   styleUrls: ['./progressive-bot.component.scss', '../bot-common.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -73,5 +75,25 @@ export class ProgressiveBotComponent {
       maxWidth: '1200px',
       autoFocus: false,
     });
+  }
+
+  public incrementNumPairs(): void {
+    if (this.isSaving()) {
+      return;
+    }
+    const newNumPairs = this.bot().config.numPairs + 1;
+    this.configSaveRequested.emit({ numPairs: newNumPairs });
+  }
+
+  public decrementNumPairs(): void {
+    if (this.isSaving()) {
+      return;
+    }
+    const currentNumPairs = this.bot().config.numPairs;
+    if (currentNumPairs <= 1) {
+      return;
+    }
+    const newNumPairs = currentNumPairs - 1;
+    this.configSaveRequested.emit({ numPairs: newNumPairs });
   }
 }

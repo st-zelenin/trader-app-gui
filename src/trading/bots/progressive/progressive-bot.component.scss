@@ -3,6 +3,18 @@
   gap: 1rem;
 }
 
+.num-pairs-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  .num-pairs-buttons {
+    display: flex;
+    gap: 0.25rem;
+  }
+}
+
 .edit-header {
   display: flex;
   justify-content: space-between;
