@@ -5,12 +5,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { BotItemActionsComponent } from '../bot-item-actions/bot-item-actions.component';
 import { type BotDto, type ProgressiveBot, type ProgressiveBotConfig } from '../bots.interfaces';
 import { ProgressivePairsComponent } from '../progressive-pairs/progressive-pairs.component';
 
 @Component({
   selector: 'app-progressive-bot',
-  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule, MatTooltipModule, BotItemActionsComponent],
   templateUrl: './progressive-bot.component.html',
   styleUrls: ['./progressive-bot.component.scss', '../bot-common.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -33,12 +33,5 @@
 </div>
 
 <ng-template #tradingViewTemplate>
-  <div class="trading-view-dialog">
-    <h2 mat-dialog-title>Trading View</h2>
-    <mat-dialog-content>
-      <div class="widget-container">
-        <app-trading-view-widget [exchange]="tradingViewExchange()" [pair]="tradingViewPair()"></app-trading-view-widget>
-      </div>
-    </mat-dialog-content>
-  </div>
+  <app-trading-view-widget [exchange]="tradingViewExchange()" [pair]="tradingViewPair()"></app-trading-view-widget>
 </ng-template>

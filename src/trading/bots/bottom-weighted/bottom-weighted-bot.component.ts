@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 
+import { BotItemActionsComponent } from '../bot-item-actions/bot-item-actions.component';
 import { type BotDto, type BottomWeightedBot } from '../bots.interfaces';
 import { BottomWeightedPairsComponent } from '../bottom-weighted-pairs/bottom-weighted-pairs.component';
 
 @Component({
   selector: 'app-bottom-weighted-bot',
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, BotItemActionsComponent],
   templateUrl: './bottom-weighted-bot.component.html',
   styleUrls: ['../bot-common.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

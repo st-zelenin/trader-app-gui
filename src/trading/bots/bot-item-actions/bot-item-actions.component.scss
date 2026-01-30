@@ -1,0 +1,15 @@
+@import '../../../variables.scss';
+
+:host {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.buy {
+  color: $buy-color;
+}
+
+.sell {
+  color: $sell-color;
+}

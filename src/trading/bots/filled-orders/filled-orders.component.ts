@@ -67,11 +67,15 @@ export class FilledOrdersComponent implements OnInit {
     this.loading.set(true);
     this.error.set(undefined);
 
-    const params = {
+    const params: Record<string, string | number> = {
       side: this.side.toUpperCase(),
       pageNum: this.currentPage() + 1,
       pageSize: this.pageSize,
     };
+
+    if (this.data.botId) {
+      params.botId = this.data.botId;
+    }
 
     this.httpClient.get<FilledOrdersResponse>(`${API_HUB_URL}/binance-bot/orders`, { params }).subscribe({
       next: (response) => {

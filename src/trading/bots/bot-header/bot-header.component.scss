@@ -67,25 +67,3 @@
     border-radius: 50%;
   }
 }
-
-.trading-view-dialog {
-  mat-dialog-title {
-    margin-bottom: 0;
-  }
-
-  mat-dialog-content {
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-
-    .widget-container {
-      height: calc(90vh - 100px);
-      min-height: 500px;
-      overflow: hidden;
-
-      ::ng-deep app-trading-view-widget > div {
-        height: 100% !important;
-      }
-    }
-  }
-}

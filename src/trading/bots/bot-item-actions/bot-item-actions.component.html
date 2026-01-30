@@ -1,0 +1,14 @@
+@if (showEdit()) {
+  <button mat-icon-button (click)="onEdit()" type="button" matTooltip="Edit">
+    <mat-icon>edit</mat-icon>
+  </button>
+}
+<button mat-icon-button (click)="onShowPairs()" type="button" matTooltip="Show Pairs">
+  <mat-icon>format_list_bulleted</mat-icon>
+</button>
+<button mat-icon-button (click)="onShowFilled('buy')" type="button" matTooltip="show filled buy orders">
+  <mat-icon class="buy">gpp_good</mat-icon>
+</button>
+<button mat-icon-button (click)="onShowFilled('sell')" type="button" matTooltip="show filled sell orders">
+  <mat-icon class="sell">gpp_good</mat-icon>
+</button>

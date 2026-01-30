@@ -4,11 +4,11 @@
       <div class="num-pairs-control">
         <span>Number of Pairs: {{ bot().config.numPairs }}</span>
         <div class="num-pairs-buttons">
-          <button mat-mini-fab color="primary" (click)="decrementNumPairs()" [disabled]="isSaving() || bot().config.numPairs <= 1" matTooltip="Decrease number of pairs">
-            -
+          <button mat-icon-button (click)="decrementNumPairs()" [disabled]="isSaving() || bot().config.numPairs <= 1" type="button" matTooltip="Decrease number of pairs">
+            <mat-icon>remove</mat-icon>
           </button>
-          <button mat-mini-fab color="primary" (click)="incrementNumPairs()" [disabled]="isSaving()" matTooltip="Increase number of pairs">
-            +
+          <button mat-icon-button (click)="incrementNumPairs()" [disabled]="isSaving()" type="button" matTooltip="Increase number of pairs">
+            <mat-icon>add</mat-icon>
           </button>
         </div>
       </div>
@@ -18,10 +18,12 @@
       <div>Earn in base asset: {{ bot().config.earnInBaseAsset ? 'Yes' : 'No' }}</div>
     </div>
     
-    <div class="bot-actions">
-      <button mat-raised-button color="primary" (click)="startEdit()">Edit</button>
-      <button mat-raised-button color="primary" (click)="onShowPairs()">Show Pairs</button>
-    </div>
+    <app-bot-item-actions
+      [showEdit]="true"
+      [botId]="bot().id"
+      (editClicked)="startEdit()"
+      (showPairsClicked)="onShowPairs()"
+    ></app-bot-item-actions>
   </div>
 } @else {
   <div class="bot-content">

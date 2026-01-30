@@ -48,4 +48,5 @@ export interface ProcessedFilledOrder {
 
 export interface FilledOrdersDialogData {
   side: BotOrderSide;
+  botId?: string;
 }

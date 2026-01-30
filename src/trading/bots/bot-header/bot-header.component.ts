@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Signal, TemplateRef, ViewChild, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal, TemplateRef, computed, inject, input, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -72,16 +72,17 @@ export class BotHeaderComponent {
 
   private readonly dialog = inject(MatDialog);
 
-  @ViewChild('tradingViewTemplate', { static: false }) private tradingViewTemplate?: TemplateRef<unknown>;
+  private readonly tradingViewTemplate = viewChild<TemplateRef<unknown>>('tradingViewTemplate');
 
   public openTradingView(event: MouseEvent): void {
     event.stopPropagation();
 
-    if (!this.tradingViewTemplate) {
+    const template = this.tradingViewTemplate();
+    if (!template) {
       return;
     }
 
-    this.dialog.open(this.tradingViewTemplate, {
+    this.dialog.open(template, {
       width: '90vw',
       maxWidth: '1400px',
       height: '90vh',
