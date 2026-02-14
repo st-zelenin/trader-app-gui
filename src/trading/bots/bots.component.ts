@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 
@@ -65,6 +66,7 @@ export class BotsComponent implements OnInit, OnDestroy {
   private readonly dialog = inject(MatDialog);
   private readonly webSocketService = inject(WebSocketService);
   private readonly facade = inject(AppStoreFacade);
+  private readonly snackBar = inject(MatSnackBar);
   private readonly destroy$ = new Subject<void>();
 
   private readonly usdcBalance = toSignal(this.facade.balance(EXCHANGE.BINANCE, 'USDC'), { initialValue: undefined });
@@ -132,6 +134,36 @@ export class BotsComponent implements OnInit, OnDestroy {
 
   public isBotSaving(botId: string): boolean {
     return this.savingBotIds.has(botId);
+  }
+
+  public onConsolidateRequested(botId: string): void {
+    this.savingBotIds.add(botId);
+
+    this.httpClient
+      .put<{ success: boolean; data: BotDto; error?: string }>(`${API_HUB_URL}/binance-bot/${botId}/consolidate-pairs`, { count: 5 })
+      .subscribe({
+        next: (response) => {
+          if (!response.success) {
+            this.snackBar.open(response.error ?? 'Failed to consolidate pairs', 'x', {
+              horizontalPosition: 'right',
+              verticalPosition: 'top',
+              panelClass: ['warning'],
+            });
+            this.savingBotIds.delete(botId);
+            return;
+          }
+
+          const currentBot = this.bots().find((bot) => bot.id === botId);
+          const updatedBot: BotDto = { ...response.data, expanded: currentBot?.expanded ?? false };
+          const updatedBots = this.bots().map((bot) => (bot.id === botId ? updatedBot : bot));
+          this.bots.set(updatedBots);
+          this.savingBotIds.delete(botId);
+        },
+        error: (err) => {
+          console.error('Failed to consolidate pairs:', err);
+          this.savingBotIds.delete(botId);
+        },
+      });
   }
 
   public onExpansionToggle(bot: BotDto, isExpanded: boolean): void {

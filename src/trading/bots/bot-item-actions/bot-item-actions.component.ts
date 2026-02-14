@@ -16,10 +16,13 @@ import { FilledOrdersComponent } from '../filled-orders/filled-orders.component'
 })
 export class BotItemActionsComponent {
   public readonly showEdit = input<boolean>(false);
+  public readonly showConsolidate = input<boolean>(false);
+  public readonly consolidateDisabled = input<boolean>(false);
   public readonly botId = input.required<string>();
 
   public readonly editClicked = output<void>();
   public readonly showPairsClicked = output<void>();
+  public readonly consolidateClicked = output<void>();
 
   private readonly dialog = inject(MatDialog);
 
@@ -29,6 +32,10 @@ export class BotItemActionsComponent {
 
   public onShowPairs(): void {
     this.showPairsClicked.emit();
+  }
+
+  public onConsolidate(): void {
+    this.consolidateClicked.emit();
   }
 
   public onShowFilled(side: BotOrderSide): void {

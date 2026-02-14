@@ -21,6 +21,7 @@ export class ProgressiveBotComponent {
   public readonly isSaving = input<boolean>(false);
 
   public readonly configSaveRequested = output<Partial<ProgressiveBotConfig>>();
+  public readonly consolidateRequested = output<void>();
 
   public readonly isEditing = signal(false);
   public readonly editForm = signal<FormGroup | null>(null);
@@ -67,6 +68,10 @@ export class ProgressiveBotComponent {
     };
 
     this.configSaveRequested.emit(updated);
+  }
+
+  public onConsolidate(): void {
+    this.consolidateRequested.emit();
   }
 
   public onShowPairs(): void {

@@ -3,6 +3,11 @@
     <mat-icon>edit</mat-icon>
   </button>
 }
+@if (showConsolidate()) {
+  <button mat-icon-button (click)="onConsolidate()" [disabled]="consolidateDisabled()" type="button" matTooltip="Consolidate">
+    <mat-icon>merge_type</mat-icon>
+  </button>
+}
 <button mat-icon-button (click)="onShowPairs()" type="button" matTooltip="Show Pairs">
   <mat-icon>format_list_bulleted</mat-icon>
 </button>

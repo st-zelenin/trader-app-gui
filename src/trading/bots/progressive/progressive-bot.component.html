@@ -25,9 +25,12 @@
 
     <app-bot-item-actions
       [showEdit]="true"
+      [showConsolidate]="true"
+      [consolidateDisabled]="isSaving()"
       [botId]="bot().id"
       (editClicked)="startEdit()"
       (showPairsClicked)="onShowPairs()"
+      (consolidateClicked)="onConsolidate()"
     ></app-bot-item-actions>
   </div>
 } @else {

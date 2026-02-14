@@ -35,6 +35,7 @@
                   [rawBot]="bot"
                   [isSaving]="isBotSaving(bot.id)"
                   (configSaveRequested)="onConfigSaveRequested(bot.id, $event)"
+                  (consolidateRequested)="onConsolidateRequested(bot.id)"
                 >
                 </app-progressive-bot>
               }

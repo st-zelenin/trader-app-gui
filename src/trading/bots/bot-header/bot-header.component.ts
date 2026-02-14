@@ -84,8 +84,6 @@ export class BotHeaderComponent {
 
     this.dialog.open(template, {
       width: '90vw',
-      maxWidth: '1400px',
-      height: '90vh',
       autoFocus: false,
     });
   }
