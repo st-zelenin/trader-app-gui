@@ -48,11 +48,19 @@ export interface BotDto {
   config: BotConfig;
   pairs: BotPair[];
   expanded?: boolean;
+  consolidatedOrder?: ConsolidatedOrder;
 }
 
-export interface BotsResponse {
-  success: boolean;
-  data: BotDto[];
+export interface ApiResponse<T = unknown> {
+  readonly success: boolean;
+  readonly error?: string;
+  readonly data?: T;
+}
+
+export interface ConsolidatedOrder {
+  readonly botId: string;
+  readonly sellPrice: number;
+  readonly quoteQuantity: number;
 }
 
 export interface ProgressiveBot {

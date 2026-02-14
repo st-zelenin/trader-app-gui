@@ -35,6 +35,12 @@ export class BotHeaderComponent {
     actualNumPairs: this.bot().pairs?.length || 0,
   }));
 
+  public readonly showConsolidatedWarning = computed(() => {
+    const order = this.bot().consolidatedOrder;
+    const price = this.price();
+    return order != null && price != null && order.sellPrice <= price;
+  });
+
   public readonly lowestBuyDiff = computed(() => {
     const currentPrice = this.price();
     const { pairs } = this.bot();

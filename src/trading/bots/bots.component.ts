@@ -12,7 +12,7 @@ import { filter, map, takeUntil } from 'rxjs/operators';
 import { BotHeaderComponent } from './bot-header/bot-header.component';
 import { BotsActionsComponent } from './bots-actions/bots-actions.component';
 import { BotFilteringType, BotSortingType } from './bots-actions/bots-actions.constants';
-import { BaseBotConfig, type BotDto, BotOrderSide, type BotsResponse } from './bots.interfaces';
+import { ApiResponse, BaseBotConfig, type BotDto, BotOrderSide, type ConsolidatedOrder } from './bots.interfaces';
 import { BottomWeightedBotComponent } from './bottom-weighted/bottom-weighted-bot.component';
 import { FilledOrdersComponent } from './filled-orders/filled-orders.component';
 import { ProgressiveBotComponent } from './progressive/progressive-bot.component';
@@ -74,10 +74,11 @@ export class BotsComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.facade.getBalances(EXCHANGE.BINANCE);
 
-    this.httpClient.get<BotsResponse>(`${API_HUB_URL}/binance-bot`).subscribe({
+    this.httpClient.get<ApiResponse<BotDto[]>>(`${API_HUB_URL}/binance-bot`).subscribe({
       next: (res) => {
         this.bots.set(res?.data ?? []);
         this.loading.set(false);
+        this.fetchLowestConsolidatedByBot();
       },
       error: (err) => {
         this.error.set(err?.message ?? 'Failed to load bots');
@@ -139,31 +140,30 @@ export class BotsComponent implements OnInit, OnDestroy {
   public onConsolidateRequested(botId: string): void {
     this.savingBotIds.add(botId);
 
-    this.httpClient
-      .put<{ success: boolean; data: BotDto; error?: string }>(`${API_HUB_URL}/binance-bot/${botId}/consolidate-pairs`, { count: 5 })
-      .subscribe({
-        next: (response) => {
-          if (!response.success) {
-            this.snackBar.open(response.error ?? 'Failed to consolidate pairs', 'x', {
-              horizontalPosition: 'right',
-              verticalPosition: 'top',
-              panelClass: ['warning'],
-            });
-            this.savingBotIds.delete(botId);
-            return;
-          }
+    this.httpClient.put<ApiResponse<BotDto>>(`${API_HUB_URL}/binance-bot/${botId}/consolidate-pairs`, { count: 5 }).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          this.snackBar.open(response.error ?? 'Failed to consolidate pairs', 'x', {
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['warning'],
+          });
+          this.savingBotIds.delete(botId);
+          return;
+        }
 
-          const currentBot = this.bots().find((bot) => bot.id === botId);
-          const updatedBot: BotDto = { ...response.data, expanded: currentBot?.expanded ?? false };
-          const updatedBots = this.bots().map((bot) => (bot.id === botId ? updatedBot : bot));
-          this.bots.set(updatedBots);
-          this.savingBotIds.delete(botId);
-        },
-        error: (err) => {
-          console.error('Failed to consolidate pairs:', err);
-          this.savingBotIds.delete(botId);
-        },
-      });
+        const updatedBot: BotDto = { ...response.data!, expanded: false };
+        // const currentBot = this.bots().find((bot) => bot.id === botId);
+        // const updatedBot: BotDto = { ...response.data!, expanded: currentBot?.expanded ?? false };
+        const updatedBots = this.bots().map((bot) => (bot.id === botId ? updatedBot : bot));
+        this.bots.set(updatedBots);
+        this.savingBotIds.delete(botId);
+      },
+      error: (err) => {
+        console.error('Failed to consolidate pairs:', err);
+        this.savingBotIds.delete(botId);
+      },
+    });
   }
 
   public onExpansionToggle(bot: BotDto, isExpanded: boolean): void {
@@ -215,6 +215,25 @@ export class BotsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to fetch latest prices:', err);
+      },
+    });
+  }
+
+  private fetchLowestConsolidatedByBot(): void {
+    this.httpClient.get<ApiResponse<ConsolidatedOrder[]>>(`${API_HUB_URL}/binance-bot/consolidated-orders/lowest-by-bot`).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          console.log('consolidated orders:', response.data);
+          const byBotId: Record<string, ConsolidatedOrder> = {};
+          for (const order of response.data) {
+            byBotId[order.botId] = order;
+          }
+          const updatedBots = this.bots().map((bot) => ({ ...bot, consolidatedOrder: byBotId[bot.id] }));
+          this.bots.set(updatedBots);
+        }
+      },
+      error: (err) => {
+        console.error('Failed to fetch lowest consolidated orders by bot:', err);
       },
     });
   }

@@ -17,6 +17,9 @@
   </div>
 
   <div class="right-group">
+    @if (showConsolidatedWarning()) {
+      <mat-icon matTooltip="Lowest consolidated sell price is at or above current price" class="warning-icon">warning</mat-icon>
+    }
     <span class="pairs-count sup" matTooltip="number of pairs">
       @if (data().botType === BotType.Progressive) {
         {{ data().numPairs }} / {{ data().actualNumPairs }}
